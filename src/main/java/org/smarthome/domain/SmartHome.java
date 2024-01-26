@@ -4,14 +4,14 @@ import java.util.List;
 
 public class SmartHome {
 
-    private List<Room> room;
+    private final List<Room> rooms;
 
-    public SmartHome(List<Room> room) {
-        this.room = room;
+    public SmartHome(List<Room> rooms) {
+        this.rooms = rooms;
     }
 
-    public List<Room> getRoom() {
-        return room;
+    public List<Room> getRooms() {
+        return rooms;
     }
 
 }

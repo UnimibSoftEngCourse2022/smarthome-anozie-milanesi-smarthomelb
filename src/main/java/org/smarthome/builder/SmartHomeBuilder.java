@@ -6,21 +6,22 @@ import org.smarthome.domain.Room;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmartHomeBuilder {
+public class SmartHomeBuilder implements HomeBuilder {
 
-    private List<Room> room;
+    private final List<Room> rooms;
 
     public SmartHomeBuilder() {
-        this.room = new ArrayList<>();
+        this.rooms = new ArrayList<>();
     }
 
+    @Override
     public SmartHomeBuilder addRoom(Room room) {
-        this.room.add(room);
+        rooms.add(room);
         return this;
     }
 
     public SmartHome create() {
-        return new SmartHome(room);
+        return new SmartHome(rooms);
     }
 
 }
