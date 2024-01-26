@@ -12,7 +12,7 @@ public class Light {
         this.lightState = lightState;
     }
 
-    public void gestisci() {
+    public void handle() {
         lightState.handle();
     }
 
