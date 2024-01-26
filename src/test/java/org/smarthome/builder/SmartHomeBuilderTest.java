@@ -6,7 +6,7 @@ import org.smarthome.domain.SmartHome;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SmartHomeBuilderTest {
+class SmartHomeBuilderTest {
 
     @Test
     void createSmartHomeTest() {
