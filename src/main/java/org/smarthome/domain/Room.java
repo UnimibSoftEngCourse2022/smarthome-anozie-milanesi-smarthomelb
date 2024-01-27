@@ -1,19 +1,25 @@
 package org.smarthome.domain;
 
+import org.smarthome.domain.illumination.Light;
+
+import java.util.List;
+
 public class Room {
 
-    private String name;
+    private final String name;
+    private final List<Light> lights;
 
-    public Room(String name) {
+    public Room(String name, List<Light> lights) {
         this.name = name;
+        this.lights = lights;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<Light> getLights() {
+        return lights;
     }
 
 }

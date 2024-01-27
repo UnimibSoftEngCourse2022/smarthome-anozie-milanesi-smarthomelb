@@ -4,7 +4,7 @@ public abstract class LightState {
 
     protected Light light;
 
-    public LightState(Light light) {
+    protected LightState(Light light) {
         this.light = light;
     }
 
