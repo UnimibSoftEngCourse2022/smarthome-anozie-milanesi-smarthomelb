@@ -1,9 +1,12 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
+import org.smarthome.controller.LightControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
+import org.smarthome.domain.illumination.LightOff;
+import org.smarthome.domain.illumination.LightOn;
 
 import java.util.ArrayList;
 import java.util.List;

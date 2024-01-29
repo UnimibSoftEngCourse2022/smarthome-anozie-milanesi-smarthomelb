@@ -12,6 +12,10 @@ public class Light {
         this.lightState = lightState;
     }
 
+    public LightState getLightState() {
+        return lightState;
+    }
+
     public void handle() {
         lightState.handle();
     }
