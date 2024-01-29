@@ -15,4 +15,10 @@ public class Cleaning extends VacuumState {
         throw new CleaningException(ALREADY_CLEANING_MESSAGE);
     }
 
+    @Override
+    public void stop() throws InterruptedException {
+        vacuum.transitToChargingStation();
+        vacuum.stoppedCleaning();
+    }
+
 }

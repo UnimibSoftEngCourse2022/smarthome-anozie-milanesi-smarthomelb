@@ -13,7 +13,7 @@ import static org.smarthome.util.Constants.MOVING_TO_ROOM_MS_DURATION;
 
 public class Vacuum {
 
-    private CleaningActionListener actionListener;
+    private CleaningActionListener cleaningActionListener;
     private final List<Room> houseMapping;
     private final Room chargingStationPosition;
     private Room currentPosition;
@@ -38,8 +38,8 @@ public class Vacuum {
         this.vacuumState = new Charging(this);
     }
 
-    public void setActionListener(CleaningActionListener actionListener) {
-        this.actionListener = actionListener;
+    public void setCleaningActionListener(CleaningActionListener cleaningActionListener) {
+        this.cleaningActionListener = cleaningActionListener;
     }
 
     public List<Room> getHouseMapping() {
@@ -57,63 +57,84 @@ public class Vacuum {
     public void setCurrentPosition(Room currentPosition) {
         if (!Objects.equals(this.currentPosition, currentPosition)) {
             this.currentPosition = currentPosition;
-            if (actionListener != null) {
-                actionListener.onChangePosition(currentPosition);
+            if (cleaningActionListener != null) {
+                cleaningActionListener.onChangePosition(currentPosition);
             }
         }
     }
 
-    public VacuumState getVacuumState() {
+    public synchronized VacuumState getVacuumState() {
         return vacuumState;
     }
 
-    public void setVacuumState(VacuumState vacuumState) {
+    public synchronized boolean isCleaning() {
+        return getVacuumState().getClass() == Cleaning.class;
+    }
+
+    public synchronized void setVacuumState(VacuumState vacuumState) {
         this.vacuumState = vacuumState;
-        if (actionListener != null) {
-            actionListener.onChangeState(vacuumState);
+        if (cleaningActionListener != null) {
+            cleaningActionListener.onChangeState(vacuumState);
         }
     }
 
-    public synchronized void clean() throws CleaningException {
-        vacuumState.clean();
+    public void clean() throws InterruptedException {
+        try {
+            getVacuumState().clean();
+        } catch (CleaningException e) {
+            if (cleaningActionListener != null) {
+                cleaningActionListener.onCleaningException(e);
+            }
+        }
     }
 
-    protected void cleaningHome() {
+    public void stop() throws InterruptedException {
+        try {
+            getVacuumState().stop();
+        } catch (CleaningException e) {
+            if (cleaningActionListener != null) {
+                cleaningActionListener.onCleaningException(e);
+            }
+        }
+    }
+
+    public void completedCleaning() {
+        if (cleaningActionListener != null) {
+            cleaningActionListener.onCompletedCleaning();
+        }
+    }
+
+    public void stoppedCleaning() {
+        if (cleaningActionListener != null) {
+            cleaningActionListener.onStoppedCleaning();
+        }
+    }
+
+    protected void cleaningHome() throws InterruptedException {
         setVacuumState(new Cleaning(this));
         for (Room room : getHouseMapping()) {
             moveToRoom(room);
             cleanCurrentRoom();
         }
-        if (actionListener != null) {
-            actionListener.onCompletedCleaning();
-        }
     }
 
-    protected void transitToChargingStation() {
+    protected void transitToChargingStation() throws InterruptedException {
         setVacuumState(new Transit(this));
-        for (int i = getHouseMapping().size() - 1; i >= 0; i--) {
+        int startIndex = getHouseMapping().indexOf(getCurrentPosition());
+        for (int i = startIndex; i >= 0; i--) {
             moveToRoom(getHouseMapping().get(i));
         }
         setVacuumState(new Charging(this));
     }
 
-    private void moveToRoom(Room room) {
+    private void moveToRoom(Room room) throws InterruptedException {
         setCurrentPosition(room);
-        // simulating vacuum moving to other room
-        try {
-            Thread.sleep(MOVING_TO_ROOM_MS_DURATION);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        Thread.sleep(MOVING_TO_ROOM_MS_DURATION);
     }
 
-    private void cleanCurrentRoom() {
+    private void cleanCurrentRoom() throws InterruptedException {
         // simulating vacuum cleaning room
-        try {
-            Thread.sleep(CLEANING_ROOM_MS_DURATION);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        Thread.sleep(CLEANING_ROOM_MS_DURATION);
     }
 
 }

@@ -17,8 +17,8 @@ class VacuumTest {
 
     private final Logger LOGGER = Logger.getLogger(getClass().getName());
 
-    private Room chargingStationPositionRoom;
     private List<Room> rooms;
+    private int chargingStationPositionIndex;
     private Vacuum vacuum;
 
     @BeforeEach
@@ -26,19 +26,20 @@ class VacuumTest {
         // create rooms
         Room room1 = new Room("test1", null);
         Room room2 = new Room("test2", null);
-        chargingStationPositionRoom = new Room("test3", null);
-        Room room3 = new Room("test4", null);
+        Room room3 = new Room("test3", null);
+        Room room4 = new Room("test4", null);
 
         rooms = new ArrayList<>();
         rooms.add(room1);
         rooms.add(room2);
-        rooms.add(chargingStationPositionRoom);
         rooms.add(room3);
+        rooms.add(room4);
+        chargingStationPositionIndex = 2;
 
-        vacuum = new Vacuum(rooms, chargingStationPositionRoom);
+        vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));
 
         if (IS_DEBUG_MODE) {
-            vacuum.setActionListener(new CleaningActionListener() {
+            vacuum.setCleaningActionListener(new CleaningActionListener() {
                 @Override
                 public void onChangePosition(Room currentPosition) {
                     LOGGER.info("vacuum moving to " + currentPosition.getName());
@@ -53,6 +54,16 @@ class VacuumTest {
                 public void onCompletedCleaning() {
                     LOGGER.info("vacuum completed cleaning");
                 }
+
+                @Override
+                public void onStoppedCleaning() {
+                    LOGGER.info("vacuum stop cleaning");
+                }
+
+                @Override
+                public void onCleaningException(CleaningException e) {
+                    LOGGER.warning(e.getMessage());
+                }
             });
         }
     }
@@ -61,8 +72,8 @@ class VacuumTest {
     void createVacuumTest() {
         assertNotNull(vacuum.getHouseMapping());
         assertTrue(vacuum.getHouseMapping().size() > 0);
-        assertEquals(chargingStationPositionRoom, vacuum.getChargingStationPosition());
-        assertEquals(chargingStationPositionRoom, vacuum.getCurrentPosition());
+        assertEquals(rooms.get(chargingStationPositionIndex), vacuum.getChargingStationPosition());
+        assertEquals(rooms.get(chargingStationPositionIndex), vacuum.getCurrentPosition());
     }
 
     @Test
@@ -72,34 +83,150 @@ class VacuumTest {
     }
 
     @Test
-    void cleaningTest() {
-        try {
-            vacuum.clean();
-            assertEquals(Charging.class, vacuum.getVacuumState().getClass());
-            assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
-        } catch (CleaningException e) {
-            throw new RuntimeException(e);
-        }
+    void transitToChargingStationTest() throws InterruptedException {
+        vacuum.setCurrentPosition(rooms.get(1));
+        vacuum.transitToChargingStation();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+
+        vacuum.setCurrentPosition(rooms.get(3));
+        vacuum.transitToChargingStation();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
 
     @Test
-    void cleaningErrorTest1() {
-        try {
-            vacuum.setVacuumState(new Transit(vacuum));
-            vacuum.clean();
-        } catch (CleaningException e) {
-            assertEquals(TRANSIT_TO_CHARGING_STATION_MESSAGE, e.getMessage());
-        }
+    void cleaningTest() throws InterruptedException {
+        vacuum.clean();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
 
     @Test
-    void cleaningErrorTest2() {
-        try {
-            vacuum.setVacuumState(new Cleaning(vacuum));
-            vacuum.clean();
-        } catch (CleaningException e) {
-            assertEquals(ALREADY_CLEANING_MESSAGE, e.getMessage());
-        }
+    void cleaningErrorTest1() throws InterruptedException {
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                assertEquals(TRANSIT_TO_CHARGING_STATION_MESSAGE, e.getMessage());
+            }
+        });
+
+        vacuum.setVacuumState(new Transit(vacuum));
+        vacuum.clean();
+    }
+
+    @Test
+    void cleaningErrorTest2() throws InterruptedException {
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                assertEquals(ALREADY_CLEANING_MESSAGE, e.getMessage());
+            }
+        });
+
+        vacuum.setVacuumState(new Cleaning(vacuum));
+        vacuum.clean();
+    }
+
+    @Test
+    void stopCleaningTest() throws InterruptedException {
+        vacuum.setVacuumState(new Cleaning(vacuum));
+        vacuum.setCurrentPosition(rooms.get(1));
+        vacuum.stop();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+    }
+
+    @Test
+    void stopCleaningErrorTest1() throws InterruptedException {
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                assertEquals(NOT_CLEANING_YET_MESSAGE, e.getMessage());
+            }
+        });
+
+        vacuum.stop();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+    }
+
+    @Test
+    void stopCleaningErrorTest2() throws InterruptedException {
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                assertEquals(CLEANING_ALREADY_TERMINATED_MESSAGE, e.getMessage());
+            }
+        });
+
+        vacuum.setVacuumState(new Transit(vacuum));
+        vacuum.setCurrentPosition(rooms.get(1));
+        vacuum.stop();
     }
 
 }

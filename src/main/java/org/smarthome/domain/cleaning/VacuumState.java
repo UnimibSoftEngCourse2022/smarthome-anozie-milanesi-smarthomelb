@@ -10,6 +10,8 @@ public abstract class VacuumState {
         this.vacuum = vacuum;
     }
 
-    public abstract void clean() throws CleaningException;
+    public abstract void clean() throws CleaningException, InterruptedException;
+
+    public abstract void stop() throws CleaningException, InterruptedException;
 
 }
