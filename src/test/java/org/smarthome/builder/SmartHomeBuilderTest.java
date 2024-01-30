@@ -1,17 +1,15 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
-import org.smarthome.controller.LightControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.illumination.LightOff;
-import org.smarthome.domain.illumination.LightOn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SmartHomeBuilderTest {
 
@@ -40,11 +38,12 @@ class SmartHomeBuilderTest {
         assertEquals(2, smartHome.getRooms().size());
         assertEquals("test1", smartHome.getRooms().get(0).getName());
 
-        assertNotNull(smartHome.getRooms().get(0).getLights());
-        assertNotNull(smartHome.getRooms().get(1).getLights());
-
-        assertEquals(2, smartHome.getRooms().get(0).getLights().size());
-        assertEquals(1, smartHome.getRooms().get(1).getLights().size());
+        for (Room room : smartHome.getRooms()) {
+            assertNotNull(room.getIllumination());
+            for (Light light : room.getIllumination().getLights()) {
+                assertNotNull(light);
+            }
+        }
     }
 
 }

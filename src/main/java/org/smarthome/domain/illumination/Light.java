@@ -1,5 +1,7 @@
 package org.smarthome.domain.illumination;
 
+import java.util.Objects;
+
 public class Light {
 
     private LightState lightState;
@@ -8,12 +10,14 @@ public class Light {
         lightState = new LightOff(this);
     }
 
-    public void setLightState(LightState lightState) {
-        this.lightState = lightState;
-    }
-
     public LightState getLightState() {
         return lightState;
+    }
+
+    public void setLightState(LightState lightState) {
+        if (!Objects.equals(getLightState().getClass(), lightState.getClass())) {
+            this.lightState = lightState;
+        }
     }
 
     public void handle() {
@@ -21,6 +25,3 @@ public class Light {
     }
 
 }
-
-
-

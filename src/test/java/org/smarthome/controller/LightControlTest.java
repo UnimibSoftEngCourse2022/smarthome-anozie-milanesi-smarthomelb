@@ -1,10 +1,9 @@
 package org.smarthome.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.Room;
-import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.illumination.LightOff;
-import org.smarthome.domain.illumination.LightOn;
+import org.smarthome.domain.illumination.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,37 +11,45 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LightControlTest {
-    @Test
-    void lightControlTest() {
-        // create light list
-        List<Light> lights1 = new ArrayList<>();
-        lights1.add(new Light());
-        lights1.add(new Light());
-        lights1.add(new Light());
+
+    private Room room;
+    private List<Light> lights;
+    private LightControl lightControl;
+
+    @BeforeEach
+    void setUp() {
+        // create lights
+        lights = new ArrayList<>();
+        lights.add(new Light());
+        lights.add(new Light());
+        lights.add(new Light());
 
         // create room
-        Room room1 = new Room("test1", lights1);
+        room = new Room("test1", lights);
+        lightControl = room.getLightControl();
+    }
 
-        LightControl controller = room1.getLightController();
+    @Test
+    void lightControlTest() {
+        assertNotNull(room.getIllumination());
 
-        assertEquals(lights1.get(0).getLightState().getClass(), LightOff.class);
-        assertEquals(lights1.get(1).getLightState().getClass(), LightOff.class);
-        assertEquals(lights1.get(2).getLightState().getClass(), LightOff.class);
+        lightControl.handleSingleLight(lights.get(0));
+        assertEquals(LightOn.class, lights.get(0).getLightState().getClass());
 
-        //turn lights on
-        controller.handleLights();
+        lightControl.handleIllumination();
+        assertEquals(IlluminationOn.class, room.getIllumination().getIlluminationState().getClass());
+        for (Light light : room.getIllumination().getLights()) {
+            assertEquals(LightOn.class, light.getLightState().getClass());
+        }
 
-        assertEquals(lights1.get(0).getLightState().getClass(), LightOn.class);
-        assertEquals(lights1.get(1).getLightState().getClass(), LightOn.class);
-        assertEquals(lights1.get(2).getLightState().getClass(), LightOn.class);
+        lightControl.handleSingleLight(lights.get(1));
+        assertEquals(LightOff.class, lights.get(1).getLightState().getClass());
 
-        //turn lights off
-        controller.handleLights();
-
-        assertEquals(lights1.get(0).getLightState().getClass(), LightOff.class);
-        assertEquals(lights1.get(1).getLightState().getClass(), LightOff.class);
-        assertEquals(lights1.get(2).getLightState().getClass(), LightOff.class);
-
+        lightControl.handleIllumination();
+        assertEquals(IlluminationOff.class, room.getIllumination().getIlluminationState().getClass());
+        for (Light light : room.getIllumination().getLights()) {
+            assertEquals(LightOff.class, light.getLightState().getClass());
+        }
     }
 
 
