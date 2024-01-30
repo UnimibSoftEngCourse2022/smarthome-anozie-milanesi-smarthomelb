@@ -14,11 +14,7 @@ public class SmartHome {
     public SmartHome(List<Room> rooms, Vacuum vacuum) {
         this.rooms = rooms;
         this.vacuum = vacuum;
-        if (vacuum == null) {
-            this.cleaningControl = null;
-        } else {
-            this.cleaningControl = new CleaningControl(vacuum);
-        }
+        this.cleaningControl = new CleaningControl(vacuum);
     }
 
     public List<Room> getRooms() {

@@ -4,7 +4,7 @@ public class Constants {
 
     private Constants() {}
 
-    public static final boolean IS_DEBUG_MODE = true;
+    public static final boolean IS_DEBUG_MODE = false;
 
     public static final String ALREADY_CLEANING_MESSAGE =
             "The vacuum cleaner is already in the cleaning state";

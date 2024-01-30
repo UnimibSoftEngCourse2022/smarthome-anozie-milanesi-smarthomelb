@@ -8,7 +8,8 @@ import org.smarthome.domain.illumination.Light;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SmartHomeBuilderTest {
 
@@ -30,9 +31,11 @@ class SmartHomeBuilderTest {
         SmartHome smartHome = new SmartHomeBuilder()
                 .addRoom(room1)
                 .addRoom(room2)
+                .setVacuumChargingStationPosition(room1)
                 .create();
 
         assertNotNull(smartHome.getRooms());
+        assertNotNull(smartHome.getVacuum());
 
         assertEquals(2, smartHome.getRooms().size());
         assertEquals("test1", smartHome.getRooms().get(0).getName());

@@ -10,7 +10,7 @@ import java.util.List;
 public class SmartHomeBuilder implements HomeBuilder {
 
     private final List<Room> rooms;
-    private Vacuum vacuum;
+    private Room chargingStationPosition;
 
     public SmartHomeBuilder() {
         this.rooms = new ArrayList<>();
@@ -23,13 +23,16 @@ public class SmartHomeBuilder implements HomeBuilder {
     }
 
     @Override
-    public SmartHomeBuilder setVacuum(Vacuum vacuum) {
-        this.vacuum = vacuum;
+    public SmartHomeBuilder setVacuumChargingStationPosition(Room chargingStationPosition) {
+        this.chargingStationPosition = chargingStationPosition;
         return this;
     }
 
-
     public SmartHome create() {
+        Vacuum vacuum = null;
+        if (chargingStationPosition != null) {
+            vacuum = new Vacuum(rooms, chargingStationPosition);
+        }
         return new SmartHome(rooms, vacuum);
     }
 

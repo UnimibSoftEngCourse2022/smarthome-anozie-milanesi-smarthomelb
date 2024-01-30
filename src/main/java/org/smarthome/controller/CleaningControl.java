@@ -16,27 +16,31 @@ public class CleaningControl {
     }
 
     public void startCleaning() {
-        cleaningExecutor.submit(() -> {
-            try {
-                vacuum.clean();
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
-        });
+        if (vacuum != null) {
+            cleaningExecutor.submit(() -> {
+                try {
+                    vacuum.clean();
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+        }
     }
 
     public void stopCleaning() {
-        if (vacuum.isCleaning()) {
-            shutdownAndReset();
-        }
-
-        cleaningExecutor.submit(() -> {
-            try {
-                vacuum.stop();
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
+        if (vacuum != null) {
+            if (vacuum.isCleaning()) {
+                shutdownAndReset();
             }
-        });
+
+            cleaningExecutor.submit(() -> {
+                try {
+                    vacuum.stop();
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+        }
     }
 
     private void shutdownAndReset() {
