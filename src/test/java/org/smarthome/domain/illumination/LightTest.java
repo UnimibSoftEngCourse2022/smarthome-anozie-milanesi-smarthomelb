@@ -24,4 +24,15 @@ class LightTest {
         assertEquals(LightOff.class, light.getLightState().getClass());
     }
 
+    @Test
+    void lightActionListenerTest() {
+        light.setLightActionListener(lightState ->
+                assertEquals(LightOn.class, light.getLightState().getClass()));
+        light.handle();
+
+        light.setLightActionListener(lightState ->
+                assertEquals(LightOff.class, light.getLightState().getClass()));
+        light.handle();
+    }
+
 }

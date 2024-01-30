@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class IlluminationTest {
 
@@ -51,6 +52,17 @@ class IlluminationTest {
         for (Light light : illumination.getLights()) {
             assertEquals(LightOn.class, light.getLightState().getClass());
         }
+    }
+
+    @Test
+    void illuminationActionListenerTest() {
+        illumination.setIlluminationActionListener(illuminationState ->
+                assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass()));
+        illumination.handle();
+
+        illumination.setIlluminationActionListener(illuminationState ->
+                assertEquals(IlluminationOff.class, illumination.getIlluminationState().getClass()));
+        illumination.handle();
     }
 
 }
