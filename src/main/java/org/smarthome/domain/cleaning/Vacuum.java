@@ -55,7 +55,7 @@ public class Vacuum {
     }
 
     public void setCurrentPosition(Room currentPosition) {
-        if (!Objects.equals(this.currentPosition, currentPosition)) {
+        if (!Objects.equals(getCurrentPosition(), currentPosition)) {
             this.currentPosition = currentPosition;
             if (cleaningActionListener != null) {
                 cleaningActionListener.onChangePosition(currentPosition);
@@ -72,9 +72,11 @@ public class Vacuum {
     }
 
     public synchronized void setVacuumState(VacuumState vacuumState) {
-        this.vacuumState = vacuumState;
-        if (cleaningActionListener != null) {
-            cleaningActionListener.onChangeState(vacuumState);
+        if (!Objects.equals(getVacuumState().getClass(), vacuumState.getClass())) {
+            this.vacuumState = vacuumState;
+            if (cleaningActionListener != null) {
+                cleaningActionListener.onChangeState(vacuumState);
+            }
         }
     }
 
