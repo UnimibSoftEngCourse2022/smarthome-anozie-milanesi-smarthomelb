@@ -9,6 +9,7 @@ import org.smarthome.domain.cleaning.CleaningActionListener;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
+import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import static org.smarthome.util.Constants.ALREADY_CLEANING_MESSAGE;
 @Disabled
 class CleaningControlTest {
 
-    private final Logger LOGGER = Logger.getLogger(getClass().getName());
+    private final DebugLogger logger = new DebugLogger(Logger.getLogger(getClass().getName()));
 
     private List<Room> rooms;
     private int chargingStationPositionIndex;
@@ -58,12 +59,12 @@ class CleaningControlTest {
 
             @Override
             public void onChangeState(VacuumState vacuumState) {
-                LOGGER.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
+                logger.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
             }
 
             @Override
             public void onCompletedCleaning() {
-                LOGGER.info("vacuum completed cleaning");
+                logger.info("vacuum completed cleaning");
                 assertEquals(Charging.class, vacuum.getVacuumState().getClass());
                 assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
                 latch.countDown();
@@ -71,12 +72,12 @@ class CleaningControlTest {
 
             @Override
             public void onStoppedCleaning() {
-                LOGGER.info("vacuum stop cleaning");
+                logger.info("vacuum stop cleaning");
             }
 
             @Override
             public void onCleaningException(CleaningException e) {
-                LOGGER.warning(e.getMessage());
+                logger.warning(e.getMessage());
                 assertEquals(ALREADY_CLEANING_MESSAGE, e.getMessage());
                 latch.countDown();
             }
@@ -103,12 +104,12 @@ class CleaningControlTest {
 
             @Override
             public void onChangeState(VacuumState vacuumState) {
-                LOGGER.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
+                logger.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
             }
 
             @Override
             public void onCompletedCleaning() {
-                LOGGER.info("vacuum completed cleaning");
+                logger.info("vacuum completed cleaning");
                 assertEquals(Charging.class, vacuum.getVacuumState().getClass());
                 assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
                 latch.countDown();
@@ -116,13 +117,13 @@ class CleaningControlTest {
 
             @Override
             public void onStoppedCleaning() {
-                LOGGER.info("vacuum cleaning operation stopped");
+                logger.info("vacuum cleaning operation stopped");
                 latch.countDown();
             }
 
             @Override
             public void onCleaningException(CleaningException e) {
-                LOGGER.warning(e.getMessage());
+                logger.warning(e.getMessage());
                 latch.countDown();
             }
         });

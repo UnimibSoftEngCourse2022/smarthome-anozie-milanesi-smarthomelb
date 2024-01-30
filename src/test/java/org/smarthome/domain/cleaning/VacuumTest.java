@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.domain.Room;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.exception.UnidentifiedRoomException;
+import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import static org.smarthome.util.Constants.*;
 
 class VacuumTest {
 
-    private final Logger LOGGER = Logger.getLogger(getClass().getName());
+    private final DebugLogger logger = new DebugLogger(Logger.getLogger(getClass().getName()));
 
     private List<Room> rooms;
     private int chargingStationPositionIndex;
@@ -38,34 +39,32 @@ class VacuumTest {
 
         vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));
 
-        if (IS_DEBUG_MODE) {
-            vacuum.setCleaningActionListener(new CleaningActionListener() {
-                @Override
-                public void onChangePosition(Room currentPosition) {
-                    LOGGER.info("vacuum moving to " + currentPosition.getName());
-                }
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+                logger.info("vacuum moving to " + currentPosition.getName());
+            }
 
-                @Override
-                public void onChangeState(VacuumState vacuumState) {
-                    LOGGER.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
-                }
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+                logger.info("vacuum change state to " + vacuumState.getClass().getSimpleName());
+            }
 
-                @Override
-                public void onCompletedCleaning() {
-                    LOGGER.info("vacuum completed cleaning");
-                }
+            @Override
+            public void onCompletedCleaning() {
+                logger.info("vacuum completed cleaning");
+            }
 
-                @Override
-                public void onStoppedCleaning() {
-                    LOGGER.info("vacuum stop cleaning");
-                }
+            @Override
+            public void onStoppedCleaning() {
+                logger.info("vacuum stop cleaning");
+            }
 
-                @Override
-                public void onCleaningException(CleaningException e) {
-                    LOGGER.warning(e.getMessage());
-                }
-            });
-        }
+            @Override
+            public void onCleaningException(CleaningException e) {
+                logger.warning(e.getMessage());
+            }
+        });
     }
 
     @Test
