@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.smarthome.util.Constants.ALREADY_CLEANING_MESSAGE;
+import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
 
-@Disabled
 class CleaningControlTest {
 
     private final DebugLogger logger = new DebugLogger(Logger.getLogger(getClass().getName()));
@@ -84,9 +84,9 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        Thread.sleep(1);
+        Thread.sleep(CLEANING_ROOM_MS_DURATION);
         cleaningControl.startCleaning();
-        Thread.sleep(1);
+        Thread.sleep(CLEANING_ROOM_MS_DURATION);
         cleaningControl.startCleaning();
         latch.await();
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
@@ -129,9 +129,9 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        Thread.sleep(3);
+        Thread.sleep(CLEANING_ROOM_MS_DURATION * 3);
         cleaningControl.stopCleaning();
-        Thread.sleep(1);
+        Thread.sleep(CLEANING_ROOM_MS_DURATION);
         cleaningControl.stopCleaning();
         latch.await();
     }
