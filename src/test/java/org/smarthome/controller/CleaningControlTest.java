@@ -1,7 +1,6 @@
 package org.smarthome.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
@@ -49,7 +48,81 @@ class CleaningControlTest {
     }
 
     @Test
+    @Deprecated
     void startCleaningTest() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+                assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+                assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+                latch.countDown();
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+            }
+        });
+
+        cleaningControl.startCleaning();
+        latch.await();
+        assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+        assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+    }
+
+    @Test
+    @Deprecated
+    void stopCleaningTest() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        vacuum.setCleaningActionListener(new CleaningActionListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+            }
+
+            @Override
+            public void onChangeState(VacuumState vacuumState) {
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+                assertEquals(Charging.class, vacuum.getVacuumState().getClass());
+                assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
+                latch.countDown();
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+                latch.countDown();
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+            }
+        });
+
+        cleaningControl.startCleaning();
+        Thread.sleep(CLEANING_ROOM_MS_DURATION * 3);
+        cleaningControl.stopCleaning();
+        latch.await();
+    }
+
+    @Test
+    @Deprecated
+    void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
         vacuum.setCleaningActionListener(new CleaningActionListener() {
@@ -94,7 +167,8 @@ class CleaningControlTest {
     }
 
     @Test
-    void stopCleaningTest() throws InterruptedException {
+    @Deprecated
+    void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 
         vacuum.setCleaningActionListener(new CleaningActionListener() {
