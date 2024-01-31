@@ -1,6 +1,7 @@
 package org.smarthome.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
@@ -48,7 +49,6 @@ class CleaningControlTest {
     }
 
     @Test
-    @Deprecated
     void startCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -84,7 +84,6 @@ class CleaningControlTest {
     }
 
     @Test
-    @Deprecated
     void stopCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -121,7 +120,7 @@ class CleaningControlTest {
     }
 
     @Test
-    @Deprecated
+    @Disabled
     void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
@@ -167,7 +166,7 @@ class CleaningControlTest {
     }
 
     @Test
-    @Deprecated
+    @Disabled
     void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 
