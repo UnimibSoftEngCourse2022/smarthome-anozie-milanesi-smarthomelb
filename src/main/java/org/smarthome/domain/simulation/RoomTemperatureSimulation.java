@@ -54,7 +54,7 @@ public class RoomTemperatureSimulation {
     public void stopTemperatureChange() {
         shutdownAndReset();
         if (roomTemperatureListener != null) {
-            roomTemperatureListener.onStopTemperatureChange();
+            roomTemperatureListener.onStopTemperatureTargetGoal();
         }
     }
 

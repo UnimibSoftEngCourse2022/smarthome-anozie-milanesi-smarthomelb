@@ -37,7 +37,7 @@ class RoomTemperatureSimulationTest {
             }
 
             @Override
-            public void onStopTemperatureChange() {
+            public void onStopTemperatureTargetGoal() {
             }
         });
 
@@ -61,7 +61,7 @@ class RoomTemperatureSimulationTest {
             }
 
             @Override
-            public void onStopTemperatureChange() {
+            public void onStopTemperatureTargetGoal() {
                 latch.countDown();
             }
         });
@@ -92,7 +92,7 @@ class RoomTemperatureSimulationTest {
             }
 
             @Override
-            public void onStopTemperatureChange() {
+            public void onStopTemperatureTargetGoal() {
             }
         });
 
@@ -121,7 +121,7 @@ class RoomTemperatureSimulationTest {
             }
 
             @Override
-            public void onStopTemperatureChange() {
+            public void onStopTemperatureTargetGoal() {
                 logger.info("temperature stop to change");
                 latch.countDown();
             }
