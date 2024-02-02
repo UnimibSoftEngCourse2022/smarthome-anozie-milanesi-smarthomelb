@@ -18,7 +18,7 @@ public class Cleaning extends VacuumState {
     @Override
     public void stop() throws InterruptedException {
         vacuum.transitToChargingStation();
-        vacuum.stoppedCleaning();
+        vacuum.notifyStoppedCleaning();
     }
 
 }

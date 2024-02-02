@@ -35,7 +35,7 @@ class VacuumTest {
 
         vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));
 
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
                 logger.info("vacuum moving to " + currentPosition.getName());
@@ -99,7 +99,7 @@ class VacuumTest {
 
     @Test
     void cleaningErrorTest1() throws InterruptedException {
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -128,7 +128,7 @@ class VacuumTest {
 
     @Test
     void cleaningErrorTest2() throws InterruptedException {
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -166,7 +166,7 @@ class VacuumTest {
 
     @Test
     void stopCleaningErrorTest1() throws InterruptedException {
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -196,7 +196,7 @@ class VacuumTest {
 
     @Test
     void stopCleaningErrorTest2() throws InterruptedException {
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }

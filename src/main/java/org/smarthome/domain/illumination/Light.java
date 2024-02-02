@@ -1,18 +1,27 @@
 package org.smarthome.domain.illumination;
 
+import org.smarthome.domain.cleaning.CleaningActionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Light {
 
-    private LightActionListener lightActionListener;
+    private final List<LightActionListener> observers;
     private LightState lightState;
 
     public Light() {
+        this.observers = new ArrayList<>();
         lightState = new LightOff(this);
     }
 
-    public void setLightActionListener(LightActionListener lightActionListener) {
-        this.lightActionListener = lightActionListener;
+    public void addObserver(LightActionListener observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(LightActionListener observer) {
+        observers.remove(observer);
     }
 
     public LightState getLightState() {
@@ -22,8 +31,8 @@ public class Light {
     public void setLightState(LightState lightState) {
         if (!Objects.equals(getLightState().getClass(), lightState.getClass())) {
             this.lightState = lightState;
-            if (lightActionListener != null) {
-                lightActionListener.onChangeState(lightState);
+            for (LightActionListener observer : observers) {
+                observer.onChangeState(lightState);
             }
         }
     }

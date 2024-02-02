@@ -48,7 +48,7 @@ class CleaningControlTest {
     void startCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -83,7 +83,7 @@ class CleaningControlTest {
     void stopCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -120,7 +120,7 @@ class CleaningControlTest {
     void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -166,7 +166,7 @@ class CleaningControlTest {
     void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 
-        vacuum.setCleaningActionListener(new CleaningActionListener() {
+        vacuum.addObserver(new CleaningActionListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }

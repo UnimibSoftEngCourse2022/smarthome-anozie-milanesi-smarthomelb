@@ -55,13 +55,24 @@ class IlluminationTest {
     }
 
     @Test
-    void illuminationActionListenerTest() {
-        illumination.setIlluminationActionListener(illuminationState ->
-                assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass()));
+    void illuminationActionListenerTest1() {
+        for (Light light : illumination.getLights()) {
+            light.addObserver(lightState ->
+                    assertEquals(LightOn.class, lightState.getClass()));
+        }
+
+        illumination.handle();
+    }
+
+    @Test
+    void illuminationActionListenerTest2() {
         illumination.handle();
 
-        illumination.setIlluminationActionListener(illuminationState ->
-                assertEquals(IlluminationOff.class, illumination.getIlluminationState().getClass()));
+        for (Light light : illumination.getLights()) {
+            light.addObserver(lightState ->
+                    assertEquals(LightOff.class, lightState.getClass()));
+        }
+
         illumination.handle();
     }
 
