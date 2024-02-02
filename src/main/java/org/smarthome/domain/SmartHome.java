@@ -1,5 +1,6 @@
 package org.smarthome.domain;
 
+import org.smarthome.builder.SmartHomeBuilder;
 import org.smarthome.controller.CleaningControl;
 import org.smarthome.domain.cleaning.Vacuum;
 
@@ -11,8 +12,13 @@ public class SmartHome {
     private final Vacuum vacuum;
     private final CleaningControl cleaningControl;
 
-    public SmartHome(List<Room> rooms, Vacuum vacuum) {
-        this.rooms = rooms;
+    public SmartHome(SmartHomeBuilder builder) {
+        this.rooms = builder.getRooms();
+        Vacuum vacuum = null;
+        Room chargingStationPosition = builder.getChargingStationPosition();
+        if (chargingStationPosition != null) {
+            vacuum = new Vacuum(rooms, chargingStationPosition);
+        }
         this.vacuum = vacuum;
         this.cleaningControl = new CleaningControl(vacuum);
     }

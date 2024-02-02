@@ -1,6 +1,7 @@
 package org.smarthome.domain;
 
-import org.smarthome.controller.LightControl;
+import org.smarthome.builder.SmartHomeRoomBuilder;
+import org.smarthome.controller.IlluminationControl;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.simulation.RoomSimulation;
@@ -11,17 +12,18 @@ public class Room extends RoomSimulation {
 
     private final String name;
     private final Illumination illumination;
-    private final LightControl lightControl;
+    private final IlluminationControl illuminationControl;
 
-    public Room(String name, List<Light> lights) {
+    public Room(SmartHomeRoomBuilder builder) {
         super();
-        this.name = name;
-        if (lights == null) {
-            this.illumination = null;
-        } else {
+        this.name = builder.getName();
+        List<Light> lights = builder.getLights();
+        if (lights != null && lights.size() > 0) {
             this.illumination = new Illumination(lights);
+        } else {
+            this.illumination = null;
         }
-        this.lightControl = new LightControl(illumination);
+        this.illuminationControl = new IlluminationControl(illumination);
     }
 
     public String getName() {
@@ -32,8 +34,8 @@ public class Room extends RoomSimulation {
         return illumination;
     }
 
-    public LightControl getLightControl() {
-        return lightControl;
+    public IlluminationControl getLightControl() {
+        return illuminationControl;
     }
 
 }

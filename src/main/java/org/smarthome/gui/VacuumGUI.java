@@ -2,13 +2,13 @@ package org.smarthome.gui;
 
 import javax.swing.*;
 
-public class FollettoGUI extends JFrame{
+public class VacuumGUI extends JFrame{
     private JPanel panel1;
     private JButton onButton;
     private JButton offButton;
     private JSpinner spinner1;
 
-    public FollettoGUI() {
+    public VacuumGUI() {
 
         setContentPane(panel1);
         setSize(400,400);
@@ -18,6 +18,6 @@ public class FollettoGUI extends JFrame{
     }
 
     public static void main(String[] args) {
-        new FollettoGUI();
+        new VacuumGUI();
     }
 }

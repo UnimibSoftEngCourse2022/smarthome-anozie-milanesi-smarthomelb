@@ -3,6 +3,7 @@ package org.smarthome.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
 import org.smarthome.domain.cleaning.CleaningActionListener;
@@ -32,16 +33,11 @@ class CleaningControlTest {
     @BeforeEach
     void setUp() {
         // create rooms
-        Room room1 = new Room("test1", null);
-        Room room2 = new Room("test2", null);
-        Room room3 = new Room("test3", null);
-        Room room4 = new Room("test4", null);
-
         rooms = new ArrayList<>();
-        rooms.add(room1);
-        rooms.add(room2);
-        rooms.add(room3);
-        rooms.add(room4);
+        rooms.add(new SmartHomeRoomBuilder("test1").create());
+        rooms.add(new SmartHomeRoomBuilder("test2").create());
+        rooms.add(new SmartHomeRoomBuilder("test3").create());
+        rooms.add(new SmartHomeRoomBuilder("test4").create());
         chargingStationPositionIndex = 2;
 
         vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));

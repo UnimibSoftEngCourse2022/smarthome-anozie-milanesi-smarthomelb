@@ -5,9 +5,6 @@ import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -15,17 +12,15 @@ class SmartHomeBuilderTest {
 
     @Test
     void createSmartHomeTest() {
-        // create lights list
-        List<Light> lights1 = new ArrayList<>();
-        lights1.add(new Light());
-        lights1.add(new Light());
-
-        List<Light> lights2 = new ArrayList<>();
-        lights2.add(new Light());
-
         // create rooms
-        Room room1 = new Room("test1", lights1);
-        Room room2 = new Room("test2", lights2);
+        Room room1 = new SmartHomeRoomBuilder("test1")
+                .addLight(new Light())
+                .addLight(new Light())
+                .create();
+
+        Room room2 = new SmartHomeRoomBuilder("test2")
+                .addLight(new Light())
+                .create();
 
         // create smartHome
         SmartHome smartHome = new SmartHomeBuilder()

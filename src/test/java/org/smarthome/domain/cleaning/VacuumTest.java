@@ -2,6 +2,7 @@ package org.smarthome.domain.cleaning;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.exception.UnidentifiedRoomException;
@@ -25,16 +26,11 @@ class VacuumTest {
     @BeforeEach
     void setUp() {
         // create rooms
-        Room room1 = new Room("test1", null);
-        Room room2 = new Room("test2", null);
-        Room room3 = new Room("test3", null);
-        Room room4 = new Room("test4", null);
-
         rooms = new ArrayList<>();
-        rooms.add(room1);
-        rooms.add(room2);
-        rooms.add(room3);
-        rooms.add(room4);
+        rooms.add(new SmartHomeRoomBuilder("test1").create());
+        rooms.add(new SmartHomeRoomBuilder("test2").create());
+        rooms.add(new SmartHomeRoomBuilder("test3").create());
+        rooms.add(new SmartHomeRoomBuilder("test4").create());
         chargingStationPositionIndex = 2;
 
         vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));
@@ -78,7 +74,7 @@ class VacuumTest {
     @Test
     void createVacuumErrorTest() {
         assertThrows(UnidentifiedRoomException.class, () ->
-                vacuum = new Vacuum(rooms, new Room("errorRoom", null)));
+                vacuum = new Vacuum(rooms, new SmartHomeRoomBuilder("errorRoom").create()));
     }
 
     @Test

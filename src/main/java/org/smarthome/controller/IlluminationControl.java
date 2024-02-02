@@ -3,13 +3,11 @@ package org.smarthome.controller;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
 
-import java.util.List;
-
-public class LightControl {
+public class IlluminationControl {
 
     private final Illumination illumination;
 
-    public LightControl(Illumination illumination) {
+    public IlluminationControl(Illumination illumination) {
         this.illumination = illumination;
     }
 

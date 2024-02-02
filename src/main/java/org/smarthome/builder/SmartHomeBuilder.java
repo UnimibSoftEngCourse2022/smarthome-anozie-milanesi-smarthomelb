@@ -2,7 +2,6 @@ package org.smarthome.builder;
 
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.Room;
-import org.smarthome.domain.cleaning.Vacuum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,14 @@ public class SmartHomeBuilder implements HomeBuilder {
 
     public SmartHomeBuilder() {
         this.rooms = new ArrayList<>();
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public Room getChargingStationPosition() {
+        return chargingStationPosition;
     }
 
     @Override
@@ -29,11 +36,7 @@ public class SmartHomeBuilder implements HomeBuilder {
     }
 
     public SmartHome create() {
-        Vacuum vacuum = null;
-        if (chargingStationPosition != null) {
-            vacuum = new Vacuum(rooms, chargingStationPosition);
-        }
-        return new SmartHome(rooms, vacuum);
+        return new SmartHome(this);
     }
 
 }

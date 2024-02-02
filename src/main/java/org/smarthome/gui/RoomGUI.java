@@ -8,12 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RoomGUI extends JFrame {
+
     private JPanel panel1;
     private JButton lightControlButton;
     private JScrollBar scrollBar1;
 
     public RoomGUI(Room room) throws HeadlessException {
-
         setTitle(room.getName());
         setLayout(new FlowLayout());
         setContentPane(panel1);
