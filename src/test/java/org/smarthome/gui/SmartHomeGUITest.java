@@ -2,6 +2,7 @@ package org.smarthome.gui;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.smarthome.builder.SmartHomeBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
@@ -35,12 +36,8 @@ public class SmartHomeGUITest {
         Room r2 = new Room("Stanza 2", lights2);
         Room r3 = new Room("Stanza 3", lights3);
 
-        List<Room> rooms = new ArrayList<>();
-        rooms.add(r1);
-        rooms.add(r2);
-        rooms.add(r3);
 
-        SmartHome home1 = new SmartHome(rooms);
+        SmartHome home1 = new SmartHomeBuilder().addRoom(r1).addRoom(r2).addRoom(r3).create();
 
         SmartHomeGUI homeGUI = new SmartHomeGUI(home1);
         homeGUI.setVisible(true);
