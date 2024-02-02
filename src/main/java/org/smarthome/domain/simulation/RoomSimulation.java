@@ -3,19 +3,19 @@ package org.smarthome.domain.simulation;
 public class RoomSimulation {
 
     private final RoomPresenceSimulation presenceSimulation;
-    private final RoomTemperatureSimulation roomTemperatureSimulation;
+    private final RoomTemperatureSimulation temperatureSimulation;
 
     public RoomSimulation() {
         this.presenceSimulation = new RoomPresenceSimulation();
-        this.roomTemperatureSimulation = new RoomTemperatureSimulation();
+        this.temperatureSimulation = new RoomTemperatureSimulation();
     }
 
     public RoomPresenceSimulation getPresenceSimulation() {
         return presenceSimulation;
     }
 
-    public RoomTemperatureSimulation getRoomTemperatureSimulation() {
-        return roomTemperatureSimulation;
+    public RoomTemperatureSimulation getTemperatureSimulation() {
+        return temperatureSimulation;
     }
 
 }
