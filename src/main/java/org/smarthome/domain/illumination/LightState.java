@@ -1,13 +1,13 @@
 package org.smarthome.domain.illumination;
 
-public abstract class LightState {
+import org.smarthome.domain.Actuator;
+
+public abstract class LightState implements Actuator {
 
     protected Light light;
 
     protected LightState(Light light) {
         this.light = light;
     }
-
-    public abstract void handle();
 
 }

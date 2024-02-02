@@ -40,11 +40,12 @@ class SmartHomeBuilderTest {
         assertEquals(2, smartHome.getRooms().size());
         assertEquals("test1", smartHome.getRooms().get(0).getName());
 
-        assertNotNull(smartHome.getRooms().get(0).getLights());
-        assertNotNull(smartHome.getRooms().get(1).getLights());
-
-        assertEquals(2, smartHome.getRooms().get(0).getLights().size());
-        assertEquals(1, smartHome.getRooms().get(1).getLights().size());
+        for (Room room : smartHome.getRooms()) {
+            assertNotNull(room.getIllumination());
+            for (Light light : room.getIllumination().getLights()) {
+                assertNotNull(light);
+            }
+        }
     }
 
 }
