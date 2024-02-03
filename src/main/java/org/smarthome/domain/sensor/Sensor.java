@@ -29,7 +29,7 @@ public abstract class Sensor<T> implements MAPEControl<T> {
     public void startDetection() {
         Executors.newSingleThreadExecutor().submit((Runnable) () -> {
             // MAPE feedback control loop
-            while(true) {
+            while (true) {
                 knowledge();
             }
         });

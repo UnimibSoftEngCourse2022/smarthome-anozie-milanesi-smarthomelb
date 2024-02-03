@@ -9,7 +9,7 @@ import java.util.List;
 public class SmartHomeBuilder implements HomeBuilder {
 
     private final List<Room> rooms;
-    private Room chargingStationPosition;
+    private Room vacuumChargingStationPosition;
 
     public SmartHomeBuilder() {
         this.rooms = new ArrayList<>();
@@ -19,8 +19,8 @@ public class SmartHomeBuilder implements HomeBuilder {
         return rooms;
     }
 
-    public Room getChargingStationPosition() {
-        return chargingStationPosition;
+    public Room getVacuumChargingStationPosition() {
+        return vacuumChargingStationPosition;
     }
 
     @Override
@@ -30,13 +30,13 @@ public class SmartHomeBuilder implements HomeBuilder {
     }
 
     @Override
-    public SmartHomeBuilder setVacuumChargingStationPosition(Room chargingStationPosition) {
-        this.chargingStationPosition = chargingStationPosition;
+    public SmartHomeBuilder setVacuumChargingStationPosition(Room position) {
+        vacuumChargingStationPosition = position;
         return this;
     }
 
     public SmartHome create() {
-        return new SmartHome(this);
+        return SmartHome.initialize(this);
     }
 
 }
