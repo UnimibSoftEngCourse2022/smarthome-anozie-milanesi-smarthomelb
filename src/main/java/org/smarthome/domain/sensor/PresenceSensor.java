@@ -11,10 +11,12 @@ public class PresenceSensor extends Sensor<Boolean> {
         this.roomPresenceSimulation = roomPresenceSimulation;
     }
 
+    @Override
     public Boolean monitor() {
         return roomPresenceSimulation.isPresence();
     }
 
+    @Override
     public boolean analyze(Boolean detected) {
         if (data != detected) {
             this.data = detected;
@@ -23,10 +25,12 @@ public class PresenceSensor extends Sensor<Boolean> {
         return false;
     }
 
+    @Override
     public void plan() {
         // no planning
     }
 
+    @Override
     public void execute() {
         notifyDataChange();
     }
