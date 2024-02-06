@@ -27,6 +27,20 @@ public class Illumination {
         }
     }
 
+    public void on() {
+        setIlluminationState(new IlluminationOn(this));
+        for (Light light : getLights()) {
+            light.setLightState(new LightOn(light));
+        }
+    }
+
+    public void off() {
+        setIlluminationState(new IlluminationOff(this));
+        for (Light light : getLights()) {
+            light.setLightState(new LightOff(light));
+        }
+    }
+
     public void handle() {
         illuminationState.handle();
     }

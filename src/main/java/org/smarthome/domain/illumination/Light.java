@@ -1,27 +1,17 @@
 package org.smarthome.domain.illumination;
 
-import org.smarthome.domain.cleaning.CleaningActionListener;
+import org.smarthome.domain.ObservableElement;
+import org.smarthome.domain.listener.LightActionListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class Light {
+public class Light extends ObservableElement<LightActionListener> {
 
-    private final List<LightActionListener> observers;
     private LightState lightState;
 
     public Light() {
-        this.observers = new ArrayList<>();
+        super();
         lightState = new LightOff(this);
-    }
-
-    public void addObserver(LightActionListener observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(LightActionListener observer) {
-        observers.remove(observer);
     }
 
     public LightState getLightState() {

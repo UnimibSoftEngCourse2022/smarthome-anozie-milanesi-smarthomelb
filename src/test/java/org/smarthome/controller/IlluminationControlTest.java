@@ -6,7 +6,6 @@ import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +23,7 @@ class IlluminationControlTest {
                 .addLight(new Light())
                 .addLight(new Light())
                 .create();
-        illuminationControl = room.getLightControl();
+        illuminationControl = room.getIlluminationControl();
     }
 
     @Test

@@ -1,25 +1,22 @@
 package org.smarthome.domain.sensor;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.smarthome.domain.ObservableElement;
+import org.smarthome.domain.listener.SensorListener;
+
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public abstract class Sensor<T> implements MAPEControl<T> {
+import static org.smarthome.util.Constants.SENSOR_ITERATION_PERIOD_MS_DURATION;
 
-    private final List<SensorListener<T>> observers;
+public abstract class Sensor<T>
+        extends ObservableElement<SensorListener<T>>
+        implements MAPEControl<T> {
+
     protected T data;
 
     public Sensor() {
-        this.observers = new ArrayList<>();
+        super();
         startDetection();
-    }
-
-    public void addObserver(SensorListener<T> observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(SensorListener<T> observer) {
-        observers.remove(observer);
     }
 
     public void notifyDataChange() {
@@ -27,12 +24,10 @@ public abstract class Sensor<T> implements MAPEControl<T> {
     }
 
     public void startDetection() {
-        Executors.newSingleThreadExecutor().submit((Runnable) () -> {
-            // MAPE feedback control loop
-            while (true) {
-                knowledge();
-            }
-        });
+        // MAPE feedback control loop
+        Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(this::knowledge,
+                        0, SENSOR_ITERATION_PERIOD_MS_DURATION, TimeUnit.MILLISECONDS);
     }
 
     private void knowledge() {

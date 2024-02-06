@@ -1,6 +1,8 @@
 package org.smarthome.domain.cleaning;
 
+import org.smarthome.domain.ObservableElement;
 import org.smarthome.domain.Room;
+import org.smarthome.domain.listener.CleaningActionListener;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.exception.UnidentifiedRoomException;
 
@@ -11,16 +13,15 @@ import java.util.Objects;
 import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
 import static org.smarthome.util.Constants.MOVING_TO_ROOM_MS_DURATION;
 
-public class Vacuum {
+public class Vacuum extends ObservableElement<CleaningActionListener> {
 
-    private final List<CleaningActionListener> observers;
     private final List<Room> houseMapping;
     private final Room chargingStationPosition;
     private Room currentPosition;
     private VacuumState vacuumState;
 
     public Vacuum(List<Room> houseMapping, Room chargingStationPosition) {
-        this.observers = new ArrayList<>();
+        super();
         // Shift the list of rooms so that it starts at the chargingStationPosition
         this.houseMapping = new ArrayList<>(houseMapping.size());
 
@@ -37,14 +38,6 @@ public class Vacuum {
         this.chargingStationPosition = this.houseMapping.get(0);
         this.currentPosition = chargingStationPosition;
         this.vacuumState = new Charging(this);
-    }
-
-    public void addObserver(CleaningActionListener observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(CleaningActionListener observer) {
-        observers.remove(observer);
     }
 
     public List<Room> getHouseMapping() {

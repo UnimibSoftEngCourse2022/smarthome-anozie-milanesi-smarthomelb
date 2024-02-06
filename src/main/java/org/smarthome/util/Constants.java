@@ -22,4 +22,8 @@ public class Constants {
     public static final int DEFAULT_IDEAL_TEMPERATURE = 20;
     public static final int TEMPERATURE_CHANGE_MS_DURATION = 1;
 
+    // automation
+    public static final int PRESENCE_TIMER_MS_DURATION = 1;
+    public static final int SENSOR_ITERATION_PERIOD_MS_DURATION = 1;
+
 }

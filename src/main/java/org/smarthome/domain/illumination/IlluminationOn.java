@@ -8,10 +8,7 @@ public class IlluminationOn extends IlluminationState {
 
     @Override
     public void handle() {
-        illumination.setIlluminationState(new IlluminationOff(illumination));
-        for (Light light : illumination.getLights()) {
-            light.setLightState(new LightOff(light));
-        }
+        illumination.off();
     }
 
 }

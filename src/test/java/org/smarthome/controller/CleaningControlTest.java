@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
-import org.smarthome.domain.cleaning.CleaningActionListener;
+import org.smarthome.domain.listener.CleaningActionListener;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
