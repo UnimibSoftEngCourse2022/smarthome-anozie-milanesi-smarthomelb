@@ -1,13 +1,16 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
+import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.protection.Siren;
+import org.smarthome.exception.UnidentifiedRoomException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SmartHomeBuilderTest {
 
@@ -47,6 +50,27 @@ class SmartHomeBuilderTest {
                 assertNotNull(light);
             }
         }
+    }
+
+    @Test
+    void createVacuumErrorTest() {
+        assertThrows(UnidentifiedRoomException.class, () -> {
+            // create rooms
+            Room room1 = new SmartHomeRoomBuilder("test1")
+                    .addLight(new Light())
+                    .addLight(new Light())
+                    .create();
+
+            Room room2 = new SmartHomeRoomBuilder("test2")
+                    .addLight(new Light())
+                    .create();
+
+            // create smartHome
+            new SmartHomeBuilder()
+                    .addRoom(room1)
+                    .setVacuumChargingStationPosition(room2)
+                    .create();
+        });
     }
 
 }

@@ -2,6 +2,7 @@ package org.smarthome.domain.illumination;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.smarthome.listener.IlluminationListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,9 @@ class IlluminationTest {
 
     @Test
     void illuminationActionListenerTest1() {
+        illumination.addObserver(illuminationState ->
+                assertEquals(IlluminationOn.class, illuminationState.getClass()));
+
         for (Light light : illumination.getLights()) {
             light.addObserver(lightState ->
                     assertEquals(LightOn.class, lightState.getClass()));
@@ -67,6 +71,9 @@ class IlluminationTest {
     @Test
     void illuminationActionListenerTest2() {
         illumination.handle();
+
+        illumination.addObserver(illuminationState ->
+                assertEquals(IlluminationOff.class, illuminationState.getClass()));
 
         for (Light light : illumination.getLights()) {
             light.addObserver(lightState ->

@@ -2,7 +2,7 @@ package org.smarthome.domain.sensor;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.smarthome.domain.simulation.RoomPresenceSimulation;
+import org.smarthome.simulation.RoomPresenceSimulation;
 
 import java.util.concurrent.CountDownLatch;
 

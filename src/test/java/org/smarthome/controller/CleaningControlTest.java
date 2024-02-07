@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
-import org.smarthome.domain.listener.CleaningActionListener;
+import org.smarthome.listener.CleaningActionListener;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.smarthome.util.Constants.ALREADY_CLEANING_MESSAGE;
 import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
@@ -116,7 +117,16 @@ class CleaningControlTest {
     }
 
     @Test
-    @Disabled
+    void doesNotThrowCleaningTest() {
+        assertDoesNotThrow(() -> {
+            CleaningControl cleaningControl = new CleaningControl(null);
+            cleaningControl.startCleaning();
+            cleaningControl.stopCleaning();
+        });
+    }
+
+    @Test
+    @Disabled("concurrent debug test")
     void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
@@ -162,7 +172,7 @@ class CleaningControlTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("concurrent debug test")
     void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 

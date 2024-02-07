@@ -1,7 +1,7 @@
 package org.smarthome.domain.protection;
 
 import org.smarthome.domain.ObservableElement;
-import org.smarthome.domain.listener.SirenListener;
+import org.smarthome.listener.SirenListener;
 
 public class Siren extends ObservableElement<SirenListener> {
 

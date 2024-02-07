@@ -1,7 +1,7 @@
 package org.smarthome.domain.sensor;
 
 import org.smarthome.domain.ObservableElement;
-import org.smarthome.domain.listener.SensorListener;
+import org.smarthome.listener.SensorListener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +14,7 @@ public abstract class Sensor<T>
 
     protected T data;
 
-    public Sensor() {
+    protected Sensor() {
         super();
         startDetection();
     }
@@ -30,7 +30,8 @@ public abstract class Sensor<T>
                         0, SENSOR_ITERATION_PERIOD_MS_DURATION, TimeUnit.MILLISECONDS);
     }
 
-    private void knowledge() {
+    @Override
+    public void knowledge() {
         T detected = monitor();
         if (analyze(detected)) {
             plan();

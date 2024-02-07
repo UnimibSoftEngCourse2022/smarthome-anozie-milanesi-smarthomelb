@@ -1,6 +1,6 @@
 package org.smarthome.domain.sensor;
 
-import org.smarthome.domain.simulation.RoomPresenceSimulation;
+import org.smarthome.simulation.RoomPresenceSimulation;
 
 public class PresenceSensor extends Sensor<Boolean> {
 
@@ -18,7 +18,7 @@ public class PresenceSensor extends Sensor<Boolean> {
 
     @Override
     public boolean analyze(Boolean detected) {
-        if (data != detected) {
+        if (!detected.equals(data)) {
             this.data = detected;
             return true;
         }

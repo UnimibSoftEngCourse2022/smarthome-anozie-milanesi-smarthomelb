@@ -1,4 +1,4 @@
-package org.smarthome.domain.listener;
+package org.smarthome.listener;
 
 import org.smarthome.domain.protection.AlarmState;
 

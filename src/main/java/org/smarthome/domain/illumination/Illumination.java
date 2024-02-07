@@ -1,9 +1,12 @@
 package org.smarthome.domain.illumination;
 
+import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.IlluminationListener;
+
 import java.util.List;
 import java.util.Objects;
 
-public class Illumination {
+public class Illumination extends ObservableElement<IlluminationListener> {
 
     private final List<Light> lights;
     private IlluminationState illuminationState;
@@ -24,6 +27,9 @@ public class Illumination {
     public void setIlluminationState(IlluminationState illuminationState) {
         if (!Objects.equals(getIlluminationState().getClass(), illuminationState.getClass())) {
             this.illuminationState = illuminationState;
+            for (IlluminationListener observer : observers) {
+                observer.onChangeState(illuminationState);
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 package org.smarthome.domain.illumination;
 
 import org.smarthome.domain.ObservableElement;
-import org.smarthome.domain.listener.LightActionListener;
+import org.smarthome.listener.LightActionListener;
 
 import java.util.Objects;
 

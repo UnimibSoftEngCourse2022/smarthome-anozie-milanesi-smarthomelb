@@ -6,7 +6,7 @@ import org.smarthome.controller.PresenceController;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.sensor.PresenceSensor;
-import org.smarthome.domain.simulation.RoomSimulation;
+import org.smarthome.simulation.RoomSimulation;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class Room extends RoomSimulation {
         super();
         this.name = builder.getName();
         List<Light> lights = builder.getLights();
-        if (lights != null && lights.size() > 0) {
+        if (lights != null && !lights.isEmpty()) {
             this.illumination = new Illumination(lights);
         } else {
             this.illumination = null;

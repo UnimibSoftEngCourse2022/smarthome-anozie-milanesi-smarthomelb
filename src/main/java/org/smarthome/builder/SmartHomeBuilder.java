@@ -4,6 +4,7 @@ import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.protection.Alarm;
 import org.smarthome.domain.protection.Siren;
+import org.smarthome.exception.UnidentifiedRoomException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class SmartHomeBuilder implements HomeBuilder {
 
     @Override
     public SmartHomeBuilder setVacuumChargingStationPosition(Room position) {
+        if (!rooms.contains(position)) {
+            throw new UnidentifiedRoomException(position);
+        }
         vacuumChargingStationPosition = position;
         return this;
     }

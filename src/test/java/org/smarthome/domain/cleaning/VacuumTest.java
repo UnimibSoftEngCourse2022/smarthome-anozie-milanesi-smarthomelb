@@ -4,9 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
-import org.smarthome.domain.listener.CleaningActionListener;
+import org.smarthome.listener.CleaningActionListener;
 import org.smarthome.exception.CleaningException;
-import org.smarthome.exception.UnidentifiedRoomException;
 import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
@@ -70,12 +69,6 @@ class VacuumTest {
         assertTrue(vacuum.getHouseMapping().size() > 0);
         assertEquals(rooms.get(chargingStationPositionIndex), vacuum.getChargingStationPosition());
         assertEquals(rooms.get(chargingStationPositionIndex), vacuum.getCurrentPosition());
-    }
-
-    @Test
-    void createVacuumErrorTest() {
-        assertThrows(UnidentifiedRoomException.class, () ->
-                vacuum = new Vacuum(rooms, new SmartHomeRoomBuilder("errorRoom").create()));
     }
 
     @Test

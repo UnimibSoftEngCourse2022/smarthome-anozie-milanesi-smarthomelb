@@ -25,11 +25,13 @@ public class PresenceController extends SensorControl<Boolean> {
     @Override
     public void onDataChange(Boolean presence) {
         if (presence != null && !protectionControl.emergencySituation()) {
-            if (illuminationControl.isAutomationActive() && presence) {
-                illuminationControl.handleAutomation(true);
-                resetPresenceTimer();
-            } else {
-                startPresenceTimer();
+            if (illuminationControl.isAutomationActive()) {
+                if (presence) {
+                    illuminationControl.handleAutomation(true);
+                    resetPresenceTimer();
+                } else {
+                    startPresenceTimer();
+                }
             }
         }
     }

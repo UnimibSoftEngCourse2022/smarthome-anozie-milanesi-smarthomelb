@@ -1,4 +1,4 @@
-package org.smarthome.domain.simulation;
+package org.smarthome.simulation;
 
 public class RoomPresenceSimulation {
 

@@ -10,7 +10,6 @@ import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.Armed;
 import org.smarthome.domain.protection.Disarmed;
 import org.smarthome.domain.protection.Siren;
-import org.smarthome.domain.listener.SirenListener;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -37,7 +36,10 @@ class PresenceControllerTest {
     }
 
     @Test
-    public void presenceControllerIlluminationTest() throws InterruptedException {
+    void presenceControllerIlluminationTest() throws InterruptedException {
+        assertNotNull(room.getPresenceSensor());
+        assertNotNull(room.getPresenceController());
+
         room.getIlluminationControl().setAutomationActive(true);
 
         assertEquals(IlluminationOff.class, room.getIllumination().getIlluminationState().getClass());
@@ -58,22 +60,31 @@ class PresenceControllerTest {
         for (Light light : room.getIllumination().getLights()) {
             assertEquals(LightOn.class, light.getLightState().getClass());
         }
+
+        CountDownLatch latch1 = new CountDownLatch(3);
+
+        for (Light light : room.getIllumination().getLights()) {
+            light.addObserver(lightState -> latch1.countDown());
+        }
+
+        room.getPresenceSimulation().setPresence(false);
+        latch1.await();
+
+        assertEquals(IlluminationOff.class, room.getIllumination().getIlluminationState().getClass());
+        for (Light light : room.getIllumination().getLights()) {
+            assertEquals(LightOff.class, light.getLightState().getClass());
+        }
     }
 
     @Test
-    public void presenceControllerProtectionTest() throws InterruptedException {
+    void presenceControllerProtectionTest() throws InterruptedException {
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
         smartHome.getProtectionControl().handleAlarm();
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        smartHome.getAlarm().getSiren().addObserver(new SirenListener() {
-            @Override
-            public void onChangeState(boolean active) {
-                latch.countDown();
-            }
-        });
+        smartHome.getAlarm().getSiren().addObserver(active -> latch.countDown());
 
         room.getPresenceSimulation().setPresence(true);
         latch.await();

@@ -5,7 +5,6 @@ import org.smarthome.controller.CleaningControl;
 import org.smarthome.controller.ProtectionControl;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.protection.Alarm;
-import org.smarthome.domain.protection.Siren;
 
 import java.util.List;
 
@@ -19,12 +18,12 @@ public class SmartHome {
 
     public SmartHome(SmartHomeBuilder builder) {
         this.rooms = builder.getRooms();
-        Vacuum vacuum = null;
+        Vacuum initVacuum = null;
         Room chargingStationPosition = builder.getVacuumChargingStationPosition();
         if (chargingStationPosition != null) {
-            vacuum = new Vacuum(rooms, chargingStationPosition);
+            initVacuum = new Vacuum(rooms, chargingStationPosition);
         }
-        this.vacuum = vacuum;
+        this.vacuum = initVacuum;
         this.alarm = builder.getAlarm();
         this.cleaningControl = new CleaningControl(vacuum);
         this.protectionControl = new ProtectionControl(alarm);

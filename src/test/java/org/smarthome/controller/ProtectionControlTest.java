@@ -1,5 +1,6 @@
 package org.smarthome.controller;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.protection.Alarm;
@@ -16,14 +17,16 @@ class ProtectionControlTest {
     private ProtectionControl protectionController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         siren = new Siren();
         alarm = new Alarm(siren);
         protectionController = new ProtectionControl(alarm);
     }
 
     @Test
-    public void activateDeactivateProtectionTest() {
+    void activateDeactivateProtectionTest() {
+        alarm.addObserver(Assertions::assertNotNull);
+
         protectionController.handleAlarm();
         assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
@@ -32,18 +35,28 @@ class ProtectionControlTest {
     }
 
     @Test
-    public void emergencySituationWithoutAlarmActivationTest() {
+    void emergencySituationWithoutAlarmActivationTest() {
         protectionController.emergencySituation();
         assertFalse(siren.isActive());
     }
 
     @Test
-    public void emergencySituationWithAlarmActivationTest() {
+    void emergencySituationWithAlarmActivationTest() {
         protectionController.handleAlarm();
         protectionController.emergencySituation();
         assertTrue(siren.isActive());
         protectionController.deactivateSiren();
         assertFalse(siren.isActive());
+    }
+
+    @Test
+    void doesNotThrowCleaningTest() {
+        assertDoesNotThrow(() -> {
+            ProtectionControl protectionController = new ProtectionControl(null);
+            protectionController.handleAlarm();
+            assertFalse(protectionController.emergencySituation());
+            protectionController.deactivateSiren();
+        });
     }
 
 }

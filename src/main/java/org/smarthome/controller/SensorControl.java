@@ -1,13 +1,13 @@
 package org.smarthome.controller;
 
 import org.smarthome.domain.sensor.Sensor;
-import org.smarthome.domain.listener.SensorListener;
+import org.smarthome.listener.SensorListener;
 
 public abstract class SensorControl<T> implements SensorListener<T> {
 
     private final Sensor<T> sensor;
 
-    public SensorControl(Sensor<T> sensor) {
+    protected SensorControl(Sensor<T> sensor) {
         this.sensor = sensor;
     }
 

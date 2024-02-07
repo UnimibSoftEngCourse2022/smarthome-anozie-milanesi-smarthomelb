@@ -1,4 +1,4 @@
-package org.smarthome.domain.simulation;
+package org.smarthome.simulation;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

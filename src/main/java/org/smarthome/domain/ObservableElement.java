@@ -1,6 +1,6 @@
 package org.smarthome.domain;
 
-import org.smarthome.domain.listener.ElementListener;
+import org.smarthome.listener.ElementListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ public abstract class ObservableElement<T extends ElementListener> {
 
     protected final List<T> observers;
 
-    public ObservableElement() {
+    protected ObservableElement() {
         this.observers = new ArrayList<>();
     }
 

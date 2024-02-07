@@ -5,6 +5,6 @@ import org.smarthome.domain.protection.Siren;
 
 public interface HomeBuilder {
     HomeBuilder addRoom(Room room);
-    HomeBuilder setVacuumChargingStationPosition(Room chargingStationPosition);
+    HomeBuilder setVacuumChargingStationPosition(Room position);
     HomeBuilder setSiren(Siren siren);
 }

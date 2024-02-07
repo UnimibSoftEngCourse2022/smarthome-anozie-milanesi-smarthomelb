@@ -2,9 +2,9 @@ package org.smarthome.controller;
 
 public abstract class AutomaticControl<T> {
 
-    public boolean automationActive;
+    private boolean automationActive;
 
-    public AutomaticControl() {
+    protected AutomaticControl() {
         this.automationActive = false;
     }
 

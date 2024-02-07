@@ -2,9 +2,8 @@ package org.smarthome.domain.cleaning;
 
 import org.smarthome.domain.ObservableElement;
 import org.smarthome.domain.Room;
-import org.smarthome.domain.listener.CleaningActionListener;
+import org.smarthome.listener.CleaningActionListener;
 import org.smarthome.exception.CleaningException;
-import org.smarthome.exception.UnidentifiedRoomException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,6 @@ public class Vacuum extends ObservableElement<CleaningActionListener> {
         this.houseMapping = new ArrayList<>(houseMapping.size());
 
         int startIndex = houseMapping.indexOf(chargingStationPosition);
-        if (startIndex == -1) {
-            throw new UnidentifiedRoomException(chargingStationPosition);
-        }
-
         for (int i = 0; i < houseMapping.size(); i++) {
             int newIndex = (startIndex + i) % houseMapping.size();
             this.houseMapping.add(houseMapping.get(newIndex));
