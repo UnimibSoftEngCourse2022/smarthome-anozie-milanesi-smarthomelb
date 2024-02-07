@@ -1,6 +1,6 @@
 package org.smarthome.domain.cleaning;
 
-import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.ObservableElement;
 import org.smarthome.domain.Room;
 import org.smarthome.listener.CleaningActionListener;
 import org.smarthome.exception.CleaningException;

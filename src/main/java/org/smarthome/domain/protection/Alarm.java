@@ -1,6 +1,6 @@
 package org.smarthome.domain.protection;
 
-import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.AlarmListener;
 
 import java.util.Objects;

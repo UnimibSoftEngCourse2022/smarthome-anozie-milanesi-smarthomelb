@@ -1,6 +1,6 @@
 package org.smarthome.controller;
 
-import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.AutomationListener;
 
 public abstract class AutomaticControl<T> extends ObservableElement<AutomationListener> {

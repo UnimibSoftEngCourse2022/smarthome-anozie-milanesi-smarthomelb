@@ -1,6 +1,6 @@
 package org.smarthome.domain.sensor;
 
-import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.SensorListener;
 
 import java.util.concurrent.Executors;

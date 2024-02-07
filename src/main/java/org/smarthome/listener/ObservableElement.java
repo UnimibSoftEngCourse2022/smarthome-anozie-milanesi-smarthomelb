@@ -1,4 +1,4 @@
-package org.smarthome.domain;
+package org.smarthome.listener;
 
 import org.smarthome.listener.ElementListener;
 
