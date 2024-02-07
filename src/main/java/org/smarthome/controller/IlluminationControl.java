@@ -13,12 +13,14 @@ public class IlluminationControl extends AutomaticControl<Boolean> {
 
     public void handleIllumination() {
         if (illumination != null) {
+            setAutomationActive(false);
             illumination.handle();
         }
     }
 
     public void handleSingleLight(Light light) {
         if (light != null) {
+            setAutomationActive(false);
             light.handle();
         }
     }

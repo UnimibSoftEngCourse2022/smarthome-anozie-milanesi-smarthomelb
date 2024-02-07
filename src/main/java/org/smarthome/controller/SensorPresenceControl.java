@@ -7,13 +7,13 @@ import java.util.TimerTask;
 
 import static org.smarthome.util.Constants.PRESENCE_TIMER_MS_DURATION;
 
-public class PresenceController extends SensorControl<Boolean> {
+public class SensorPresenceControl extends SensorControl<Boolean> {
 
     private final ProtectionControl protectionControl;
     private final IlluminationControl illuminationControl;
     private Timer presenceTimer;
 
-    public PresenceController(
+    public SensorPresenceControl(
             PresenceSensor presenceSensor,
             ProtectionControl protectionControl,
             IlluminationControl illuminationControl) {

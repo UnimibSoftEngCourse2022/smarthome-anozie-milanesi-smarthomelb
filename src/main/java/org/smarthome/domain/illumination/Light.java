@@ -14,11 +14,11 @@ public class Light extends ObservableElement<LightActionListener> {
         lightState = new LightOff(this);
     }
 
-    public LightState getLightState() {
+    public synchronized LightState getLightState() {
         return lightState;
     }
 
-    public void setLightState(LightState lightState) {
+    public synchronized void setLightState(LightState lightState) {
         if (!Objects.equals(getLightState().getClass(), lightState.getClass())) {
             this.lightState = lightState;
             for (LightActionListener observer : observers) {

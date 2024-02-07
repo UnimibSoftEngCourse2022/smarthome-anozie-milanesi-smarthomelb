@@ -1,6 +1,9 @@
 package org.smarthome.controller;
 
-public abstract class AutomaticControl<T> {
+import org.smarthome.domain.ObservableElement;
+import org.smarthome.listener.AutomationListener;
+
+public abstract class AutomaticControl<T> extends ObservableElement<AutomationListener> {
 
     private boolean automationActive;
 
@@ -13,7 +16,12 @@ public abstract class AutomaticControl<T> {
     }
 
     public void setAutomationActive(boolean automationActive) {
-        this.automationActive = automationActive;
+        if (this.automationActive != automationActive) {
+            this.automationActive = automationActive;
+            for (AutomationListener observer : observers) {
+                observer.onChangeState(automationActive);
+            }
+        }
     }
 
     public abstract void handleAutomation(T data);

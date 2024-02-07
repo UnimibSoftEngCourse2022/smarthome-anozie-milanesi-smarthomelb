@@ -20,11 +20,11 @@ public class Illumination extends ObservableElement<IlluminationListener> {
         return lights;
     }
 
-    public IlluminationState getIlluminationState() {
+    public synchronized IlluminationState getIlluminationState() {
         return illuminationState;
     }
 
-    public void setIlluminationState(IlluminationState illuminationState) {
+    public synchronized void setIlluminationState(IlluminationState illuminationState) {
         if (!Objects.equals(getIlluminationState().getClass(), illuminationState.getClass())) {
             this.illuminationState = illuminationState;
             for (IlluminationListener observer : observers) {
@@ -33,14 +33,14 @@ public class Illumination extends ObservableElement<IlluminationListener> {
         }
     }
 
-    public void on() {
+    public synchronized void on() {
         setIlluminationState(new IlluminationOn(this));
         for (Light light : getLights()) {
             light.setLightState(new LightOn(light));
         }
     }
 
-    public void off() {
+    public synchronized void off() {
         setIlluminationState(new IlluminationOff(this));
         for (Light light : getLights()) {
             light.setLightState(new LightOff(light));

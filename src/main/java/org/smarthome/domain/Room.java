@@ -2,7 +2,7 @@ package org.smarthome.domain;
 
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.controller.IlluminationControl;
-import org.smarthome.controller.PresenceController;
+import org.smarthome.controller.SensorPresenceControl;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.sensor.PresenceSensor;
@@ -16,7 +16,7 @@ public class Room extends RoomSimulation {
     private final Illumination illumination;
     private final PresenceSensor presenceSensor;
     private final IlluminationControl illuminationControl;
-    private PresenceController presenceController;
+    private SensorPresenceControl sensorPresenceControl;
 
     public Room(SmartHomeRoomBuilder builder) {
         super();
@@ -33,9 +33,9 @@ public class Room extends RoomSimulation {
 
     public void setAutomaticControl(SmartHome smartHome) {
         if (smartHome != null) {
-            presenceController = new PresenceController(
+            sensorPresenceControl = new SensorPresenceControl(
                     presenceSensor, smartHome.getProtectionControl(), illuminationControl);
-            presenceController.monitorSensor();
+            sensorPresenceControl.monitorSensor();
         }
     }
 
@@ -55,8 +55,8 @@ public class Room extends RoomSimulation {
         return illuminationControl;
     }
 
-    public PresenceController getPresenceController() {
-        return presenceController;
+    public SensorPresenceControl getSensorPresenceControl() {
+        return sensorPresenceControl;
     }
 
 }

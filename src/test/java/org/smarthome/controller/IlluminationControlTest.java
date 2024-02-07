@@ -69,4 +69,17 @@ class IlluminationControlTest {
         }
     }
 
+    @Test
+    void automationObserverTest() {
+        illuminationControl.handleAutomation(true);
+        illuminationControl.addObserver(automationActive -> {
+            assertFalse(automationActive);
+            assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass());
+            for (Light light : illumination.getLights()) {
+                assertEquals(LightOn.class, light.getLightState().getClass());
+            }
+        });
+        illuminationControl.handleIllumination();
+    }
+
 }

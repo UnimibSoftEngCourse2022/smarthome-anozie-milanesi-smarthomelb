@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PresenceControllerTest {
+class SensorPresenceControlTest {
 
     private Room room;
     private SmartHome smartHome;
@@ -36,9 +36,9 @@ class PresenceControllerTest {
     }
 
     @Test
-    void presenceControllerIlluminationTest() throws InterruptedException {
+    void presenceSensorControlIlluminationTest1() throws InterruptedException {
         assertNotNull(room.getPresenceSensor());
-        assertNotNull(room.getPresenceController());
+        assertNotNull(room.getSensorPresenceControl());
 
         room.getIlluminationControl().setAutomationActive(true);
 
@@ -60,6 +60,20 @@ class PresenceControllerTest {
         for (Light light : room.getIllumination().getLights()) {
             assertEquals(LightOn.class, light.getLightState().getClass());
         }
+    }
+
+    @Test
+    void presenceSensorControlIlluminationTest2() throws InterruptedException {
+        room.getIlluminationControl().setAutomationActive(true);
+
+        CountDownLatch latch = new CountDownLatch(3);
+
+        for (Light light : room.getIllumination().getLights()) {
+            light.addObserver(lightState -> latch.countDown());
+        }
+
+        room.getPresenceSimulation().setPresence(true);
+        latch.await();
 
         CountDownLatch latch1 = new CountDownLatch(3);
 
@@ -77,20 +91,18 @@ class PresenceControllerTest {
     }
 
     @Test
-    void presenceControllerProtectionTest() throws InterruptedException {
+    void presenceSensorControlProtectionTest() {
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
         smartHome.getProtectionControl().handleAlarm();
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
-        CountDownLatch latch = new CountDownLatch(1);
-
-        smartHome.getAlarm().getSiren().addObserver(active -> latch.countDown());
+        smartHome.getAlarm().getSiren().addObserver(active -> {
+            assertTrue(smartHome.getAlarm().getSiren().isActive());
+            smartHome.getProtectionControl().deactivateSiren();
+            assertFalse(smartHome.getAlarm().getSiren().isActive());
+        });
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
-        assertTrue(smartHome.getAlarm().getSiren().isActive());
-        smartHome.getProtectionControl().deactivateSiren();
-        assertFalse(smartHome.getAlarm().getSiren().isActive());
     }
 
 }
