@@ -1,7 +1,5 @@
 package org.smarthome.listener;
 
-import org.smarthome.listener.ElementListener;
-
 import java.util.ArrayList;
 import java.util.List;
 

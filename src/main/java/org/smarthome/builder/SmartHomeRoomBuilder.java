@@ -16,7 +16,6 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
     public SmartHomeRoomBuilder(String name) {
         this.name = name;
         this.lights = new ArrayList<>();
-        this.airConditioner = null;
     }
 
     public String getName() {

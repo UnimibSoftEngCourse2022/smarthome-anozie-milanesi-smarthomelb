@@ -4,6 +4,8 @@ import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.illumination.LightOff;
 import org.smarthome.domain.illumination.LightOn;
+import org.smarthome.domain.illumination.LightState;
+import org.smarthome.listener.LightActionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,53 +13,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoomGUI extends JFrame {
+
     private JPanel panel1;
     private JButton lightControlButton;
-    private List<JRadioButton> lightButtons;
 
     public RoomGUI(Room room) throws HeadlessException {
-
         setContentPane(panel1);
         setLayout(new FlowLayout());
-        setSize(400,400);
+        setSize(600,600);
         setTitle(room.getName());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setVisible(true);
+        initIllumination(room);
+    }
 
-        lightButtons = new ArrayList<>();
-
+    public void initIllumination(Room room) {
         for(Light light : room.getIllumination().getLights()) {
-            panel1.add(createLightButton(light));
+            JRadioButton button = createLightButton(light);
+            panel1.add(button);
+
+            light.addObserver(state ->
+                    button.setSelected(state.getClass().equals(LightOn.class)));
         }
 
         lightControlButton.addActionListener(e -> {
-            room.getLightControl().handleIllumination();
-
-            for(JRadioButton lightbutton : lightButtons){
-                lightbutton.doClick();
-            }
-
+            room.getIlluminationControl().handleIllumination();
         });
     }
 
-    public JRadioButton createLightButton(Light light) {
-
+    private JRadioButton createLightButton(Light light) {
         JRadioButton lightButton = new JRadioButton("Light");
-        lightButton.setVisible(true);
+        if (light.isOn()) {
+            lightButton.setSelected(true);
+        }
 
         lightButton.addActionListener(e -> {
-
-            if(lightButton.isSelected()) {
-                light.setLightState(new LightOn(light));
-            }
-            else {
-                light.setLightState(new LightOff(light));
-            }
-
+            light.handle();
         });
 
-        lightButtons.add(lightButton);
-
+        lightButton.setVisible(true);
         return lightButton;
     }
 

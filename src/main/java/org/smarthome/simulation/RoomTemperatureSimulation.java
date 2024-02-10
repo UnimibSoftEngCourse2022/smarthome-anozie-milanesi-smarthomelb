@@ -8,13 +8,17 @@ import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
 import static org.smarthome.util.Constants.TEMPERATURE_CHANGE_MS_DURATION;
 
 public class RoomTemperatureSimulation {
+
     private RoomTemperatureListener roomTemperatureListener;
     private int temperature;
-    private ScheduledExecutorService temperatureExecutor;
+    private int target;
+    private final ScheduledExecutorService temperatureExecutor;
 
     public RoomTemperatureSimulation() {
         this.temperature = DEFAULT_IDEAL_TEMPERATURE;
+        this.target = DEFAULT_IDEAL_TEMPERATURE;
         this.temperatureExecutor = Executors.newSingleThreadScheduledExecutor();
+        startTemperatureSimulation();
     }
 
     public void setRoomTemperatureListener(RoomTemperatureListener roomTemperatureListener) {
@@ -25,46 +29,37 @@ public class RoomTemperatureSimulation {
         return temperature;
     }
 
-    public synchronized void setTemperature(int temperature) {
+    private synchronized void setTemperature(int temperature) {
         this.temperature = temperature;
         if (roomTemperatureListener != null) {
             roomTemperatureListener.onTemperatureChange(temperature);
         }
     }
 
-    public void startTemperatureChange(int target) {
-        shutdownAndReset();
+    public synchronized int getTarget() {
+        return target;
+    }
 
+    public synchronized void setTarget(int target) {
+        this.target = target;
+    }
+
+    public void startTemperatureSimulation() {
         temperatureExecutor.scheduleAtFixedRate(() -> {
             int currentTemperature = getTemperature();
-            if (getTemperature() < target) {
+            int currentTarget = getTarget();
+            if (currentTemperature < currentTarget) {
                 setTemperature(currentTemperature + 1);
-            } else if (currentTemperature > target) {
+            } else if (currentTemperature > currentTarget) {
                 setTemperature(currentTemperature - 1);
-            }
-
-            if (getTemperature() == target) {
-                targetTemperatureReached();
-                shutdownAndReset();
             }
         }, 0, TEMPERATURE_CHANGE_MS_DURATION, TimeUnit.MILLISECONDS);
     }
 
     public void stopTemperatureChange() {
-        shutdownAndReset();
+        setTarget(getTemperature());
         if (roomTemperatureListener != null) {
-            roomTemperatureListener.onStopTemperatureTargetGoal();
-        }
-    }
-
-    private void shutdownAndReset() {
-        temperatureExecutor.shutdown();
-        temperatureExecutor = Executors.newSingleThreadScheduledExecutor();
-    }
-
-    private void targetTemperatureReached() {
-        if (roomTemperatureListener != null) {
-            roomTemperatureListener.onTargetTemperatureReached();
+            roomTemperatureListener.onStopTemperatureChange();
         }
     }
 

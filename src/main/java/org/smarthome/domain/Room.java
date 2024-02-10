@@ -5,9 +5,8 @@ import org.smarthome.controller.IlluminationControl;
 import org.smarthome.controller.SensorPresenceControl;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.simulation.RoomSimulation;
 import org.smarthome.domain.temperature.AirConditioner;
-import org.smarthome.domain.temperature.TemperatureControl;
+import org.smarthome.controller.TemperatureControl;
 import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.simulation.RoomSimulation;
 
@@ -17,26 +16,30 @@ public class Room extends RoomSimulation {
 
     private final String name;
     private final Illumination illumination;
+    private final AirConditioner airConditioner;
     private final PresenceSensor presenceSensor;
     private final IlluminationControl illuminationControl;
-    private SensorPresenceControl sensorPresenceControl;
-    private final AirConditioner airConditioner;
     private final TemperatureControl temperatureControl;
+    private SensorPresenceControl sensorPresenceControl;
 
     public Room(SmartHomeRoomBuilder builder) {
         super();
         this.name = builder.getName();
+
         List<Light> lights = builder.getLights();
         if (lights != null && !lights.isEmpty()) {
             this.illumination = new Illumination(lights);
         } else {
             this.illumination = null;
         }
-        this.presenceSensor = new PresenceSensor(getPresenceSimulation());
-        this.illuminationControl = new IlluminationControl(illumination);
 
         this.airConditioner = builder.getAirConditioner();
+        if (airConditioner != null) {
+            this.airConditioner.setRoomTemperatureSimulation(getTemperatureSimulation());
+        }
 
+        this.presenceSensor = new PresenceSensor(getPresenceSimulation());
+        this.illuminationControl = new IlluminationControl(illumination);
         this.temperatureControl = new TemperatureControl(airConditioner);
     }
 
@@ -56,6 +59,10 @@ public class Room extends RoomSimulation {
         return illumination;
     }
 
+    public AirConditioner getAirConditioner() {
+        return airConditioner;
+    }
+
     public PresenceSensor getPresenceSensor() {
         return presenceSensor;
     }
@@ -64,13 +71,10 @@ public class Room extends RoomSimulation {
         return illuminationControl;
     }
 
-    public AirConditioner getAirConditioner() {
-        return airConditioner;
-    }
-
     public TemperatureControl getTemperatureControl() {
         return temperatureControl;
     }
+
     public SensorPresenceControl getSensorPresenceControl() {
         return sensorPresenceControl;
     }

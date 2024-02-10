@@ -2,6 +2,5 @@ package org.smarthome.simulation;
 
 public interface RoomTemperatureListener {
     void onTemperatureChange(int temperature);
-    void onTargetTemperatureReached();
-    void onStopTemperatureTargetGoal();
+    void onStopTemperatureChange();
 }

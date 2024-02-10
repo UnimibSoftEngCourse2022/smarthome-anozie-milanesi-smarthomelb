@@ -1,11 +1,30 @@
 package org.smarthome.domain.temperature;
 
-public class AirConditioner {
-    private AirConditionerState airConditionerState;
+import org.smarthome.listener.AirConditionerListener;
+import org.smarthome.listener.ObservableElement;
+import org.smarthome.simulation.RoomTemperatureSimulation;
+
+import java.util.Objects;
+
+import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
+
+public class AirConditioner extends ObservableElement<AirConditionerListener> {
+
     private int temperature;
+    private AirConditionerState airConditionerState;
+    private RoomTemperatureSimulation roomTemperatureSimulation;
 
     public AirConditioner() {
+        this.temperature = DEFAULT_IDEAL_TEMPERATURE;
         this.airConditionerState = new AirConditionerOff(this);
+    }
+
+    public RoomTemperatureSimulation getRoomTemperatureSimulation() {
+        return roomTemperatureSimulation;
+    }
+
+    public void setRoomTemperatureSimulation(RoomTemperatureSimulation roomTemperatureSimulation) {
+        this.roomTemperatureSimulation = roomTemperatureSimulation;
     }
 
     public AirConditionerState getAirConditionerState() {
@@ -13,23 +32,41 @@ public class AirConditioner {
     }
 
     public void setAirConditionerState(AirConditionerState airConditionerState) {
-        this.airConditionerState = airConditionerState;
+        if (!Objects.equals(getAirConditionerState().getClass(), airConditionerState.getClass())) {
+            this.airConditionerState = airConditionerState;
+            for (AirConditionerListener observer : observers) {
+                observer.onChangeState(airConditionerState);
+            }
+        }
+    }
+
+    public boolean isOn() {
+        return airConditionerState.getClass().equals(AirConditionerOn.class);
     }
 
     public int getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(int temperature) throws Exception {
-        if(airConditionerState.getClass().equals(AirConditionerOn.class)) {
-            this.temperature = temperature;
-        }else {
-            throw new Exception("The air conditioner is off");
-        }
+    public void setTemperature(int temperature) {
+        if (this.temperature != temperature) {
+            if (!isOn()) {
+                setAirConditionerState(new AirConditionerOn(this));
+            }
 
+            this.temperature = temperature;
+            if (roomTemperatureSimulation != null) {
+                roomTemperatureSimulation.setTarget(temperature);
+            }
+
+            for (AirConditionerListener observer : observers) {
+                observer.onTemperatureChange(temperature);
+            }
+        }
     }
 
     public void handle() {
         airConditionerState.handle();
     }
+
 }

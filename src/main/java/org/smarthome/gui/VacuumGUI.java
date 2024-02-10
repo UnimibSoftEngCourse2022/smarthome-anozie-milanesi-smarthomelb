@@ -9,15 +9,10 @@ public class VacuumGUI extends JFrame{
     private JSpinner spinner1;
 
     public VacuumGUI() {
-
         setContentPane(panel1);
-        setSize(400,400);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(600,600);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setVisible(true);
-
     }
 
-    public static void main(String[] args) {
-        new VacuumGUI();
-    }
 }

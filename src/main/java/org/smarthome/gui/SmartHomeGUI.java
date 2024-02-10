@@ -12,10 +12,9 @@ public class SmartHomeGUI extends JFrame {
     private JPanel panel1;
 
     public SmartHomeGUI(SmartHome home) {
-
         setContentPane(panel1);
         setLayout(new FlowLayout());
-        setSize(400, 400);
+        setSize(600, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 

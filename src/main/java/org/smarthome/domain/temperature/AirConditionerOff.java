@@ -1,6 +1,8 @@
 package org.smarthome.domain.temperature;
 
-public class AirConditionerOff  extends AirConditionerState{
+import org.smarthome.simulation.RoomTemperatureSimulation;
+
+public class AirConditionerOff extends AirConditionerState {
 
     protected AirConditionerOff(AirConditioner airConditioner) {
         super(airConditioner);
@@ -9,5 +11,10 @@ public class AirConditionerOff  extends AirConditionerState{
     @Override
     public void handle() {
         airConditioner.setAirConditionerState(new AirConditionerOn(airConditioner));
+        RoomTemperatureSimulation roomTemperatureSimulation = airConditioner.getRoomTemperatureSimulation();
+        if (roomTemperatureSimulation != null) {
+            roomTemperatureSimulation.setTarget(airConditioner.getTemperature());
+        }
     }
+
 }
