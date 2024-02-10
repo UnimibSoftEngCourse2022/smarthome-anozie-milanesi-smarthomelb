@@ -2,6 +2,7 @@ package org.smarthome.builder;
 
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
+import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.domain.temperature.AirConditioner;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
     private final String name;
     private final List<Light> lights;
     private AirConditioner airConditioner;
+    private PresenceSensor presenceSensor;
 
     public SmartHomeRoomBuilder(String name) {
         this.name = name;
@@ -26,6 +28,14 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
         return lights;
     }
 
+    public AirConditioner getAirConditioner() {
+        return airConditioner;
+    }
+
+    public PresenceSensor getPresenceSensor() {
+        return presenceSensor;
+    }
+
     @Override
     public SmartHomeRoomBuilder addLight(Light light) {
         lights.add(light);
@@ -38,8 +48,10 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
         return this;
     }
 
-    public AirConditioner getAirConditioner() {
-        return airConditioner;
+    @Override
+    public SmartHomeRoomBuilder setPresenceSensor(PresenceSensor presenceSensor) {
+        this.presenceSensor = presenceSensor;
+        return this;
     }
 
     public Room create() {

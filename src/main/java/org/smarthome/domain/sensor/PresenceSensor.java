@@ -4,16 +4,19 @@ import org.smarthome.simulation.RoomPresenceSimulation;
 
 public class PresenceSensor extends Sensor<Boolean> {
 
-    private final RoomPresenceSimulation roomPresenceSimulation;
+    private RoomPresenceSimulation roomPresenceSimulation;
 
-    public PresenceSensor(RoomPresenceSimulation roomPresenceSimulation) {
+    public PresenceSensor() {
         super();
+    }
+
+    public void setRoomPresenceSimulation(RoomPresenceSimulation roomPresenceSimulation) {
         this.roomPresenceSimulation = roomPresenceSimulation;
     }
 
     @Override
     public Boolean monitor() {
-        return roomPresenceSimulation.isPresence();
+        return roomPresenceSimulation != null && roomPresenceSimulation.isPresence();
     }
 
     @Override

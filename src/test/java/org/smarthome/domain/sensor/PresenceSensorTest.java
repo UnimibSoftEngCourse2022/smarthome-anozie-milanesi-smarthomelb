@@ -17,7 +17,8 @@ class PresenceSensorTest {
     @BeforeEach
     void setUp() {
         roomPresenceSimulation = new RoomPresenceSimulation();
-        presenceSensor = new PresenceSensor(roomPresenceSimulation);
+        presenceSensor = new PresenceSensor();
+        presenceSensor.setRoomPresenceSimulation(roomPresenceSimulation);
     }
 
     @Test

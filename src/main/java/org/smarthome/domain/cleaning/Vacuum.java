@@ -2,7 +2,7 @@ package org.smarthome.domain.cleaning;
 
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.domain.Room;
-import org.smarthome.listener.CleaningActionListener;
+import org.smarthome.listener.VacuumListener;
 import org.smarthome.exception.CleaningException;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
 import static org.smarthome.util.Constants.MOVING_TO_ROOM_MS_DURATION;
 
-public class Vacuum extends ObservableElement<CleaningActionListener> {
+public class Vacuum extends ObservableElement<VacuumListener> {
 
     private final List<Room> houseMapping;
     private final Room chargingStationPosition;
@@ -50,7 +50,7 @@ public class Vacuum extends ObservableElement<CleaningActionListener> {
     public void setCurrentPosition(Room currentPosition) {
         if (!Objects.equals(getCurrentPosition(), currentPosition)) {
             this.currentPosition = currentPosition;
-            for (CleaningActionListener observer : observers) {
+            for (VacuumListener observer : observers) {
                 observer.onChangePosition(currentPosition);
             }
         }
@@ -67,7 +67,7 @@ public class Vacuum extends ObservableElement<CleaningActionListener> {
     public synchronized void setVacuumState(VacuumState vacuumState) {
         if (!Objects.equals(getVacuumState().getClass(), vacuumState.getClass())) {
             this.vacuumState = vacuumState;
-            for (CleaningActionListener observer : observers) {
+            for (VacuumListener observer : observers) {
                 observer.onChangeState(vacuumState);
             }
         }
@@ -90,19 +90,19 @@ public class Vacuum extends ObservableElement<CleaningActionListener> {
     }
 
     protected void notifyCompletedCleaning() {
-        for (CleaningActionListener observer : observers) {
+        for (VacuumListener observer : observers) {
             observer.onCompletedCleaning();
         }
     }
 
     protected void notifyStoppedCleaning() {
-        for (CleaningActionListener observer : observers) {
+        for (VacuumListener observer : observers) {
             observer.onStoppedCleaning();
         }
     }
 
     protected void notifyCleaningException(CleaningException e) {
-        for (CleaningActionListener observer : observers) {
+        for (VacuumListener observer : observers) {
             observer.onCleaningException(e);
         }
     }

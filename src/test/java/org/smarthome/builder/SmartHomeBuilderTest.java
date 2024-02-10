@@ -7,6 +7,8 @@ import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.protection.Siren;
+import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.domain.temperature.AirConditioner;
 import org.smarthome.exception.UnidentifiedRoomException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,10 +23,18 @@ class SmartHomeBuilderTest {
                 .addLight(new Light())
                 .addLight(new Light())
                 .create();
+        assertNotNull(room1.getIllumination());
+        assertNull(room1.getAirConditioner());
+        assertNull(room1.getPresenceSensor());
 
         Room room2 = new SmartHomeRoomBuilder("test2")
                 .addLight(new Light())
+                .setAirConditioner(new AirConditioner())
+                .setPresenceSensor(new PresenceSensor())
                 .create();
+        assertNotNull(room2.getIllumination());
+        assertNotNull(room2.getAirConditioner());
+        assertNotNull(room2.getPresenceSensor());
 
         // create smartHome
         SmartHome smartHome = new SmartHomeBuilder()

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.cleaning.Charging;
-import org.smarthome.listener.CleaningActionListener;
+import org.smarthome.listener.VacuumListener;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
@@ -49,7 +49,7 @@ class CleaningControlTest {
     void startCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -84,7 +84,7 @@ class CleaningControlTest {
     void stopCleaningTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -130,7 +130,7 @@ class CleaningControlTest {
     void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -176,7 +176,7 @@ class CleaningControlTest {
     void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }

@@ -35,10 +35,14 @@ public class Room extends RoomSimulation {
 
         this.airConditioner = builder.getAirConditioner();
         if (airConditioner != null) {
-            this.airConditioner.setRoomTemperatureSimulation(getTemperatureSimulation());
+            airConditioner.setRoomTemperatureSimulation(getTemperatureSimulation());
         }
 
-        this.presenceSensor = new PresenceSensor(getPresenceSimulation());
+        this.presenceSensor = builder.getPresenceSensor();
+        if (presenceSensor != null) {
+            presenceSensor.setRoomPresenceSimulation(getPresenceSimulation());
+        }
+
         this.illuminationControl = new IlluminationControl(illumination);
         this.temperatureControl = new TemperatureControl(airConditioner);
     }

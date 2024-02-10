@@ -82,7 +82,7 @@ class AirConditionerTest {
 
         airConditioner.handle();
         airConditioner.setTemperature(12);
-        Thread.sleep(1500);
+        Thread.sleep(1);
         airConditioner.setTemperature(expected);
         latch.await();
     }

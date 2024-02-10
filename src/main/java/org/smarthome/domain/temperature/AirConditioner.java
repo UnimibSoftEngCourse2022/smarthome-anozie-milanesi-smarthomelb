@@ -19,7 +19,7 @@ public class AirConditioner extends ObservableElement<AirConditionerListener> {
         this.airConditionerState = new AirConditionerOff(this);
     }
 
-    public RoomTemperatureSimulation getRoomTemperatureSimulation() {
+    protected RoomTemperatureSimulation getRoomTemperatureSimulation() {
         return roomTemperatureSimulation;
     }
 

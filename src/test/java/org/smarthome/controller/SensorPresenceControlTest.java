@@ -10,6 +10,7 @@ import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.Armed;
 import org.smarthome.domain.protection.Disarmed;
 import org.smarthome.domain.protection.Siren;
+import org.smarthome.domain.sensor.PresenceSensor;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -26,6 +27,7 @@ class SensorPresenceControlTest {
                 .addLight(new Light())
                 .addLight(new Light())
                 .addLight(new Light())
+                .setPresenceSensor(new PresenceSensor())
                 .create();
 
         smartHome = new SmartHomeBuilder()

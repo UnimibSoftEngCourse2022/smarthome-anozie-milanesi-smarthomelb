@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
-import org.smarthome.listener.CleaningActionListener;
+import org.smarthome.listener.VacuumListener;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.util.DebugLogger;
 
@@ -35,7 +35,7 @@ class VacuumTest {
 
         vacuum = new Vacuum(rooms, rooms.get(chargingStationPositionIndex));
 
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
                 logger.info("vacuum moving to " + currentPosition.getName());
@@ -93,7 +93,7 @@ class VacuumTest {
 
     @Test
     void cleaningErrorTest1() throws InterruptedException {
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -122,7 +122,7 @@ class VacuumTest {
 
     @Test
     void cleaningErrorTest2() throws InterruptedException {
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -160,7 +160,7 @@ class VacuumTest {
 
     @Test
     void stopCleaningErrorTest1() throws InterruptedException {
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }
@@ -190,7 +190,7 @@ class VacuumTest {
 
     @Test
     void stopCleaningErrorTest2() throws InterruptedException {
-        vacuum.addObserver(new CleaningActionListener() {
+        vacuum.addObserver(new VacuumListener() {
             @Override
             public void onChangePosition(Room currentPosition) {
             }

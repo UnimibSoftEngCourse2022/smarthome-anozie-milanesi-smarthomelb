@@ -12,7 +12,9 @@ public abstract class SensorControl<T> implements SensorListener<T> {
     }
 
     public void monitorSensor() {
-        sensor.addObserver(this);
+        if (sensor != null) {
+            sensor.addObserver(this);
+        }
     }
 
 }
