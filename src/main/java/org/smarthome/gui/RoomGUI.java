@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoomGUI extends JFrame {
-
     private JPanel panel1;
     private JButton lightControlButton;
     private List<JRadioButton> lightButtons;

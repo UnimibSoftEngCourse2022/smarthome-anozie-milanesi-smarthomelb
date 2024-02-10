@@ -5,6 +5,8 @@ import org.smarthome.controller.IlluminationControl;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.simulation.RoomSimulation;
+import org.smarthome.domain.temperature.AirConditioner;
+import org.smarthome.domain.temperature.TemperatureControl;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class Room extends RoomSimulation {
     private final String name;
     private final Illumination illumination;
     private final IlluminationControl illuminationControl;
+    private final AirConditioner airConditioner;
+    private final TemperatureControl temperatureControl;
 
     public Room(SmartHomeRoomBuilder builder) {
         super();
@@ -24,6 +28,10 @@ public class Room extends RoomSimulation {
             this.illumination = null;
         }
         this.illuminationControl = new IlluminationControl(illumination);
+
+        this.airConditioner = builder.getAirConditioner();
+
+        this.temperatureControl = new TemperatureControl(airConditioner);
     }
 
     public String getName() {
@@ -38,4 +46,11 @@ public class Room extends RoomSimulation {
         return illuminationControl;
     }
 
+    public AirConditioner getAirConditioner() {
+        return airConditioner;
+    }
+
+    public TemperatureControl getTemperatureControl() {
+        return temperatureControl;
+    }
 }

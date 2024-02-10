@@ -8,7 +8,6 @@ import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
 import static org.smarthome.util.Constants.TEMPERATURE_CHANGE_MS_DURATION;
 
 public class RoomTemperatureSimulation {
-
     private RoomTemperatureListener roomTemperatureListener;
     private int temperature;
     private ScheduledExecutorService temperatureExecutor;
