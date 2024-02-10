@@ -1,11 +1,13 @@
 package org.smarthome.domain.illumination;
 
+import org.smarthome.listener.ObservableElement;
+import org.smarthome.listener.IlluminationListener;
+
 import java.util.List;
 import java.util.Objects;
 
-public class Illumination {
+public class Illumination extends ObservableElement<IlluminationListener> {
 
-    private IlluminationActionListener illuminationActionListener;
     private final List<Light> lights;
     private IlluminationState illuminationState;
 
@@ -14,24 +16,34 @@ public class Illumination {
         illuminationState = new IlluminationOff(this);
     }
 
-    public void setIlluminationActionListener(IlluminationActionListener illuminationActionListener) {
-        this.illuminationActionListener = illuminationActionListener;
-    }
-
     public List<Light> getLights() {
         return lights;
     }
 
-    public IlluminationState getIlluminationState() {
+    public synchronized IlluminationState getIlluminationState() {
         return illuminationState;
     }
 
-    public void setIlluminationState(IlluminationState illuminationState) {
+    public synchronized void setIlluminationState(IlluminationState illuminationState) {
         if (!Objects.equals(getIlluminationState().getClass(), illuminationState.getClass())) {
             this.illuminationState = illuminationState;
-            if (illuminationActionListener != null) {
-                illuminationActionListener.onChangeState(illuminationState);
+            for (IlluminationListener observer : observers) {
+                observer.onChangeState(illuminationState);
             }
+        }
+    }
+
+    public synchronized void on() {
+        setIlluminationState(new IlluminationOn(this));
+        for (Light light : getLights()) {
+            light.setLightState(new LightOn(light));
+        }
+    }
+
+    public synchronized void off() {
+        setIlluminationState(new IlluminationOff(this));
+        for (Light light : getLights()) {
+            light.setLightState(new LightOff(light));
         }
     }
 

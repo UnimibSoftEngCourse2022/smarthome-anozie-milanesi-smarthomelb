@@ -2,6 +2,7 @@ package org.smarthome.domain.illumination;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.smarthome.listener.LightActionListener;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,12 +27,16 @@ class LightTest {
 
     @Test
     void lightActionListenerTest() {
-        light.setLightActionListener(lightState ->
-                assertEquals(LightOn.class, light.getLightState().getClass()));
-        light.handle();
+        LightActionListener listener = lightState ->
+                assertEquals(LightOn.class, light.getLightState().getClass());
 
-        light.setLightActionListener(lightState ->
-                assertEquals(LightOff.class, light.getLightState().getClass()));
+        light.addObserver(listener);
+        light.handle();
+        light.removeObserver(listener);
+
+        listener = lightState ->
+                assertEquals(LightOff.class, light.getLightState().getClass());
+        light.addObserver(listener);
         light.handle();
     }
 

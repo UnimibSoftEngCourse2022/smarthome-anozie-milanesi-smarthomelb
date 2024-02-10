@@ -1,4 +1,4 @@
-package org.smarthome.domain.simulation;
+package org.smarthome.simulation;
 
 public interface RoomTemperatureListener {
     void onTemperatureChange(int temperature);

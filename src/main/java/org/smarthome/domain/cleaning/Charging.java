@@ -14,7 +14,7 @@ public class Charging extends VacuumState {
     public void clean() throws InterruptedException {
         vacuum.cleaningHome();
         vacuum.transitToChargingStation();
-        vacuum.completedCleaning();
+        vacuum.notifyCompletedCleaning();
     }
 
     @Override

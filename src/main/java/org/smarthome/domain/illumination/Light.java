@@ -1,29 +1,28 @@
 package org.smarthome.domain.illumination;
 
+import org.smarthome.listener.ObservableElement;
+import org.smarthome.listener.LightActionListener;
+
 import java.util.Objects;
 
-public class Light {
+public class Light extends ObservableElement<LightActionListener> {
 
-    private LightActionListener lightActionListener;
     private LightState lightState;
 
     public Light() {
+        super();
         lightState = new LightOff(this);
     }
 
-    public void setLightActionListener(LightActionListener lightActionListener) {
-        this.lightActionListener = lightActionListener;
-    }
-
-    public LightState getLightState() {
+    public synchronized LightState getLightState() {
         return lightState;
     }
 
-    public void setLightState(LightState lightState) {
+    public synchronized void setLightState(LightState lightState) {
         if (!Objects.equals(getLightState().getClass(), lightState.getClass())) {
             this.lightState = lightState;
-            if (lightActionListener != null) {
-                lightActionListener.onChangeState(lightState);
+            for (LightActionListener observer : observers) {
+                observer.onChangeState(lightState);
             }
         }
     }

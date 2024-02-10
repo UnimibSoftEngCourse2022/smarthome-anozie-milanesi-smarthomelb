@@ -2,6 +2,9 @@ package org.smarthome.builder;
 
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.Room;
+import org.smarthome.domain.protection.Alarm;
+import org.smarthome.domain.protection.Siren;
+import org.smarthome.exception.UnidentifiedRoomException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,8 @@ import java.util.List;
 public class SmartHomeBuilder implements HomeBuilder {
 
     private final List<Room> rooms;
-    private Room chargingStationPosition;
+    private Room vacuumChargingStationPosition;
+    private Alarm alarm;
 
     public SmartHomeBuilder() {
         this.rooms = new ArrayList<>();
@@ -19,8 +23,12 @@ public class SmartHomeBuilder implements HomeBuilder {
         return rooms;
     }
 
-    public Room getChargingStationPosition() {
-        return chargingStationPosition;
+    public Room getVacuumChargingStationPosition() {
+        return vacuumChargingStationPosition;
+    }
+
+    public Alarm getAlarm() {
+        return alarm;
     }
 
     @Override
@@ -30,8 +38,19 @@ public class SmartHomeBuilder implements HomeBuilder {
     }
 
     @Override
-    public SmartHomeBuilder setVacuumChargingStationPosition(Room chargingStationPosition) {
-        this.chargingStationPosition = chargingStationPosition;
+    public SmartHomeBuilder setVacuumChargingStationPosition(Room position) {
+        if (!rooms.contains(position)) {
+            throw new UnidentifiedRoomException(position);
+        }
+        vacuumChargingStationPosition = position;
+        return this;
+    }
+
+    @Override
+    public SmartHomeBuilder setSiren(Siren siren) {
+        if (siren != null) {
+            this.alarm = new Alarm(siren);
+        }
         return this;
     }
 
