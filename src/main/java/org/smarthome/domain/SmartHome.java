@@ -26,7 +26,7 @@ public class SmartHome {
         this.vacuum = initVacuum;
         this.alarm = builder.getAlarm();
         this.cleaningControl = new CleaningControl(vacuum);
-        this.protectionControl = new ProtectionControl(alarm);
+        this.protectionControl = new ProtectionControl(alarm, rooms);
 
         for (Room room : rooms) {
             room.setAutomaticControl(this);

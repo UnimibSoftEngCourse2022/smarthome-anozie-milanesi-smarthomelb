@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GUITest {
 
     @Test
-    public void GUItest() {
+    void GUItest() {
         assertTrue(true);
     }
 
