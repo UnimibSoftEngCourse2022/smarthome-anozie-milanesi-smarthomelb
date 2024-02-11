@@ -39,9 +39,7 @@ public class SensorPresenceControl extends SensorControl<Boolean> {
     }
 
     private void startPresenceTimer() {
-        if (presenceTimer != null) {
-            presenceTimer.cancel();
-        }
+        resetPresenceTimer();
 
         presenceTimer = new Timer();
         presenceTimer.schedule(new TimerTask() {

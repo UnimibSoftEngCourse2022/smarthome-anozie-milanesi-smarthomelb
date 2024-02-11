@@ -57,9 +57,7 @@ public class ProtectionControl {
 
     private synchronized void startEmergencyTimer() {
         if (!emergencyTimerRunning) {
-            if (emergencyTimer != null) {
-                emergencyTimer.cancel();
-            }
+            resetEmergencyTimer();
 
             emergencyTimer = new Timer();
             emergencyTimerRunning = true;
@@ -77,6 +75,7 @@ public class ProtectionControl {
         if (emergencyTimer != null) {
             emergencyTimer.cancel();
             emergencyTimer = null;
+            emergencyTimerRunning = false;
         }
     }
 
