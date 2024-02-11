@@ -9,9 +9,15 @@ import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.Armed;
 import org.smarthome.domain.protection.Disarmed;
+import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.listener.EmergencyServiceListener;
+import org.smarthome.listener.IlluminationListener;
+import org.smarthome.listener.LightActionListener;
+import org.smarthome.listener.SirenListener;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,18 +99,107 @@ class SensorPresenceControlTest {
     }
 
     @Test
-    void presenceSensorControlProtectionTest() {
+    void presenceSensorControlProtectionTest1() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        List<Room> rooms = smartHome.getRooms();
+
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+            illumination.handle();
+            assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass());
+        }
+
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
         smartHome.getProtectionControl().handleAlarm();
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
         smartHome.getAlarm().getSiren().addObserver(active -> {
             assertTrue(smartHome.getAlarm().getSiren().isActive());
-            smartHome.getProtectionControl().deactivateSiren();
-            assertFalse(smartHome.getAlarm().getSiren().isActive());
+            latch.countDown();
         });
 
         room.getPresenceSimulation().setPresence(true);
+        latch.await();
+    }
+
+    @Test
+    void presenceSensorControlProtectionTest2() throws InterruptedException {
+        List<Room> rooms = smartHome.getRooms();
+        int count = 2;
+
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+            illumination.handle();
+            assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass());
+            for (Light light : illumination.getLights()) {
+                assertEquals(LightOn.class, light.getLightState().getClass());
+                count++;
+            }
+            count++;
+        }
+
+        CountDownLatch latch = new CountDownLatch(count);
+
+        assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
+        smartHome.getProtectionControl().handleAlarm();
+        assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
+
+        EmergencyService.getInstance().addObserver(latch::countDown);
+        smartHome.getAlarm().getSiren().addObserver(active -> latch.countDown());
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+
+            illumination.addObserver(state -> latch.countDown());
+            for (Light light : illumination.getLights()) {
+                light.addObserver(state -> latch.countDown());
+            }
+        }
+
+        room.getPresenceSimulation().setPresence(true);
+        latch.await();
+
+        assertTrue(smartHome.getAlarm().getSiren().isActive());
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+            assertEquals(IlluminationOff.class, illumination.getIlluminationState().getClass());
+            for (Light light : illumination.getLights()) {
+                assertEquals(LightOff.class, light.getLightState().getClass());
+            }
+        }
+    }
+
+    @Test
+    void presenceSensorControlProtectionTest3() throws InterruptedException {
+        List<Room> rooms = smartHome.getRooms();
+        CountDownLatch latch = new CountDownLatch(2);
+
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+            illumination.handle();
+        }
+
+        assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
+        smartHome.getProtectionControl().handleAlarm();
+        assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
+
+        smartHome.getAlarm().getSiren().addObserver(active -> {
+            if (active) {
+                smartHome.getProtectionControl().handleAlarm();
+            }
+            latch.countDown();
+        });
+
+        room.getPresenceSimulation().setPresence(true);
+        latch.await();
+
+        assertFalse(smartHome.getAlarm().getSiren().isActive());
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+            assertEquals(IlluminationOn.class, illumination.getIlluminationState().getClass());
+            for (Light light : illumination.getLights()) {
+                assertEquals(LightOn.class, light.getLightState().getClass());
+            }
+        }
     }
 
 }

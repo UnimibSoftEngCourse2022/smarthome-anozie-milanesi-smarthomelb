@@ -2,11 +2,10 @@ package org.smarthome.domain.sensor;
 
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.SensorListener;
+import org.smarthome.util.Constants;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static org.smarthome.util.Constants.SENSOR_ITERATION_PERIOD_MS_DURATION;
 
 public abstract class Sensor<T>
         extends ObservableElement<SensorListener<T>>
@@ -27,7 +26,7 @@ public abstract class Sensor<T>
         // MAPE feedback control loop
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this::knowledge,
-                        0, SENSOR_ITERATION_PERIOD_MS_DURATION, TimeUnit.MILLISECONDS);
+                        0, Constants.sensorIterationPeriodMsDuration(), TimeUnit.MILLISECONDS);
     }
 
     @Override

@@ -1,8 +1,7 @@
 package org.smarthome.domain.cleaning;
 
 import org.smarthome.exception.CleaningException;
-
-import static org.smarthome.util.Constants.ALREADY_CLEANING_MESSAGE;
+import org.smarthome.util.Constants;
 
 public class Cleaning extends VacuumState {
 
@@ -12,7 +11,7 @@ public class Cleaning extends VacuumState {
 
     @Override
     public void clean() throws CleaningException {
-        throw new CleaningException(ALREADY_CLEANING_MESSAGE);
+        throw new CleaningException(Constants.alreadyCleaningMessage());
     }
 
     @Override

@@ -12,11 +12,11 @@ public class Siren extends ObservableElement<SirenListener> {
         this.active = false;
     }
 
-    public boolean isActive() {
+    public synchronized boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public synchronized void setActive(boolean active) {
         if (this.active != active) {
             this.active = active;
             for (SirenListener observer : observers) {

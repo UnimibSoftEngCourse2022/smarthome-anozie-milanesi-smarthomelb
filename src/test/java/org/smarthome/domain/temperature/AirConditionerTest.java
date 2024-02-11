@@ -3,15 +3,15 @@ package org.smarthome.domain.temperature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.listener.AirConditionerListener;
-import org.smarthome.simulation.RoomTemperatureListener;
+import org.smarthome.simulation.RoomTemperatureSimulationListener;
 import org.smarthome.simulation.RoomTemperatureSimulation;
+import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
 
 class AirConditionerTest {
 
@@ -29,7 +29,7 @@ class AirConditionerTest {
 
     @Test
     void isOnAirConditionerTest() {
-        int expected = DEFAULT_IDEAL_TEMPERATURE + 1;
+        int expected = Constants.defaultIdealTemperature() + 1;
         airConditioner.addObserver(new AirConditionerListener() {
             @Override
             public void onChangeState(AirConditionerState state) {
@@ -43,7 +43,7 @@ class AirConditionerTest {
         });
 
         assertFalse(airConditioner.isOn());
-        assertEquals(DEFAULT_IDEAL_TEMPERATURE, airConditioner.getTemperature());
+        assertEquals(Constants.defaultIdealTemperature(), airConditioner.getTemperature());
         airConditioner.setTemperature(expected);
     }
 
@@ -53,7 +53,7 @@ class AirConditionerTest {
 
         int expected = 21;
 
-        roomTemperatureSimulation.setRoomTemperatureListener(new RoomTemperatureListener() {
+        roomTemperatureSimulation.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
             public void onTemperatureChange(int temperature) {
                 if (temperature == expected) {

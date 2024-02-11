@@ -20,11 +20,16 @@ public class Alarm extends ObservableElement<AlarmListener> {
         return siren;
     }
 
-    public AlarmState getAlarmState() {
+    public synchronized AlarmState getAlarmState() {
         return alarmState;
     }
 
-    public void setAlarmState(AlarmState alarmState) {
+    public synchronized boolean isArmed() {
+        return getAlarmState().getClass().equals(Armed.class);
+    }
+
+
+    public synchronized void setAlarmState(AlarmState alarmState) {
         if (!Objects.equals(getAlarmState().getClass(), alarmState.getClass())) {
             this.alarmState = alarmState;
             for (AlarmListener observer : observers) {
@@ -33,11 +38,11 @@ public class Alarm extends ObservableElement<AlarmListener> {
         }
     }
 
-    public void handle() {
+    public synchronized void handle() {
         alarmState.handle();
     }
 
-    public boolean emergency() {
+    public synchronized boolean emergency() {
         return alarmState.emergency();
     }
 

@@ -13,6 +13,7 @@ import org.smarthome.domain.protection.Siren;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,23 +63,37 @@ class ProtectionControlTest {
     }
 
     @Test
-    void emergencySituationWithAlarmActivationTest() {
+    void emergencySituationWithAlarmActivationTest() throws InterruptedException {
+        int count = 0;
         for (Room room : rooms) {
             room.getIlluminationControl().handleIllumination();
-        }
-        for (Room room : rooms) {
+            count++;
             assertEquals(IlluminationOn.class, room.getIllumination().getIlluminationState().getClass());
             for (Light light : room.getIllumination().getLights()) {
                 assertEquals(LightOn.class, light.getLightState().getClass());
+                count++;
             }
         }
 
+        assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
         protectionController.handleAlarm();
-        protectionController.emergencySituation();
-        assertTrue(siren.isActive());
-        protectionController.deactivateSiren();
-        assertFalse(siren.isActive());
+        assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
+        CountDownLatch latch = new CountDownLatch(count);
+
+        for (Room room : rooms) {
+            Illumination illumination = room.getIllumination();
+
+            illumination.addObserver(state -> latch.countDown());
+            for (Light light : illumination.getLights()) {
+                light.addObserver(state -> latch.countDown());
+            }
+        }
+
+        protectionController.emergencySituation();
+        latch.await();
+
+        assertTrue(siren.isActive());
         for (Room room : rooms) {
             assertEquals(IlluminationOff.class, room.getIllumination().getIlluminationState().getClass());
             for (Light light : room.getIllumination().getLights()) {
@@ -93,7 +108,7 @@ class ProtectionControlTest {
             ProtectionControl protectionController = new ProtectionControl(null, rooms);
             protectionController.handleAlarm();
             assertFalse(protectionController.emergencySituation());
-            protectionController.deactivateSiren();
+            protectionController.handleAlarm();
         });
     }
 

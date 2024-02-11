@@ -1,7 +1,6 @@
 package org.smarthome.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
@@ -10,6 +9,7 @@ import org.smarthome.listener.VacuumListener;
 import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
+import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
@@ -19,8 +19,6 @@ import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.smarthome.util.Constants.ALREADY_CLEANING_MESSAGE;
-import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
 
 class CleaningControlTest {
 
@@ -111,7 +109,7 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        Thread.sleep(CLEANING_ROOM_MS_DURATION * 3);
+        Thread.sleep(Constants.cleaningRoomMsDuration() * 3L);
         cleaningControl.stopCleaning();
         latch.await();
     }
@@ -126,7 +124,6 @@ class CleaningControlTest {
     }
 
     @Test
-    @Disabled("concurrent debug test")
     void startCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(3);
 
@@ -156,15 +153,15 @@ class CleaningControlTest {
             @Override
             public void onCleaningException(CleaningException e) {
                 logger.warning(e.getMessage());
-                assertEquals(ALREADY_CLEANING_MESSAGE, e.getMessage());
+                assertEquals(Constants.alreadyCleaningMessage(), e.getMessage());
                 latch.countDown();
             }
         });
 
         cleaningControl.startCleaning();
-        Thread.sleep(CLEANING_ROOM_MS_DURATION);
+        Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.startCleaning();
-        Thread.sleep(CLEANING_ROOM_MS_DURATION);
+        Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.startCleaning();
         latch.await();
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
@@ -172,7 +169,6 @@ class CleaningControlTest {
     }
 
     @Test
-    @Disabled("concurrent debug test")
     void stopCleaningConcurrentTest() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(2);
 
@@ -208,9 +204,9 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        Thread.sleep(CLEANING_ROOM_MS_DURATION * 3);
+        Thread.sleep(Constants.cleaningRoomMsDuration() * 3L);
         cleaningControl.stopCleaning();
-        Thread.sleep(CLEANING_ROOM_MS_DURATION);
+        Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.stopCleaning();
         latch.await();
     }
