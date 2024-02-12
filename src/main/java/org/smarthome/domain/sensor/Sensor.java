@@ -25,12 +25,12 @@ public abstract class Sensor<T>
     public void startDetection() {
         // MAPE feedback control loop
         Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this::knowledge,
+                .scheduleAtFixedRate(this::loop,
                         0, Constants.sensorIterationPeriodMsDuration(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void knowledge() {
+    public void loop() {
         T detected = monitor();
         if (analyze(detected)) {
             plan();
