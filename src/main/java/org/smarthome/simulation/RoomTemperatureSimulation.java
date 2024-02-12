@@ -28,7 +28,7 @@ public class RoomTemperatureSimulation {
         return temperature;
     }
 
-    private synchronized void setTemperature(int temperature) {
+    public synchronized void setTemperature(int temperature) {
         this.temperature = temperature;
         if (roomTemperatureSimulationListener != null) {
             roomTemperatureSimulationListener.onTemperatureChange(temperature);

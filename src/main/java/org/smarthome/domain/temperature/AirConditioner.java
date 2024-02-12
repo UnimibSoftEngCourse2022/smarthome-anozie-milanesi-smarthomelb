@@ -18,10 +18,6 @@ public class AirConditioner extends ObservableElement<AirConditionerListener> {
         this.airConditionerState = new AirConditionerOff(this);
     }
 
-    protected RoomTemperatureSimulation getRoomTemperatureSimulation() {
-        return roomTemperatureSimulation;
-    }
-
     public void setRoomTemperatureSimulation(RoomTemperatureSimulation roomTemperatureSimulation) {
         this.roomTemperatureSimulation = roomTemperatureSimulation;
     }
@@ -48,19 +44,36 @@ public class AirConditioner extends ObservableElement<AirConditionerListener> {
     }
 
     public synchronized void setTemperature(int temperature) {
-        if (this.temperature != temperature) {
+        if (temperature >= Constants.airConditionerBottomRangeValue() &&
+                temperature <= Constants.airConditionerUpperRangeValue()) {
             if (!isOn()) {
-                setAirConditionerState(new AirConditionerOn(this));
+                on();
             }
 
-            this.temperature = temperature;
-            if (roomTemperatureSimulation != null) {
-                roomTemperatureSimulation.setTarget(temperature);
-            }
+            if (this.temperature != temperature) {
+                this.temperature = temperature;
+                for (AirConditionerListener observer : observers) {
+                    observer.onTemperatureChange(temperature);
+                }
 
-            for (AirConditionerListener observer : observers) {
-                observer.onTemperatureChange(temperature);
+                if (roomTemperatureSimulation != null) {
+                    roomTemperatureSimulation.setTarget(temperature);
+                }
             }
+        }
+    }
+
+    public synchronized void on() {
+        setAirConditionerState(new AirConditionerOn(this));
+        if (roomTemperatureSimulation != null) {
+            roomTemperatureSimulation.setTarget(getTemperature());
+        }
+    }
+
+    public synchronized void off() {
+        setAirConditionerState(new AirConditionerOff(this));
+        if (roomTemperatureSimulation != null) {
+            roomTemperatureSimulation.stopTemperatureChange();
         }
     }
 

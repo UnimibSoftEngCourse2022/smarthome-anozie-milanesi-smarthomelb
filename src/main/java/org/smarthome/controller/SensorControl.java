@@ -17,4 +17,10 @@ public abstract class SensorControl<T> implements SensorListener<T> {
         }
     }
 
+    public void stopMonitorSensor() {
+        if (sensor != null) {
+            sensor.removeObserver(this);
+        }
+    }
+
 }

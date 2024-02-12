@@ -12,10 +12,6 @@ import org.smarthome.domain.protection.Disarmed;
 import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.domain.sensor.PresenceSensor;
-import org.smarthome.listener.EmergencyServiceListener;
-import org.smarthome.listener.IlluminationListener;
-import org.smarthome.listener.LightActionListener;
-import org.smarthome.listener.SirenListener;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -38,7 +34,6 @@ class SensorPresenceControlTest {
 
         smartHome = new SmartHomeBuilder()
                 .addRoom(room)
-                .setVacuumChargingStationPosition(room)
                 .setSiren(new Siren())
                 .create();
     }
@@ -46,7 +41,6 @@ class SensorPresenceControlTest {
     @Test
     void presenceSensorControlIlluminationTest1() throws InterruptedException {
         assertNotNull(room.getPresenceSensor());
-        assertNotNull(room.getSensorPresenceControl());
 
         room.getIlluminationControl().setAutomationActive(true);
 
@@ -100,6 +94,8 @@ class SensorPresenceControlTest {
 
     @Test
     void presenceSensorControlProtectionTest1() throws InterruptedException {
+        room.getIlluminationControl().setAutomationActive(true);
+
         CountDownLatch latch = new CountDownLatch(1);
         List<Room> rooms = smartHome.getRooms();
 
@@ -124,6 +120,8 @@ class SensorPresenceControlTest {
 
     @Test
     void presenceSensorControlProtectionTest2() throws InterruptedException {
+        room.getIlluminationControl().setAutomationActive(true);
+
         List<Room> rooms = smartHome.getRooms();
         int count = 2;
 
@@ -170,6 +168,8 @@ class SensorPresenceControlTest {
 
     @Test
     void presenceSensorControlProtectionTest3() throws InterruptedException {
+        room.getIlluminationControl().setAutomationActive(true);
+
         List<Room> rooms = smartHome.getRooms();
         CountDownLatch latch = new CountDownLatch(2);
 

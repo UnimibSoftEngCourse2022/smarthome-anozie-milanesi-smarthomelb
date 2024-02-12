@@ -68,12 +68,32 @@ public class Constants {
         return Integer.parseInt(properties.getProperty("default.ideal.temperature"));
     }
 
+    public static int defaultIdealTemperatureThreshold() {
+        return Integer.parseInt(properties.getProperty("default.ideal.temperature.threshold"));
+    }
+
+    public static int temperatureThresholdBottomRangeValue() {
+        return Integer.parseInt(properties.getProperty("temperature.threshold.bottom.range.value"));
+    }
+
+    public static int temperatureThresholdUpperRangeValue() {
+        return Integer.parseInt(properties.getProperty("temperature.threshold.upper.range.value"));
+    }
+
     public static int temperatureChangeMsDuration() {
         if (debugModeActive()) {
             return Integer.parseInt(properties.getProperty("temperature.change.ms.duration.debug"));
         } else {
             return Integer.parseInt(properties.getProperty("temperature.change.ms.duration"));
         }
+    }
+
+    public static int airConditionerBottomRangeValue() {
+        return Integer.parseInt(properties.getProperty("air.conditioner.bottom.range.value"));
+    }
+
+    public static int airConditionerUpperRangeValue() {
+        return Integer.parseInt(properties.getProperty("air.conditioner.upper.range.value"));
     }
 
     public static int presenceTimerMsDuration() {
