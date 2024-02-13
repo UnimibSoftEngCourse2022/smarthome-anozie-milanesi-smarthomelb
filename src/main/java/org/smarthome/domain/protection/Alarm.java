@@ -8,16 +8,22 @@ import java.util.Objects;
 public class Alarm extends ObservableElement<AlarmListener> {
 
     private final Siren siren;
+    private final EmergencyService emergencyService;
     private AlarmState alarmState;
 
-    public Alarm(Siren siren) {
+    public Alarm(Siren siren, EmergencyService emergencyService) {
         super();
         this.siren = siren;
+        this.emergencyService = emergencyService;
         this.alarmState = new Disarmed(this);
     }
 
     public Siren getSiren() {
         return siren;
+    }
+
+    public EmergencyService getEmergencyService() {
+        return emergencyService;
     }
 
     public synchronized AlarmState getAlarmState() {

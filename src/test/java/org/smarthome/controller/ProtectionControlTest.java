@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.*;
-import org.smarthome.domain.protection.Alarm;
-import org.smarthome.domain.protection.Armed;
-import org.smarthome.domain.protection.Disarmed;
-import org.smarthome.domain.protection.Siren;
+import org.smarthome.domain.protection.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,7 @@ class ProtectionControlTest {
         rooms.add(room2);
 
         siren = new Siren();
-        alarm = new Alarm(siren);
+        alarm = new Alarm(siren, new EmergencyService("112"));
         protectionController = new ProtectionControl(alarm, rooms);
     }
 

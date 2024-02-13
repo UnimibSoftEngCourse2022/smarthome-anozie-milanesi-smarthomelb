@@ -3,6 +3,7 @@ package org.smarthome.builder;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.protection.Alarm;
+import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.exception.UnidentifiedRoomException;
 
@@ -47,9 +48,9 @@ public class SmartHomeBuilder implements HomeBuilder {
     }
 
     @Override
-    public SmartHomeBuilder setSiren(Siren siren) {
+    public SmartHomeBuilder setProtection(Siren siren, EmergencyService emergencyService) {
         if (siren != null) {
-            this.alarm = new Alarm(siren);
+            this.alarm = new Alarm(siren, emergencyService);
         }
         return this;
     }

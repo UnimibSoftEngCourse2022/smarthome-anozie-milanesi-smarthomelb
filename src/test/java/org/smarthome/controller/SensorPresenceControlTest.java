@@ -12,6 +12,7 @@ import org.smarthome.domain.protection.Disarmed;
 import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.listener.EmergencyServiceListener;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -34,7 +35,7 @@ class SensorPresenceControlTest {
 
         smartHome = new SmartHomeBuilder()
                 .addRoom(room)
-                .setSiren(new Siren())
+                .setProtection(new Siren(), new EmergencyService("112"))
                 .create();
     }
 
@@ -142,7 +143,7 @@ class SensorPresenceControlTest {
         smartHome.getProtectionControl().handleAlarm();
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
-        EmergencyService.getInstance().addObserver(latch::countDown);
+        smartHome.getAlarm().getEmergencyService().addObserver(emergencyNumber -> latch.countDown());
         smartHome.getAlarm().getSiren().addObserver(active -> latch.countDown());
         for (Room room : rooms) {
             Illumination illumination = room.getIllumination();

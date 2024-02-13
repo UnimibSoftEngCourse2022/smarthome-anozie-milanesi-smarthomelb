@@ -2,7 +2,6 @@ package org.smarthome.controller;
 
 import org.smarthome.domain.Room;
 import org.smarthome.domain.protection.Alarm;
-import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.util.Constants;
 
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class ProtectionControl {
             for (IlluminationControl illuminationControl : illuminationControls) {
                 illuminationControl.handleAutomation(false);
             }
-            EmergencyService.getInstance().emergencyCall();
+            alarm.getEmergencyService().emergencyCall();
         }
     }
 

@@ -1,6 +1,5 @@
 package org.smarthome.builder;
 
-import org.smarthome.controller.TemperatureControl;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.domain.sensor.TemperatureSensor;

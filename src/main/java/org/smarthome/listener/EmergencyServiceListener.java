@@ -1,5 +1,5 @@
 package org.smarthome.listener;
 
 public interface EmergencyServiceListener extends ElementListener {
-    void onEmergencyCall();
+    void onEmergencyCall(String emergencyNumber);
 }

@@ -5,21 +5,20 @@ import org.smarthome.listener.ObservableElement;
 
 public class EmergencyService extends ObservableElement<EmergencyServiceListener> {
 
-    private static EmergencyService instance;
+    private final String emergencyNumber;
 
-    private EmergencyService() {}
-
-    public static synchronized EmergencyService getInstance() {
-        if (instance == null) {
-            instance = new EmergencyService();
-        }
-        return instance;
+    public EmergencyService(String emergencyNumber) {
+        this.emergencyNumber = emergencyNumber;
     }
 
-    public synchronized void emergencyCall() {
+    public String getEmergencyNumber() {
+        return emergencyNumber;
+    }
+
+    public void emergencyCall() {
         // Emulate an emergency call
         for (EmergencyServiceListener observer : observers) {
-            observer.onEmergencyCall();
+            observer.onEmergencyCall(emergencyNumber);
         }
     }
 

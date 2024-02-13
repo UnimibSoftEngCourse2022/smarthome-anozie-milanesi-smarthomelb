@@ -18,6 +18,10 @@ public abstract class Sensor<T>
         startDetection();
     }
 
+    public synchronized T getData() {
+        return data;
+    }
+
     public void notifyDataChange() {
         observers.forEach(observer -> observer.onDataChange(data));
     }
