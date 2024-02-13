@@ -3,10 +3,9 @@ package org.smarthome.domain.temperature;
 import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.simulation.RoomTemperatureSimulation;
+import org.smarthome.util.Constants;
 
 import java.util.Objects;
-
-import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
 
 public class AirConditioner extends ObservableElement<AirConditionerListener> {
 
@@ -15,23 +14,19 @@ public class AirConditioner extends ObservableElement<AirConditionerListener> {
     private RoomTemperatureSimulation roomTemperatureSimulation;
 
     public AirConditioner() {
-        this.temperature = DEFAULT_IDEAL_TEMPERATURE;
+        this.temperature = Constants.defaultIdealTemperature();
         this.airConditionerState = new AirConditionerOff(this);
-    }
-
-    protected RoomTemperatureSimulation getRoomTemperatureSimulation() {
-        return roomTemperatureSimulation;
     }
 
     public void setRoomTemperatureSimulation(RoomTemperatureSimulation roomTemperatureSimulation) {
         this.roomTemperatureSimulation = roomTemperatureSimulation;
     }
 
-    public AirConditionerState getAirConditionerState() {
+    public synchronized AirConditionerState getAirConditionerState() {
         return airConditionerState;
     }
 
-    public void setAirConditionerState(AirConditionerState airConditionerState) {
+    public synchronized void setAirConditionerState(AirConditionerState airConditionerState) {
         if (!Objects.equals(getAirConditionerState().getClass(), airConditionerState.getClass())) {
             this.airConditionerState = airConditionerState;
             for (AirConditionerListener observer : observers) {
@@ -40,32 +35,49 @@ public class AirConditioner extends ObservableElement<AirConditionerListener> {
         }
     }
 
-    public boolean isOn() {
+    public synchronized boolean isOn() {
         return airConditionerState.getClass().equals(AirConditionerOn.class);
     }
 
-    public int getTemperature() {
+    public synchronized int getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(int temperature) {
-        if (this.temperature != temperature) {
+    public synchronized void setTemperature(int temperature) {
+        if (temperature >= Constants.airConditionerBottomRangeValue() &&
+                temperature <= Constants.airConditionerUpperRangeValue()) {
             if (!isOn()) {
-                setAirConditionerState(new AirConditionerOn(this));
+                on();
             }
 
-            this.temperature = temperature;
-            if (roomTemperatureSimulation != null) {
-                roomTemperatureSimulation.setTarget(temperature);
-            }
+            if (this.temperature != temperature) {
+                this.temperature = temperature;
+                for (AirConditionerListener observer : observers) {
+                    observer.onTemperatureChange(temperature);
+                }
 
-            for (AirConditionerListener observer : observers) {
-                observer.onTemperatureChange(temperature);
+                if (roomTemperatureSimulation != null) {
+                    roomTemperatureSimulation.setTarget(temperature);
+                }
             }
         }
     }
 
-    public void handle() {
+    public synchronized void on() {
+        setAirConditionerState(new AirConditionerOn(this));
+        if (roomTemperatureSimulation != null) {
+            roomTemperatureSimulation.setTarget(getTemperature());
+        }
+    }
+
+    public synchronized void off() {
+        setAirConditionerState(new AirConditionerOff(this));
+        if (roomTemperatureSimulation != null) {
+            roomTemperatureSimulation.stopTemperatureChange();
+        }
+    }
+
+    public synchronized void handle() {
         airConditionerState.handle();
     }
 

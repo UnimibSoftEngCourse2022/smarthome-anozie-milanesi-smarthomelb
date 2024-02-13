@@ -1,38 +1,37 @@
 package org.smarthome.simulation;
 
+import org.smarthome.util.Constants;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.smarthome.util.Constants.DEFAULT_IDEAL_TEMPERATURE;
-import static org.smarthome.util.Constants.TEMPERATURE_CHANGE_MS_DURATION;
-
 public class RoomTemperatureSimulation {
 
-    private RoomTemperatureListener roomTemperatureListener;
+    private RoomTemperatureSimulationListener roomTemperatureSimulationListener;
     private int temperature;
     private int target;
     private final ScheduledExecutorService temperatureExecutor;
 
     public RoomTemperatureSimulation() {
-        this.temperature = DEFAULT_IDEAL_TEMPERATURE;
-        this.target = DEFAULT_IDEAL_TEMPERATURE;
+        this.temperature = Constants.defaultIdealTemperature();
+        this.target = Constants.defaultIdealTemperature();
         this.temperatureExecutor = Executors.newSingleThreadScheduledExecutor();
         startTemperatureSimulation();
     }
 
-    public void setRoomTemperatureListener(RoomTemperatureListener roomTemperatureListener) {
-        this.roomTemperatureListener = roomTemperatureListener;
+    public void setRoomTemperatureListener(RoomTemperatureSimulationListener roomTemperatureSimulationListener) {
+        this.roomTemperatureSimulationListener = roomTemperatureSimulationListener;
     }
 
     public synchronized int getTemperature() {
         return temperature;
     }
 
-    private synchronized void setTemperature(int temperature) {
+    public synchronized void setTemperature(int temperature) {
         this.temperature = temperature;
-        if (roomTemperatureListener != null) {
-            roomTemperatureListener.onTemperatureChange(temperature);
+        if (roomTemperatureSimulationListener != null) {
+            roomTemperatureSimulationListener.onTemperatureChange(temperature);
         }
     }
 
@@ -53,13 +52,13 @@ public class RoomTemperatureSimulation {
             } else if (currentTemperature > currentTarget) {
                 setTemperature(currentTemperature - 1);
             }
-        }, 0, TEMPERATURE_CHANGE_MS_DURATION, TimeUnit.MILLISECONDS);
+        }, 0, Constants.temperatureChangeMsDuration(), TimeUnit.MILLISECONDS);
     }
 
     public void stopTemperatureChange() {
         setTarget(getTemperature());
-        if (roomTemperatureListener != null) {
-            roomTemperatureListener.onStopTemperatureChange();
+        if (roomTemperatureSimulationListener != null) {
+            roomTemperatureSimulationListener.onStopTemperatureChange();
         }
     }
 

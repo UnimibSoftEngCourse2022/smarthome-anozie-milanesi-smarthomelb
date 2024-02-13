@@ -1,13 +1,13 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
-import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.illumination.Light;
+import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.domain.sensor.TemperatureSensor;
 import org.smarthome.domain.temperature.AirConditioner;
 import org.smarthome.exception.UnidentifiedRoomException;
 
@@ -26,22 +26,25 @@ class SmartHomeBuilderTest {
         assertNotNull(room1.getIllumination());
         assertNull(room1.getAirConditioner());
         assertNull(room1.getPresenceSensor());
+        assertNull(room1.getTemperatureSensor());
 
         Room room2 = new SmartHomeRoomBuilder("test2")
                 .addLight(new Light())
                 .setAirConditioner(new AirConditioner())
                 .setPresenceSensor(new PresenceSensor())
+                .setTemperatureSensor(new TemperatureSensor())
                 .create();
         assertNotNull(room2.getIllumination());
         assertNotNull(room2.getAirConditioner());
         assertNotNull(room2.getPresenceSensor());
+        assertNotNull(room2.getTemperatureSensor());
 
         // create smartHome
         SmartHome smartHome = new SmartHomeBuilder()
                 .addRoom(room1)
                 .addRoom(room2)
                 .setVacuumChargingStationPosition(room1)
-                .setSiren(new Siren())
+                .setProtection(new Siren(), new EmergencyService("112"))
                 .create();
 
         assertNotNull(smartHome.getRooms());

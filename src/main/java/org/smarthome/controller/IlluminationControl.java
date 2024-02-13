@@ -27,8 +27,8 @@ public class IlluminationControl extends AutomaticControl<Boolean> {
 
     @Override
     public void handleAutomation(Boolean turnOn) {
-        if (illumination != null) {
-            if (turnOn != null && turnOn) {
+        if (illumination != null && turnOn != null) {
+            if (turnOn) {
                 illumination.on();
             } else {
                 illumination.off();

@@ -6,6 +6,7 @@ import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.listener.VacuumListener;
 import org.smarthome.exception.CleaningException;
+import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.smarthome.util.Constants.*;
 
 class VacuumTest {
 
@@ -112,7 +112,7 @@ class VacuumTest {
 
             @Override
             public void onCleaningException(CleaningException e) {
-                assertEquals(TRANSIT_TO_CHARGING_STATION_MESSAGE, e.getMessage());
+                assertEquals(Constants.transitToChargingStationMessage(), e.getMessage());
             }
         });
 
@@ -141,7 +141,7 @@ class VacuumTest {
 
             @Override
             public void onCleaningException(CleaningException e) {
-                assertEquals(ALREADY_CLEANING_MESSAGE, e.getMessage());
+                assertEquals(Constants.alreadyCleaningMessage(), e.getMessage());
             }
         });
 
@@ -179,7 +179,7 @@ class VacuumTest {
 
             @Override
             public void onCleaningException(CleaningException e) {
-                assertEquals(NOT_CLEANING_YET_MESSAGE, e.getMessage());
+                assertEquals(Constants.notCleaningYetMessage(), e.getMessage());
             }
         });
 
@@ -209,7 +209,7 @@ class VacuumTest {
 
             @Override
             public void onCleaningException(CleaningException e) {
-                assertEquals(CLEANING_ALREADY_TERMINATED_MESSAGE, e.getMessage());
+                assertEquals(Constants.cleaningAlreadyTerminatedMessage(), e.getMessage());
             }
         });
 

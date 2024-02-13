@@ -1,8 +1,10 @@
 package org.smarthome.controller;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.illumination.*;
+import org.smarthome.listener.AutomationListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +72,7 @@ class IlluminationControlTest {
     }
 
     @Test
-    void automationObserverTest() {
+    void automationObserverTest1() {
         illuminationControl.handleAutomation(true);
         illuminationControl.addObserver(automationActive -> {
             assertFalse(automationActive);
@@ -81,5 +83,12 @@ class IlluminationControlTest {
         });
         illuminationControl.handleIllumination();
     }
+
+    @Test
+    void automationObserverTest2() {
+        illuminationControl.addObserver(Assertions::assertTrue);
+        illuminationControl.setAutomationActive(true);
+    }
+
 
 }

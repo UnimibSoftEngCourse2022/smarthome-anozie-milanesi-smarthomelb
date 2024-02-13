@@ -1,8 +1,7 @@
 package org.smarthome.domain.cleaning;
 
 import org.smarthome.exception.CleaningException;
-
-import static org.smarthome.util.Constants.NOT_CLEANING_YET_MESSAGE;
+import org.smarthome.util.Constants;
 
 public class Charging extends VacuumState {
 
@@ -19,7 +18,7 @@ public class Charging extends VacuumState {
 
     @Override
     public void stop() throws CleaningException {
-        throw new CleaningException(NOT_CLEANING_YET_MESSAGE);
+        throw new CleaningException(Constants.notCleaningYetMessage());
     }
 
 }

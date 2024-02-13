@@ -1,6 +1,6 @@
 package org.smarthome.simulation;
 
-public interface RoomTemperatureListener {
+public interface RoomTemperatureSimulationListener {
     void onTemperatureChange(int temperature);
     void onStopTemperatureChange();
 }

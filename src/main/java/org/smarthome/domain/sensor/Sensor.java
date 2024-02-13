@@ -2,11 +2,10 @@ package org.smarthome.domain.sensor;
 
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.SensorListener;
+import org.smarthome.util.Constants;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static org.smarthome.util.Constants.SENSOR_ITERATION_PERIOD_MS_DURATION;
 
 public abstract class Sensor<T>
         extends ObservableElement<SensorListener<T>>
@@ -19,6 +18,10 @@ public abstract class Sensor<T>
         startDetection();
     }
 
+    public synchronized T getData() {
+        return data;
+    }
+
     public void notifyDataChange() {
         observers.forEach(observer -> observer.onDataChange(data));
     }
@@ -26,12 +29,12 @@ public abstract class Sensor<T>
     public void startDetection() {
         // MAPE feedback control loop
         Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this::knowledge,
-                        0, SENSOR_ITERATION_PERIOD_MS_DURATION, TimeUnit.MILLISECONDS);
+                .scheduleAtFixedRate(this::loop,
+                        0, Constants.sensorIterationPeriodMsDuration(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void knowledge() {
+    public void loop() {
         T detected = monitor();
         if (analyze(detected)) {
             plan();

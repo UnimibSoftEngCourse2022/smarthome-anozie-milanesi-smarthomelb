@@ -1,11 +1,10 @@
 package org.smarthome.controller;
 
 import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.util.Constants;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static org.smarthome.util.Constants.PRESENCE_TIMER_MS_DURATION;
 
 public class SensorPresenceControl extends SensorControl<Boolean> {
 
@@ -24,12 +23,15 @@ public class SensorPresenceControl extends SensorControl<Boolean> {
 
     @Override
     public void onDataChange(Boolean presence) {
-        if (presence != null && !protectionControl.emergencySituation()) {
-            if (illuminationControl.isAutomationActive()) {
-                if (presence) {
+        if (presence != null) {
+            if (presence) {
+                if (!protectionControl.emergencySituation() &&
+                        illuminationControl.isAutomationActive()) {
                     illuminationControl.handleAutomation(true);
                     resetPresenceTimer();
-                } else {
+                }
+            } else {
+                if (illuminationControl.isAutomationActive()) {
                     startPresenceTimer();
                 }
             }
@@ -37,9 +39,7 @@ public class SensorPresenceControl extends SensorControl<Boolean> {
     }
 
     private void startPresenceTimer() {
-        if (presenceTimer != null) {
-            presenceTimer.cancel();
-        }
+        resetPresenceTimer();
 
         presenceTimer = new Timer();
         presenceTimer.schedule(new TimerTask() {
@@ -47,7 +47,7 @@ public class SensorPresenceControl extends SensorControl<Boolean> {
             public void run() {
                 illuminationControl.handleAutomation(false);
             }
-        }, PRESENCE_TIMER_MS_DURATION);
+        }, Constants.presenceTimerMsDuration());
     }
 
     private void resetPresenceTimer() {

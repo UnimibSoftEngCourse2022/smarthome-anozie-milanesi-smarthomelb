@@ -8,11 +8,13 @@ import java.util.Objects;
 public class Alarm extends ObservableElement<AlarmListener> {
 
     private final Siren siren;
+    private final EmergencyService emergencyService;
     private AlarmState alarmState;
 
-    public Alarm(Siren siren) {
+    public Alarm(Siren siren, EmergencyService emergencyService) {
         super();
         this.siren = siren;
+        this.emergencyService = emergencyService;
         this.alarmState = new Disarmed(this);
     }
 
@@ -20,11 +22,20 @@ public class Alarm extends ObservableElement<AlarmListener> {
         return siren;
     }
 
-    public AlarmState getAlarmState() {
+    public EmergencyService getEmergencyService() {
+        return emergencyService;
+    }
+
+    public synchronized AlarmState getAlarmState() {
         return alarmState;
     }
 
-    public void setAlarmState(AlarmState alarmState) {
+    public synchronized boolean isArmed() {
+        return getAlarmState().getClass().equals(Armed.class);
+    }
+
+
+    public synchronized void setAlarmState(AlarmState alarmState) {
         if (!Objects.equals(getAlarmState().getClass(), alarmState.getClass())) {
             this.alarmState = alarmState;
             for (AlarmListener observer : observers) {
@@ -33,11 +44,11 @@ public class Alarm extends ObservableElement<AlarmListener> {
         }
     }
 
-    public void handle() {
+    public synchronized void handle() {
         alarmState.handle();
     }
 
-    public boolean emergency() {
+    public synchronized boolean emergency() {
         return alarmState.emergency();
     }
 

@@ -1,20 +1,25 @@
 package org.smarthome.domain.protection;
 
-public class EmergencyService {
+import org.smarthome.listener.EmergencyServiceListener;
+import org.smarthome.listener.ObservableElement;
 
-    private static EmergencyService instance;
+public class EmergencyService extends ObservableElement<EmergencyServiceListener> {
 
-    private EmergencyService() {}
+    private final String emergencyNumber;
 
-    public synchronized static EmergencyService getInstance() {
-        if (instance == null) {
-            instance = new EmergencyService();
-        }
-        return instance;
+    public EmergencyService(String emergencyNumber) {
+        this.emergencyNumber = emergencyNumber;
     }
 
-    public void makeEmergencyCall() {
+    public String getEmergencyNumber() {
+        return emergencyNumber;
+    }
+
+    public void emergencyCall() {
         // Emulate an emergency call
+        for (EmergencyServiceListener observer : observers) {
+            observer.onEmergencyCall(emergencyNumber);
+        }
     }
 
 }

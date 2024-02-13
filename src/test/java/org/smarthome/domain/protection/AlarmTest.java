@@ -11,7 +11,7 @@ class AlarmTest {
 
     @BeforeEach
     void setUp() {
-        alarm = new Alarm(new Siren());
+        alarm = new Alarm(new Siren(), new EmergencyService("112"));
     }
 
     @Test

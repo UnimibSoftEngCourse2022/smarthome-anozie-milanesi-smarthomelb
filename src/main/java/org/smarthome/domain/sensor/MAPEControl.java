@@ -1,7 +1,7 @@
 package org.smarthome.domain.sensor;
 
 public interface MAPEControl<T> {
-    void knowledge();
+    void loop();
     T monitor();
     /**
      *@return {@code true} if analyze if the analysis is successful, otherwise {@code false}

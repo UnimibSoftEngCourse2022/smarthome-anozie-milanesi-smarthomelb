@@ -47,7 +47,7 @@ public class Illumination extends ObservableElement<IlluminationListener> {
         }
     }
 
-    public void handle() {
+    public synchronized void handle() {
         illuminationState.handle();
     }
 

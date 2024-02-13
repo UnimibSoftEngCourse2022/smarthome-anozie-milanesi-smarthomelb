@@ -1,6 +1,5 @@
 package org.smarthome.domain.illumination;
 
-import org.smarthome.domain.temperature.AirConditionerOn;
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.LightActionListener;
 
@@ -29,7 +28,7 @@ public class Light extends ObservableElement<LightActionListener> {
     }
 
     public synchronized boolean isOn() {
-        return lightState.getClass().equals(LightOn.class);
+        return getLightState().getClass().equals(LightOn.class);
     }
 
     public void handle() {

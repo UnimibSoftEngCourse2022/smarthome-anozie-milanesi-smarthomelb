@@ -2,14 +2,19 @@ package org.smarthome.controller;
 
 import org.smarthome.domain.Room;
 import org.smarthome.domain.protection.Alarm;
+import org.smarthome.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ProtectionControl {
 
     private final Alarm alarm;
     private final List<IlluminationControl> illuminationControls;
+    private Timer emergencyTimer;
+    private boolean emergencyTimerRunning;
 
     public ProtectionControl(Alarm alarm, List<Room> rooms) {
         this.alarm = alarm;
@@ -17,6 +22,7 @@ public class ProtectionControl {
         for (Room room : rooms) {
             illuminationControls.add(room.getIlluminationControl());
         }
+        this.emergencyTimerRunning = false;
     }
 
     public void handleAlarm() {
@@ -27,25 +33,48 @@ public class ProtectionControl {
 
     public boolean emergencySituation() {
         if (alarm != null) {
-            boolean isEmergency = alarm.emergency();
-            if (isEmergency) {
-                turnOffAllIllumination();
+            boolean emergency = alarm.emergency();
+            if (emergency) {
+                startEmergencyTimer();
+            } else {
+                resetEmergencyTimer();
             }
 
-            return isEmergency;
+            return emergency;
         }
         return false;
     }
 
-    public void deactivateSiren() {
-        if (alarm != null) {
-            alarm.getSiren().setActive(false);
+    private void handleEmergency() {
+        if (alarm.isArmed()) {
+            for (IlluminationControl illuminationControl : illuminationControls) {
+                illuminationControl.handleAutomation(false);
+            }
+            alarm.getEmergencyService().emergencyCall();
         }
     }
 
-    private void turnOffAllIllumination() {
-        for (IlluminationControl illuminationControl : illuminationControls) {
-            illuminationControl.handleAutomation(false);
+    private synchronized void startEmergencyTimer() {
+        if (!emergencyTimerRunning) {
+            resetEmergencyTimer();
+
+            emergencyTimer = new Timer();
+            emergencyTimerRunning = true;
+            emergencyTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    handleEmergency();
+                    emergencyTimerRunning = false;
+                }
+            }, Constants.emergencyTimerMsDuration());
+        }
+    }
+
+    private void resetEmergencyTimer() {
+        if (emergencyTimer != null) {
+            emergencyTimer.cancel();
+            emergencyTimer = null;
+            emergencyTimerRunning = false;
         }
     }
 

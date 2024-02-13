@@ -4,13 +4,11 @@ import org.smarthome.listener.ObservableElement;
 import org.smarthome.domain.Room;
 import org.smarthome.listener.VacuumListener;
 import org.smarthome.exception.CleaningException;
+import org.smarthome.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static org.smarthome.util.Constants.CLEANING_ROOM_MS_DURATION;
-import static org.smarthome.util.Constants.MOVING_TO_ROOM_MS_DURATION;
 
 public class Vacuum extends ObservableElement<VacuumListener> {
 
@@ -126,12 +124,12 @@ public class Vacuum extends ObservableElement<VacuumListener> {
 
     private void moveToRoom(Room room) throws InterruptedException {
         setCurrentPosition(room);
-        Thread.sleep(MOVING_TO_ROOM_MS_DURATION);
+        Thread.sleep(Constants.movingToRoomMsDuration());
     }
 
     private void cleanCurrentRoom() throws InterruptedException {
         // simulating vacuum cleaning room
-        Thread.sleep(CLEANING_ROOM_MS_DURATION);
+        Thread.sleep(Constants.cleaningRoomMsDuration());
     }
 
 }

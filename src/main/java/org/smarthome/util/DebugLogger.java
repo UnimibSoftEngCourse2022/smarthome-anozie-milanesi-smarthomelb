@@ -2,8 +2,6 @@ package org.smarthome.util;
 
 import java.util.logging.Logger;
 
-import static org.smarthome.util.Constants.IS_DEBUG_MODE;
-
 public class DebugLogger {
 
     private final Logger logger;
@@ -13,13 +11,13 @@ public class DebugLogger {
     }
 
     public void info(String msg) {
-        if (IS_DEBUG_MODE) {
+        if (Constants.debugLoggerActive()) {
             logger.info(msg);
         }
     }
 
     public void warning(String msg) {
-        if (IS_DEBUG_MODE) {
+        if (Constants.debugLoggerActive()) {
             logger.warning(msg);
         }
     }
