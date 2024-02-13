@@ -9,7 +9,9 @@ import java.util.concurrent.TimeUnit;
 public class RoomTemperatureSimulation {
 
     private RoomTemperatureSimulationListener roomTemperatureSimulationListener;
+    // temperatura attuale nella stanza
     private int temperature;
+    // target di temperatura che si vuole raggiungere
     private int target;
     private final ScheduledExecutorService temperatureExecutor;
 

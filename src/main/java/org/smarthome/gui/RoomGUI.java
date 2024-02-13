@@ -18,8 +18,8 @@ public class RoomGUI extends JFrame {
         setSize(600,600);
         setTitle(room.getName());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setVisible(true);
         initIllumination(room);
+        setVisible(true);
     }
 
     public void initIllumination(Room room) {

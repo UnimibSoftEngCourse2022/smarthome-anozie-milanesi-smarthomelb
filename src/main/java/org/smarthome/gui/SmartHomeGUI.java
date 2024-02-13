@@ -14,13 +14,14 @@ public class SmartHomeGUI extends JFrame {
     public SmartHomeGUI(SmartHome home) {
         setContentPane(panel1);
         setLayout(new FlowLayout());
+        setTitle("Smart Home");
         setSize(600, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setVisible(true);
 
         for(Room room : home.getRooms()) {
             panel1.add(createRoomButton(room));
         }
+        setVisible(true);
     }
 
     public JButton createRoomButton(Room room) {
