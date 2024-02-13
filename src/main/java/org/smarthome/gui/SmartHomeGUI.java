@@ -30,7 +30,6 @@ public class SmartHomeGUI extends JFrame {
         roomButton.addActionListener(e -> {
             RoomGUI roomGUI = new RoomGUI(room);
         });
-
         return roomButton;
     }
 

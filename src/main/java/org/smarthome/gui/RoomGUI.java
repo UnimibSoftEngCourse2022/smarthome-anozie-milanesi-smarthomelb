@@ -2,15 +2,10 @@ package org.smarthome.gui;
 
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.illumination.LightOff;
 import org.smarthome.domain.illumination.LightOn;
-import org.smarthome.domain.illumination.LightState;
-import org.smarthome.listener.LightActionListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RoomGUI extends JFrame {
 
