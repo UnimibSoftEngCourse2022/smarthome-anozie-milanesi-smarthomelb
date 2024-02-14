@@ -9,6 +9,7 @@ import org.smarthome.listener.TemperatureSettingsListener;
 import org.smarthome.simulation.RoomTemperatureSimulationListener;
 import org.smarthome.simulation.RoomTemperatureSimulation;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
@@ -76,7 +77,7 @@ class TemperatureControlTest {
         temperatureControl.decreaseTemperature();
         temperatureControl.decreaseTemperature();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test
@@ -107,7 +108,7 @@ class TemperatureControlTest {
         temperatureSettings.setIdealTemperature(idealTemperatureExpected);
         temperatureSettings.setThreshold(thresholdExpected);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         CountDownLatch latch1 = new CountDownLatch(1);
 
@@ -141,7 +142,7 @@ class TemperatureControlTest {
 
         temperatureControl.handleAutomation(roomTemperatureSimulation.getTemperature());
 
-        latch1.await();
+        CountDownLatchWaiter.awaitLatch(latch1);
 
         assertEquals(AirConditionerOn.class, airConditioner.getAirConditionerState().getClass());
         assertEquals(temperatureSettings.getIdealTemperature(), airConditioner.getTemperature());

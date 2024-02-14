@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.TemperatureSettingsListener;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ class TemperatureSettingsTest {
         temperatureSettings.setIdealTemperature(1000);
         temperatureSettings.setThreshold(1000);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test

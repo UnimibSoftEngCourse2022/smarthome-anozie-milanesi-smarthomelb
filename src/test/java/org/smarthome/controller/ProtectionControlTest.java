@@ -7,6 +7,7 @@ import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.*;
+import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +91,7 @@ class ProtectionControlTest {
 
         protectionController.emergencySituation();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertTrue(siren.isActive());
         for (Room room : rooms) {

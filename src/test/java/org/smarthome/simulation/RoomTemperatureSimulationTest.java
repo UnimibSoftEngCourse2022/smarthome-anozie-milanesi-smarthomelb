@@ -3,6 +3,7 @@ package org.smarthome.simulation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
@@ -43,7 +44,7 @@ class RoomTemperatureSimulationTest {
 
         simulationTemperature.setTarget(target);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(target, simulationTemperature.getTemperature());
     }
@@ -70,7 +71,7 @@ class RoomTemperatureSimulationTest {
 
         simulationTemperature.setTarget(target);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(target, simulationTemperature.getTemperature());
     }
@@ -97,7 +98,7 @@ class RoomTemperatureSimulationTest {
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.stopTemperatureChange();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertNotEquals(target, simulationTemperature.getTemperature());
     }
@@ -127,7 +128,7 @@ class RoomTemperatureSimulationTest {
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.setTarget(targetFinal);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(targetFinal, simulationTemperature.getTemperature());
     }

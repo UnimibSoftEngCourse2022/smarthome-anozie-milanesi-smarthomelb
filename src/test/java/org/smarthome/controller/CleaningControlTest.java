@@ -10,6 +10,7 @@ import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ class CleaningControlTest {
 
         cleaningControl.startCleaning();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
@@ -114,7 +115,7 @@ class CleaningControlTest {
         Thread.sleep(Constants.cleaningRoomMsDuration() * 3L);
         cleaningControl.stopCleaning();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test
@@ -167,7 +168,7 @@ class CleaningControlTest {
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.startCleaning();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
@@ -214,7 +215,7 @@ class CleaningControlTest {
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.stopCleaning();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }

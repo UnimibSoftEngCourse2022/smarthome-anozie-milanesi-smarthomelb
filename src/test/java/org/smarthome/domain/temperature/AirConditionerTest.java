@@ -6,6 +6,7 @@ import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.simulation.RoomTemperatureSimulationListener;
 import org.smarthome.simulation.RoomTemperatureSimulation;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
@@ -86,7 +87,7 @@ class AirConditionerTest {
         Thread.sleep(1);
         airConditioner.setTemperature(expected);
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }
