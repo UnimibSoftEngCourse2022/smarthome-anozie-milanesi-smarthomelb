@@ -49,7 +49,7 @@ class SensorTemperatureControlTest {
 
         room.getTemperatureControl().setAutomationActive(true);
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         room.getTemperatureSimulation().setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -77,6 +77,7 @@ class SensorTemperatureControlTest {
             }
         });
 
+        Thread.sleep(1);
         room.getTemperatureSimulation().setTarget(
                 room.getTemperatureSettings().getIdealTemperature() +
                         (room.getTemperatureSettings().getThreshold() * 2));
@@ -100,7 +101,7 @@ class SensorTemperatureControlTest {
         room.getTemperatureSimulation().setTarget(startTemperature);
         room.getTemperatureSimulation().setTemperature(startTemperature);
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         room.getTemperatureSimulation().setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override

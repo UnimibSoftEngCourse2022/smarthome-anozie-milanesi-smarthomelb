@@ -13,6 +13,7 @@ import org.smarthome.domain.protection.EmergencyService;
 import org.smarthome.domain.protection.Siren;
 import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.listener.EmergencyServiceListener;
+import org.smarthome.listener.LightActionListener;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -51,12 +52,13 @@ class SensorPresenceControlTest {
             assertEquals(LightOff.class, light.getLightState().getClass());
         }
 
-        CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch = new CountDownLatch(3);
 
         for (Light light : room.getIllumination().getLights()) {
             light.addObserver(lightState -> latch.countDown());
         }
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -71,22 +73,23 @@ class SensorPresenceControlTest {
     void presenceSensorControlIlluminationTest2() throws InterruptedException {
         room.getIlluminationControl().setAutomationActive(true);
 
-        CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch1 = new CountDownLatch(3);
 
         for (Light light : room.getIllumination().getLights()) {
             light.addObserver(lightState -> latch.countDown());
         }
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        CountDownLatch latch1 = new CountDownLatch(3);
 
         for (Light light : room.getIllumination().getLights()) {
             light.addObserver(lightState -> latch1.countDown());
         }
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(false);
 
         assertTrue(latch1.await(10, TimeUnit.SECONDS));
@@ -101,7 +104,7 @@ class SensorPresenceControlTest {
     void presenceSensorControlProtectionTest1() throws InterruptedException {
         room.getIlluminationControl().setAutomationActive(true);
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         List<Room> rooms = smartHome.getRooms();
 
         for (Room room : rooms) {
@@ -119,6 +122,7 @@ class SensorPresenceControlTest {
             latch.countDown();
         });
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -131,6 +135,8 @@ class SensorPresenceControlTest {
         List<Room> rooms = smartHome.getRooms();
         int count = 2;
 
+        final CountDownLatch latch = new CountDownLatch(count);
+
         for (Room room : rooms) {
             Illumination illumination = room.getIllumination();
             illumination.handle();
@@ -141,8 +147,6 @@ class SensorPresenceControlTest {
             }
             count++;
         }
-
-        CountDownLatch latch = new CountDownLatch(count);
 
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
         smartHome.getProtectionControl().handleAlarm();
@@ -159,6 +163,7 @@ class SensorPresenceControlTest {
             }
         }
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -178,7 +183,7 @@ class SensorPresenceControlTest {
         room.getIlluminationControl().setAutomationActive(true);
 
         List<Room> rooms = smartHome.getRooms();
-        CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(2);
 
         for (Room room : rooms) {
             Illumination illumination = room.getIllumination();
@@ -196,6 +201,7 @@ class SensorPresenceControlTest {
             latch.countDown();
         });
 
+        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
