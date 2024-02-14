@@ -12,6 +12,7 @@ import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,7 +75,8 @@ class TemperatureControlTest {
         temperatureControl.decreaseTemperature();
         temperatureControl.decreaseTemperature();
         temperatureControl.decreaseTemperature();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
     @Test
@@ -105,7 +107,7 @@ class TemperatureControlTest {
         temperatureSettings.setIdealTemperature(idealTemperatureExpected);
         temperatureSettings.setThreshold(thresholdExpected);
 
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         CountDownLatch latch1 = new CountDownLatch(1);
 

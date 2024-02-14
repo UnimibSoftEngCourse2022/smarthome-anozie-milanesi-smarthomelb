@@ -16,6 +16,7 @@ import org.smarthome.listener.EmergencyServiceListener;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,7 +58,8 @@ class SensorPresenceControlTest {
         }
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(IlluminationOn.class, room.getIllumination().getIlluminationState().getClass());
         for (Light light : room.getIllumination().getLights()) {
@@ -76,7 +78,8 @@ class SensorPresenceControlTest {
         }
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         CountDownLatch latch1 = new CountDownLatch(3);
 
@@ -116,7 +119,8 @@ class SensorPresenceControlTest {
         });
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
     @Test
@@ -155,7 +159,8 @@ class SensorPresenceControlTest {
         }
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertTrue(smartHome.getAlarm().getSiren().isActive());
         for (Room room : rooms) {
@@ -191,7 +196,8 @@ class SensorPresenceControlTest {
         });
 
         room.getPresenceSimulation().setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertFalse(smartHome.getAlarm().getSiren().isActive());
         for (Room room : rooms) {

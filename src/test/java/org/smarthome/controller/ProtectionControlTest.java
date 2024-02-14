@@ -11,6 +11,7 @@ import org.smarthome.domain.protection.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -88,7 +89,8 @@ class ProtectionControlTest {
         }
 
         protectionController.emergencySituation();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertTrue(siren.isActive());
         for (Room room : rooms) {

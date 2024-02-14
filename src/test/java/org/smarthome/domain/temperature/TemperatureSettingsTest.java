@@ -6,6 +6,7 @@ import org.smarthome.listener.TemperatureSettingsListener;
 import org.smarthome.util.Constants;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +46,7 @@ class TemperatureSettingsTest {
         temperatureSettings.setIdealTemperature(1000);
         temperatureSettings.setThreshold(1000);
 
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
     @Test

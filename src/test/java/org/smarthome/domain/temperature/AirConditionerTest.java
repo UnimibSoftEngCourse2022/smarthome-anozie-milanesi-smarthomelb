@@ -9,6 +9,7 @@ import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +85,8 @@ class AirConditionerTest {
         airConditioner.setTemperature(12);
         Thread.sleep(1);
         airConditioner.setTemperature(expected);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
 }

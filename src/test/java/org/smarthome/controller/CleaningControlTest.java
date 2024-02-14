@@ -15,10 +15,10 @@ import org.smarthome.util.DebugLogger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CleaningControlTest {
 
@@ -73,7 +73,9 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
@@ -111,7 +113,8 @@ class CleaningControlTest {
         cleaningControl.startCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration() * 3L);
         cleaningControl.stopCleaning();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
     @Test
@@ -163,7 +166,9 @@ class CleaningControlTest {
         cleaningControl.startCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.startCleaning();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
@@ -208,7 +213,8 @@ class CleaningControlTest {
         cleaningControl.stopCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.stopCleaning();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
 }

@@ -6,10 +6,10 @@ import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RoomTemperatureSimulationTest {
 
@@ -42,7 +42,9 @@ class RoomTemperatureSimulationTest {
         });
 
         simulationTemperature.setTarget(target);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertEquals(target, simulationTemperature.getTemperature());
     }
 
@@ -67,7 +69,9 @@ class RoomTemperatureSimulationTest {
         });
 
         simulationTemperature.setTarget(target);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertEquals(target, simulationTemperature.getTemperature());
     }
 
@@ -92,7 +96,9 @@ class RoomTemperatureSimulationTest {
         simulationTemperature.setTarget(target);
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.stopTemperatureChange();
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertNotEquals(target, simulationTemperature.getTemperature());
     }
 
@@ -120,7 +126,9 @@ class RoomTemperatureSimulationTest {
         simulationTemperature.setTarget(target);
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.setTarget(targetFinal);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
         assertEquals(targetFinal, simulationTemperature.getTemperature());
     }
 

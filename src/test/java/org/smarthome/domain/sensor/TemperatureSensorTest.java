@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.simulation.RoomTemperatureSimulation;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +35,8 @@ class TemperatureSensorTest {
         });
 
         roomTemperatureSimulation.setTarget(target);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
 }

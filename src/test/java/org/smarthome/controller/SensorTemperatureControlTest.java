@@ -17,6 +17,7 @@ import org.smarthome.util.Constants;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,7 +81,7 @@ class SensorTemperatureControlTest {
                 room.getTemperatureSettings().getIdealTemperature() +
                         (room.getTemperatureSettings().getThreshold() * 2));
 
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(AirConditionerOff.class, room.getAirConditioner().getAirConditionerState().getClass());
         assertEquals(room.getTemperatureSettings().getIdealTemperature(), room.getAirConditioner().getTemperature());
@@ -131,7 +132,7 @@ class SensorTemperatureControlTest {
         room.getTemperatureControl().decreaseTemperature();
         room.getTemperatureControl().decreaseTemperature();
 
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(AirConditionerOn.class, room.getAirConditioner().getAirConditionerState().getClass());
         assertNotEquals(room.getTemperatureSettings().getIdealTemperature(), room.getAirConditioner().getTemperature());

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.simulation.RoomPresenceSimulation;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PresenceSensorTest {
 
@@ -32,7 +32,8 @@ class PresenceSensorTest {
         });
 
         roomPresenceSimulation.setPresence(true);
-        latch.await();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
     }
 
 }
