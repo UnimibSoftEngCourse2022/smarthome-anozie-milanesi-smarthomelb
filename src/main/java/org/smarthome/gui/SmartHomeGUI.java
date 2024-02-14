@@ -6,6 +6,9 @@ import org.smarthome.domain.SmartHome;
 import javax.swing.*;
 import java.awt.*;
 
+import static org.smarthome.util.Constants.defaultDialogHeightSetting;
+import static org.smarthome.util.Constants.defaultDialogWidthSetting;
+
 
 public class SmartHomeGUI extends JFrame {
 
@@ -15,7 +18,7 @@ public class SmartHomeGUI extends JFrame {
         setContentPane(panel1);
         setLayout(new FlowLayout());
         setTitle("Smart Home");
-        setSize(600, 600);
+        setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         for(Room room : home.getRooms()) {

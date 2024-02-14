@@ -7,6 +7,9 @@ import org.smarthome.domain.illumination.LightOn;
 import javax.swing.*;
 import java.awt.*;
 
+import static org.smarthome.util.Constants.defaultDialogHeightSetting;
+import static org.smarthome.util.Constants.defaultDialogWidthSetting;
+
 public class RoomGUI extends JFrame {
 
     private JPanel panel1;
@@ -15,7 +18,7 @@ public class RoomGUI extends JFrame {
     public RoomGUI(Room room) throws HeadlessException {
         setContentPane(panel1);
         setLayout(new FlowLayout());
-        setSize(600,600);
+        setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
         setTitle(room.getName());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initIllumination(room);

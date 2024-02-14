@@ -9,6 +9,8 @@ import org.smarthome.listener.VacuumListener;
 
 import javax.swing.*;
 
+import static org.smarthome.util.Constants.*;
+
 public class VacuumGUI extends JFrame implements VacuumListener {
 
     private JPanel panel1;
@@ -20,7 +22,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
 
     public VacuumGUI(SmartHome smartHome) {
         setContentPane(panel1);
-        setSize(768,432);
+        setSize(defaultJFrameWidthSetting(),defaultJFrameHeightSetting());
         setTitle("Cleaning");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initCleaningGUI(smartHome.getVacuum(), smartHome.getCleaningControl());
@@ -70,7 +72,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
         JLabel label = new JLabel("The cleaning of the house is now complete!");
         dialog.setTitle("Complete Cleaning");
         dialog.add(label);
-        dialog.setSize(384, 216);
+        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
         dialog.setVisible(true);
     }
 
@@ -80,7 +82,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
         JLabel label = new JLabel("The cleaning process has stopped!");
         dialog.setTitle("Stopped Cleaning");
         dialog.add(label);
-        dialog.setSize(384, 216);
+        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
         dialog.setVisible(true);
     }
 
@@ -90,7 +92,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
         JLabel label = new JLabel(e.getMessage());
         dialog.setTitle("Cleaning Error!");
         dialog.add(label);
-        dialog.setSize(384, 216);
+        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
         dialog.setVisible(true);
     }
 
