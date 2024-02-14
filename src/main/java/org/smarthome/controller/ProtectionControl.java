@@ -12,15 +12,15 @@ import java.util.TimerTask;
 public class ProtectionControl {
 
     private final Alarm alarm;
-    private final List<IlluminationControl> illuminationControls;
+    private final List<IlluminationControl> homeIlluminations;
     private Timer emergencyTimer;
     private boolean emergencyTimerRunning;
 
     public ProtectionControl(Alarm alarm, List<Room> rooms) {
         this.alarm = alarm;
-        this.illuminationControls = new ArrayList<>();
+        this.homeIlluminations = new ArrayList<>();
         for (Room room : rooms) {
-            illuminationControls.add(room.getIlluminationControl());
+            homeIlluminations.add(room.getIlluminationControl());
         }
         this.emergencyTimerRunning = false;
     }
@@ -47,7 +47,7 @@ public class ProtectionControl {
 
     private void handleEmergency() {
         if (alarm.isArmed()) {
-            for (IlluminationControl illuminationControl : illuminationControls) {
+            for (IlluminationControl illuminationControl : homeIlluminations) {
                 illuminationControl.handleAutomation(false);
             }
             alarm.getEmergencyService().emergencyCall();

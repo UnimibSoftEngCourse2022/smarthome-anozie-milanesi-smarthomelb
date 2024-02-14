@@ -1,6 +1,6 @@
 package org.smarthome.domain.temperature;
 
-import org.smarthome.exception.TemperatureOutOfRangeException;
+import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.TemperatureSettingsListener;
 import org.smarthome.util.Constants;
@@ -44,8 +44,8 @@ public class TemperatureSettings extends ObservableElement<TemperatureSettingsLi
             }
         } else {
             for (TemperatureSettingsListener observer : observers) {
-                observer.onTemperatureOutOfRangeException(
-                        new TemperatureOutOfRangeException("Ideal temperature out of range",
+                observer.onFieldOutOfRangeException(
+                        new FieldOutOfRangeException("Ideal temperature out of range",
                                 idealTemperature,
                                 Constants.airConditionerBottomRangeValue(),
                                 Constants.airConditionerUpperRangeValue()));
@@ -67,8 +67,8 @@ public class TemperatureSettings extends ObservableElement<TemperatureSettingsLi
             }
         } else {
             for (TemperatureSettingsListener observer : observers) {
-                observer.onTemperatureOutOfRangeException(
-                        new TemperatureOutOfRangeException("Threshold out of range",
+                observer.onFieldOutOfRangeException(
+                        new FieldOutOfRangeException("Threshold out of range",
                                 threshold,
                                 Constants.temperatureThresholdBottomRangeValue(),
                                 Constants.temperatureThresholdUpperRangeValue()));

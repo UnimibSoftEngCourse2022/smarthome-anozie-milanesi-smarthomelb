@@ -3,7 +3,7 @@ package org.smarthome.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.domain.temperature.*;
-import org.smarthome.exception.TemperatureOutOfRangeException;
+import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.listener.TemperatureSettingsListener;
 import org.smarthome.simulation.RoomTemperatureSimulationListener;
@@ -98,7 +98,7 @@ class TemperatureControlTest {
             }
 
             @Override
-            public void onTemperatureOutOfRangeException(TemperatureOutOfRangeException e) {
+            public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
             }
         });
 
