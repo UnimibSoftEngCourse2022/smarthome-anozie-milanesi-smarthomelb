@@ -5,6 +5,7 @@ import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.*;
 import org.smarthome.exception.CleaningException;
+import org.smarthome.gui.dialog.VacuumDialog;
 import org.smarthome.listener.VacuumListener;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
     private JLabel stateLabel;
     private JLabel currentPositionLabel;
     private JLabel chargingStationPositionLabel;
+    private final VacuumDialog vacuumDialog;
 
     public VacuumGUI(SmartHome smartHome) {
         setContentPane(panel1);
@@ -27,6 +29,7 @@ public class VacuumGUI extends JFrame implements VacuumListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initCleaningGUI(smartHome.getVacuum(), smartHome.getCleaningControl());
         setVisible(true);
+        vacuumDialog = new VacuumDialog();
     }
 
     public void initCleaningGUI(Vacuum vacuum, CleaningControl cleaningControl) {
@@ -68,32 +71,26 @@ public class VacuumGUI extends JFrame implements VacuumListener {
 
     @Override
     public void onCompletedCleaning() {
-        JDialog dialog = new JDialog();
-        JLabel label = new JLabel("The cleaning of the house is now complete!");
-        dialog.setTitle("Complete Cleaning");
-        dialog.add(label);
-        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
-        dialog.setVisible(true);
+        vacuumDialog.setTitleDialog("Complete Cleaning");
+        vacuumDialog.setMessageDialog("The cleaning of the house is now complete!");
+        vacuumDialog.setVisible(true);
+
     }
 
     @Override
     public void onStoppedCleaning() {
-        JDialog dialog = new JDialog();
-        JLabel label = new JLabel("The cleaning process has stopped!");
-        dialog.setTitle("Stopped Cleaning");
-        dialog.add(label);
-        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
-        dialog.setVisible(true);
+        vacuumDialog.setTitleDialog("Stopped Cleaning");
+        vacuumDialog.setMessageDialog("The cleaning process has stopped!");
+        vacuumDialog.setVisible(true);
+
     }
 
     @Override
     public void onCleaningException(CleaningException e) {
-        JDialog dialog = new JDialog();
-        JLabel label = new JLabel(e.getMessage());
-        dialog.setTitle("Cleaning Error!");
-        dialog.add(label);
-        dialog.setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
-        dialog.setVisible(true);
+        vacuumDialog.setTitleDialog("Cleaning Error!");
+        vacuumDialog.setMessageDialog(e.getMessage());
+        vacuumDialog.setVisible(true);
+
     }
 
 }
