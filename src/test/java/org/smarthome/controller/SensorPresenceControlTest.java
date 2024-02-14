@@ -88,7 +88,8 @@ class SensorPresenceControlTest {
         }
 
         room.getPresenceSimulation().setPresence(false);
-        latch1.await();
+
+        assertTrue(latch1.await(10, TimeUnit.SECONDS));
 
         assertEquals(IlluminationOff.class, room.getIllumination().getIlluminationState().getClass());
         for (Light light : room.getIllumination().getLights()) {
