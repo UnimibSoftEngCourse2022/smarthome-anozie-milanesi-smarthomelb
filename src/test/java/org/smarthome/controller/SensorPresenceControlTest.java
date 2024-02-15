@@ -109,6 +109,7 @@ class SensorPresenceControlTest {
 
         room.getIllumination().addObserver(state -> {
             logger.info("illumination state change: " + state.getClass().getSimpleName());
+            assertNotNull(state);
             if (state.getClass().equals(IlluminationOn.class)) {
                 latch.countDown();
             } else {
@@ -118,6 +119,7 @@ class SensorPresenceControlTest {
         for (Light light : room.getIllumination().getLights()) {
             light.addObserver(state -> {
                 logger.info("light state change: " + state.getClass().getSimpleName());
+                assertNotNull(state);
                 if (state.getClass().equals(LightOn.class)) {
                     latch.countDown();
                 } else {
@@ -267,6 +269,7 @@ class SensorPresenceControlTest {
 
         room.getIllumination().addObserver(state -> {
             logger.info("illumination state change: " + state.getClass().getSimpleName());
+            assertNotNull(state);
             if (state.getClass().equals(IlluminationOn.class)) {
                 latch.countDown();
             } else {
@@ -276,6 +279,7 @@ class SensorPresenceControlTest {
         for (Light light : room.getIllumination().getLights()) {
             light.addObserver(state -> {
                 logger.info("light state change: " + state.getClass().getSimpleName());
+                assertNotNull(state);
                 if (state.getClass().equals(LightOn.class)) {
                     latch.countDown();
                 } else {
@@ -288,7 +292,6 @@ class SensorPresenceControlTest {
 
         CountDownLatchWaiter.awaitLatch(latch);
 
-        Thread.sleep(1);
         room.getPresenceSimulation().setPresence(false);
 
         CountDownLatchWaiter.awaitLatch(latch1);
