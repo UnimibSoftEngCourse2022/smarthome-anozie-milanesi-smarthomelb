@@ -22,9 +22,4 @@ public class VacuumDialog extends JDialog {
         label.setText(message);
     }
 
-    public static void main(String[] args) {
-        VacuumDialog dialog = new VacuumDialog();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
 }

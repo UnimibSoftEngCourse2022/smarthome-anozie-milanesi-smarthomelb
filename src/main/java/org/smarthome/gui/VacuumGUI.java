@@ -13,7 +13,6 @@ import javax.swing.*;
 import static org.smarthome.util.Constants.*;
 
 public class VacuumGUI extends JFrame implements VacuumListener {
-
     private JPanel panel1;
     private JButton startCleaningButton;
     private JButton stopCleaningButton;
@@ -90,7 +89,6 @@ public class VacuumGUI extends JFrame implements VacuumListener {
         vacuumDialog.setTitleDialog("Cleaning Error!");
         vacuumDialog.setMessageDialog(e.getMessage());
         vacuumDialog.setVisible(true);
-
     }
 
 }
