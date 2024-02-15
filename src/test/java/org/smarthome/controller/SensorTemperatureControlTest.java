@@ -16,7 +16,6 @@ import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +32,7 @@ class SensorTemperatureControlTest {
     public void setup() {
         room = new SmartHomeRoomBuilder("test1")
                 .setAirConditioner(new AirConditioner())
-                .setTemperatureSettings(new TemperatureSettings())
+                .setTemperaturePreference(new TemperaturePreference())
                 .setTemperatureSensor(new TemperatureSensor())
                 .create();
 
@@ -53,7 +52,7 @@ class SensorTemperatureControlTest {
     void sensorTemperatureControlTest() throws InterruptedException {
         assertNotNull(room.getTemperatureSensor());
         assertNotNull(room.getTemperatureSimulation());
-        assertNotNull(room.getTemperatureSettings());
+        assertNotNull(room.getTemperaturePreference());
 
         room.getTemperatureControl().setAutomationActive(true);
 
@@ -93,7 +92,7 @@ class SensorTemperatureControlTest {
         CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(AirConditionerOff.class, room.getAirConditioner().getAirConditionerState().getClass());
-        assertEquals(room.getTemperatureSettings().getIdealTemperature(), room.getAirConditioner().getTemperature());
+        assertEquals(room.getTemperaturePreference().getIdealTemperature(), room.getAirConditioner().getTemperature());
     }
 
     /* - */
@@ -103,7 +102,7 @@ class SensorTemperatureControlTest {
     void sensorTemperatureControlConcurrentTest1() throws InterruptedException {
         assertNotNull(room.getTemperatureSensor());
         assertNotNull(room.getTemperatureSimulation());
-        assertNotNull(room.getTemperatureSettings());
+        assertNotNull(room.getTemperaturePreference());
 
         room.getTemperatureControl().setAutomationActive(true);
 
@@ -136,13 +135,13 @@ class SensorTemperatureControlTest {
         });
 
         room.getTemperatureSimulation().setTarget(
-                room.getTemperatureSettings().getIdealTemperature() +
-                        (room.getTemperatureSettings().getThreshold() * 2));
+                room.getTemperaturePreference().getIdealTemperature() +
+                        (room.getTemperaturePreference().getThreshold() * 2));
 
         CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(AirConditionerOff.class, room.getAirConditioner().getAirConditionerState().getClass());
-        assertEquals(room.getTemperatureSettings().getIdealTemperature(), room.getAirConditioner().getTemperature());
+        assertEquals(room.getTemperaturePreference().getIdealTemperature(), room.getAirConditioner().getTemperature());
     }
 
     @Test
@@ -150,11 +149,11 @@ class SensorTemperatureControlTest {
     void sensorTemperatureControlConcurrentTest2() throws InterruptedException {
         assertNotNull(room.getTemperatureSensor());
         assertNotNull(room.getTemperatureSimulation());
-        assertNotNull(room.getTemperatureSettings());
+        assertNotNull(room.getTemperaturePreference());
 
         room.getTemperatureControl().setAutomationActive(true);
-        int startTemperature = room.getTemperatureSettings().getIdealTemperature() +
-                (room.getTemperatureSettings().getThreshold() * 2);
+        int startTemperature = room.getTemperaturePreference().getIdealTemperature() +
+                (room.getTemperaturePreference().getThreshold() * 2);
 
         room.getTemperatureSimulation().setTarget(startTemperature);
         room.getTemperatureSimulation().setTemperature(startTemperature);
@@ -180,7 +179,7 @@ class SensorTemperatureControlTest {
 
             @Override
             public void onTemperatureChange(int temperature) {
-                if (temperature == room.getTemperatureSettings().getIdealTemperature() - 2) {
+                if (temperature == room.getTemperaturePreference().getIdealTemperature() - 2) {
                     latch.countDown();
                 }
                 logger.info("air conditioner temperature change: " + temperature);
@@ -194,7 +193,7 @@ class SensorTemperatureControlTest {
         CountDownLatchWaiter.awaitLatch(latch);
 
         assertEquals(AirConditionerOn.class, room.getAirConditioner().getAirConditionerState().getClass());
-        assertNotEquals(room.getTemperatureSettings().getIdealTemperature(), room.getAirConditioner().getTemperature());
+        assertNotEquals(room.getTemperaturePreference().getIdealTemperature(), room.getAirConditioner().getTemperature());
     }
 
 }

@@ -25,7 +25,7 @@ class TemperatureSensorTest {
     @Test
     void presenceSensorTest() throws InterruptedException {
         int target = 24;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         temperatureSensor.addObserver(data -> {
             assertNotNull(data);

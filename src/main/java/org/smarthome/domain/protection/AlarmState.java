@@ -10,6 +10,6 @@ public abstract class AlarmState implements Actuator {
         this.alarm = alarm;
     }
 
-    public abstract boolean emergency();
+    public abstract void emergency();
 
 }

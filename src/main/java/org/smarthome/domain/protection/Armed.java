@@ -15,9 +15,8 @@ public class Armed extends AlarmState {
     }
 
     @Override
-    public boolean emergency() {
+    public void emergency() {
         alarm.getSiren().setActive(true);
-        return true;
     }
 
 }

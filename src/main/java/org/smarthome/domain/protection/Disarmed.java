@@ -12,8 +12,8 @@ public class Disarmed extends AlarmState {
     }
 
     @Override
-    public boolean emergency() {
-        return false;
+    public void emergency() {
+        // none
     }
 
 }

@@ -24,20 +24,17 @@ public class TemperatureSensor extends Sensor<Integer> {
 
     @Override
     public boolean analyze(Integer detected) {
-        if (detected != null && !detected.equals(data)) {
-            this.data = detected;
-            return true;
-        }
-        return false;
+        return detected != null && !detected.equals(data);
     }
 
     @Override
-    public void plan() {
+    public void plan(Integer detected) {
         // no planning
     }
 
     @Override
-    public void execute() {
+    public void execute(Integer detected) {
+        this.data = detected;
         notifyDataChange();
     }
 

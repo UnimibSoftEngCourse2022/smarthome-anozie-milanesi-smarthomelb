@@ -2,20 +2,20 @@ package org.smarthome.domain.temperature;
 
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.ObservableElement;
-import org.smarthome.listener.TemperatureSettingsListener;
+import org.smarthome.listener.TemperaturePreferenceListener;
 import org.smarthome.util.Constants;
 
-public class TemperatureSettings extends ObservableElement<TemperatureSettingsListener> {
+public class TemperaturePreference extends ObservableElement<TemperaturePreferenceListener> {
 
     private int idealTemperature;
     private int threshold;
 
-    public TemperatureSettings() {
+    public TemperaturePreference() {
         this.idealTemperature = Constants.defaultIdealTemperature();
         this.threshold = Constants.defaultIdealTemperatureThreshold();
     }
 
-    public TemperatureSettings(int idealTemperature, int threshold) {
+    public TemperaturePreference(int idealTemperature, int threshold) {
         if (idealTemperature >= Constants.airConditionerBottomRangeValue() &&
                 idealTemperature <= Constants.airConditionerUpperRangeValue()) {
             this.idealTemperature = idealTemperature;
@@ -39,11 +39,11 @@ public class TemperatureSettings extends ObservableElement<TemperatureSettingsLi
                 idealTemperature <= Constants.airConditionerUpperRangeValue() &&
                 this.idealTemperature != idealTemperature) {
             this.idealTemperature = idealTemperature;
-            for (TemperatureSettingsListener observer : observers) {
+            for (TemperaturePreferenceListener observer : observers) {
                 observer.onIdealTemperatureChange(idealTemperature);
             }
         } else {
-            for (TemperatureSettingsListener observer : observers) {
+            for (TemperaturePreferenceListener observer : observers) {
                 observer.onFieldOutOfRangeException(
                         new FieldOutOfRangeException("Ideal temperature out of range",
                                 idealTemperature,
@@ -62,11 +62,11 @@ public class TemperatureSettings extends ObservableElement<TemperatureSettingsLi
                 threshold <= Constants.temperatureThresholdUpperRangeValue() &&
                 this.threshold != threshold) {
             this.threshold = threshold;
-            for (TemperatureSettingsListener observer : observers) {
+            for (TemperaturePreferenceListener observer : observers) {
                 observer.onThresholdChange(threshold);
             }
         } else {
-            for (TemperatureSettingsListener observer : observers) {
+            for (TemperaturePreferenceListener observer : observers) {
                 observer.onFieldOutOfRangeException(
                         new FieldOutOfRangeException("Threshold out of range",
                                 threshold,

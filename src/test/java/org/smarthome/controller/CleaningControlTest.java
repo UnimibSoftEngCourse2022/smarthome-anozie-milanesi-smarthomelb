@@ -46,7 +46,7 @@ class CleaningControlTest {
 
     @Test
     void startCleaningTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -83,7 +83,7 @@ class CleaningControlTest {
 
     @Test
     void stopCleaningTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -129,7 +129,7 @@ class CleaningControlTest {
 
     @Test
     void startCleaningConcurrentTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch = new CountDownLatch(3);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -176,7 +176,7 @@ class CleaningControlTest {
 
     @Test
     void stopCleaningConcurrentTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(2);
 
         vacuum.addObserver(new VacuumListener() {
             @Override

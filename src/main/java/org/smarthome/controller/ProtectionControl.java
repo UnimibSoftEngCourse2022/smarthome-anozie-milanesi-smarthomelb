@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ProtectionControl {
+public class ProtectionControl extends AutomaticControl<Boolean> {
 
     private final Alarm alarm;
     private final List<IlluminationControl> homeIlluminations;
@@ -23,30 +23,38 @@ public class ProtectionControl {
             homeIlluminations.add(room.getIlluminationControl());
         }
         this.emergencyTimerRunning = false;
+        setAutomationActive(true);
     }
 
-    public void handleAlarm() {
+    public synchronized boolean isAlarmArmed() {
         if (alarm != null) {
-            alarm.handle();
-        }
-    }
-
-    public boolean emergencySituation() {
-        if (alarm != null) {
-            boolean emergency = alarm.emergency();
-            if (emergency) {
-                startEmergencyTimer();
-            } else {
+            boolean armed = alarm.isArmed();
+            if (!armed) {
                 resetEmergencyTimer();
             }
-
-            return emergency;
+            return armed;
         }
         return false;
     }
 
+    public void handleAlarm(String pin) {
+        if (alarm != null) {
+            alarm.handle(pin);
+        }
+    }
+
+    @Override
+    public void handleAutomation(Boolean presence) {
+        if (alarm != null && presence != null && presence) {
+            alarm.emergency();
+            if (isAlarmArmed()) {
+                startEmergencyTimer();
+            }
+        }
+    }
+
     private void handleEmergency() {
-        if (alarm.isArmed()) {
+        if (alarm != null && alarm.isArmed()) {
             for (IlluminationControl illuminationControl : homeIlluminations) {
                 illuminationControl.handleAutomation(false);
             }

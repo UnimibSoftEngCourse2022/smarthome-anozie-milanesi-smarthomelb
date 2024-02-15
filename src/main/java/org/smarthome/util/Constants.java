@@ -108,6 +108,14 @@ public class Constants {
         return Integer.parseInt(properties.getProperty("sensor.iteration.period.ms.duration"));
     }
 
+    public static String wrongSecurityPinMessage() {
+        return properties.getProperty("wrong.security.pin.message");
+    }
+
+    public static String securityPin() {
+        return properties.getProperty("security.pin");
+    }
+
     public static int emergencyTimerMsDuration() {
         if (debugModeActive()) {
             return Integer.parseInt(properties.getProperty("emergency.timer.ms.duration.debug"));

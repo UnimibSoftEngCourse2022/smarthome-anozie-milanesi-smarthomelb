@@ -51,7 +51,7 @@ class AirConditionerTest {
 
     @Test
     void airConditionerTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         int expected = 21;
 

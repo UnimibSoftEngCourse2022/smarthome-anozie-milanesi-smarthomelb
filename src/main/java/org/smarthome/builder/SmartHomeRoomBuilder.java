@@ -5,7 +5,7 @@ import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.domain.sensor.TemperatureSensor;
 import org.smarthome.domain.temperature.AirConditioner;
-import org.smarthome.domain.temperature.TemperatureSettings;
+import org.smarthome.domain.temperature.TemperaturePreference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
 
     private final String name;
     private final List<Light> lights;
-    private TemperatureSettings temperatureSettings;
+    private TemperaturePreference temperaturePreference;
     private AirConditioner airConditioner;
     private PresenceSensor presenceSensor;
     private TemperatureSensor temperatureSensor;
@@ -32,8 +32,8 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
         return lights;
     }
 
-    public TemperatureSettings getTemperatureSettings() {
-        return temperatureSettings;
+    public TemperaturePreference getTemperaturePreference() {
+        return temperaturePreference;
     }
 
     public AirConditioner getAirConditioner() {
@@ -55,8 +55,8 @@ public class SmartHomeRoomBuilder implements RoomBuilder {
     }
 
     @Override
-    public SmartHomeRoomBuilder setTemperatureSettings(TemperatureSettings temperatureSettings) {
-        this.temperatureSettings = temperatureSettings;
+    public SmartHomeRoomBuilder setTemperaturePreference(TemperaturePreference temperaturePreference) {
+        this.temperaturePreference = temperaturePreference;
         return this;
     }
 

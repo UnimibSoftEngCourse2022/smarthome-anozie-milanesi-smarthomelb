@@ -2,27 +2,26 @@ package org.smarthome.domain.temperature;
 
 import org.junit.jupiter.api.Test;
 import org.smarthome.exception.FieldOutOfRangeException;
-import org.smarthome.listener.TemperatureSettingsListener;
+import org.smarthome.listener.TemperaturePreferenceListener;
 import org.smarthome.util.Constants;
 import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TemperatureSettingsTest {
+class TemperaturePreferenceTest {
 
     @Test
     void temperatureSettingsTest1() throws InterruptedException {
-        TemperatureSettings temperatureSettings = new TemperatureSettings();
+        TemperaturePreference temperaturePreference = new TemperaturePreference();
 
         int idealTemperatureExpected = 21;
         int thresholdExpected = 4;
 
-        CountDownLatch latch = new CountDownLatch(4);
+        final CountDownLatch latch = new CountDownLatch(4);
 
-        temperatureSettings.addObserver(new TemperatureSettingsListener() {
+        temperaturePreference.addObserver(new TemperaturePreferenceListener() {
             @Override
             public void onIdealTemperatureChange(int idealTemperature) {
                 assertEquals(idealTemperatureExpected, idealTemperature);
@@ -42,21 +41,21 @@ class TemperatureSettingsTest {
             }
         });
 
-        temperatureSettings.setIdealTemperature(idealTemperatureExpected);
-        temperatureSettings.setThreshold(thresholdExpected);
-        temperatureSettings.setIdealTemperature(1000);
-        temperatureSettings.setThreshold(1000);
+        temperaturePreference.setIdealTemperature(idealTemperatureExpected);
+        temperaturePreference.setThreshold(thresholdExpected);
+        temperaturePreference.setIdealTemperature(1000);
+        temperaturePreference.setThreshold(1000);
 
         CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test
     void temperatureSettingsTest2() {
-        TemperatureSettings temperatureSettings = new TemperatureSettings(1000, 1000);
-        assertNotEquals(1000, temperatureSettings.getIdealTemperature());
-        assertEquals(Constants.defaultIdealTemperature(), temperatureSettings.getIdealTemperature());
-        assertNotEquals(1000, temperatureSettings.getThreshold());
-        assertEquals(Constants.defaultIdealTemperatureThreshold(), temperatureSettings.getThreshold());
+        TemperaturePreference temperaturePreference = new TemperaturePreference(1000, 1000);
+        assertNotEquals(1000, temperaturePreference.getIdealTemperature());
+        assertEquals(Constants.defaultIdealTemperature(), temperaturePreference.getIdealTemperature());
+        assertNotEquals(1000, temperaturePreference.getThreshold());
+        assertEquals(Constants.defaultIdealTemperatureThreshold(), temperaturePreference.getThreshold());
     }
 
 }

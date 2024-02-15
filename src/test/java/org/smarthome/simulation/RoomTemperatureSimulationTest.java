@@ -26,7 +26,7 @@ class RoomTemperatureSimulationTest {
     @Test
     void startTemperatureChangeTest1() throws InterruptedException {
         int target = 24;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -52,7 +52,7 @@ class RoomTemperatureSimulationTest {
     @Test
     void startTemperatureChangeTest2() throws InterruptedException {
         int target = 16;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -79,7 +79,7 @@ class RoomTemperatureSimulationTest {
 
     @Test
     void stopTemperatureChangeTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -107,7 +107,7 @@ class RoomTemperatureSimulationTest {
     void startTemperatureChangeConcurrentTest() throws InterruptedException {
         int targetFinal = 18;
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override

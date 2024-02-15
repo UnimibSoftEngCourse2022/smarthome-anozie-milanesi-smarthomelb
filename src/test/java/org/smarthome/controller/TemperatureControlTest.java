@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.smarthome.domain.temperature.*;
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.AirConditionerListener;
-import org.smarthome.listener.TemperatureSettingsListener;
+import org.smarthome.listener.TemperaturePreferenceListener;
 import org.smarthome.simulation.RoomTemperatureSimulationListener;
 import org.smarthome.simulation.RoomTemperatureSimulation;
 import org.smarthome.util.Constants;
@@ -13,7 +13,6 @@ import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,23 +21,23 @@ class TemperatureControlTest {
 
     private final DebugLogger logger = new DebugLogger(Logger.getLogger(getClass().getName()));
 
-    private TemperatureSettings temperatureSettings;
+    private TemperaturePreference temperaturePreference;
     private AirConditioner airConditioner;
     private RoomTemperatureSimulation roomTemperatureSimulation;
     private TemperatureControl temperatureControl;
 
     @BeforeEach
     void setUp() {
-        temperatureSettings = new TemperatureSettings();
+        temperaturePreference = new TemperaturePreference();
         airConditioner = new AirConditioner();
         roomTemperatureSimulation = new RoomTemperatureSimulation();
         airConditioner.setRoomTemperatureSimulation(roomTemperatureSimulation);
-        temperatureControl = new TemperatureControl(temperatureSettings, airConditioner);
+        temperatureControl = new TemperatureControl(temperaturePreference, airConditioner);
     }
 
     @Test
     void airConditionerTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         roomTemperatureSimulation.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -85,9 +84,9 @@ class TemperatureControlTest {
         int idealTemperatureExpected = 21;
         int thresholdExpected = 4;
 
-        CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(2);
 
-        temperatureSettings.addObserver(new TemperatureSettingsListener() {
+        temperaturePreference.addObserver(new TemperaturePreferenceListener() {
             @Override
             public void onIdealTemperatureChange(int idealTemperature) {
                 assertEquals(idealTemperatureExpected, idealTemperature);
@@ -105,19 +104,19 @@ class TemperatureControlTest {
             }
         });
 
-        temperatureSettings.setIdealTemperature(idealTemperatureExpected);
-        temperatureSettings.setThreshold(thresholdExpected);
+        temperaturePreference.setIdealTemperature(idealTemperatureExpected);
+        temperaturePreference.setThreshold(thresholdExpected);
 
         CountDownLatchWaiter.awaitLatch(latch);
 
-        CountDownLatch latch1 = new CountDownLatch(1);
+        final CountDownLatch latch1 = new CountDownLatch(1);
 
         roomTemperatureSimulation.setTemperature(28);
         roomTemperatureSimulation.setTarget(28);
         roomTemperatureSimulation.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
             public void onTemperatureChange(int temperature) {
-                if (temperature == temperatureSettings.getIdealTemperature()) {
+                if (temperature == temperaturePreference.getIdealTemperature()) {
                     latch1.countDown();
                 }
                 logger.info("temperature change: " + temperature);
@@ -145,7 +144,7 @@ class TemperatureControlTest {
         CountDownLatchWaiter.awaitLatch(latch1);
 
         assertEquals(AirConditionerOn.class, airConditioner.getAirConditionerState().getClass());
-        assertEquals(temperatureSettings.getIdealTemperature(), airConditioner.getTemperature());
+        assertEquals(temperaturePreference.getIdealTemperature(), airConditioner.getTemperature());
 
         temperatureControl.handleAutomation(roomTemperatureSimulation.getTemperature());
         assertEquals(AirConditionerOff.class, airConditioner.getAirConditionerState().getClass());

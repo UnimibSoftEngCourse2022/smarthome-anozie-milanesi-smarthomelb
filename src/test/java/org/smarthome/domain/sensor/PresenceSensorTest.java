@@ -24,7 +24,7 @@ class PresenceSensorTest {
 
     @Test
     void presenceSensorTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         presenceSensor.addObserver(data -> {
             assertNotNull(data);

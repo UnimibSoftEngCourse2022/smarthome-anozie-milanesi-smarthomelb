@@ -10,6 +10,7 @@ import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.*;
 import org.smarthome.domain.sensor.PresenceSensor;
+import org.smarthome.util.Constants;
 import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
@@ -137,7 +138,7 @@ class SensorPresenceControlTest {
     @Test
     void presenceSensorControlProtectionTest1() throws InterruptedException {
         assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
-        protectionControl.handleAlarm();
+        protectionControl.handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
         room.getIlluminationControl().setAutomationActive(true);
@@ -192,7 +193,7 @@ class SensorPresenceControlTest {
     @Test
     void presenceSensorControlProtectionTest2() throws InterruptedException {
         assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
-        protectionControl.handleAlarm();
+        protectionControl.handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
         room.getIlluminationControl().setAutomationActive(true);
@@ -210,7 +211,7 @@ class SensorPresenceControlTest {
 
         alarm.getSiren().addObserver(active -> {
             if (active) {
-                protectionControl.handleAlarm();
+                protectionControl.handleAlarm(Constants.securityPin());
             }
             latch.countDown();
         });
@@ -297,7 +298,7 @@ class SensorPresenceControlTest {
     @Disabled("concurrent debug test")
     void presenceSensorControlProtectionConcurrentTest1() throws InterruptedException {
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
-        smartHome.getProtectionControl().handleAlarm();
+        smartHome.getProtectionControl().handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
         room.getIlluminationControl().setAutomationActive(true);
@@ -354,7 +355,7 @@ class SensorPresenceControlTest {
     @Disabled("concurrent debug test")
     void presenceSensorControlProtectionConcurrentTest2() throws InterruptedException {
         assertEquals(Disarmed.class, smartHome.getAlarm().getAlarmState().getClass());
-        smartHome.getProtectionControl().handleAlarm();
+        smartHome.getProtectionControl().handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, smartHome.getAlarm().getAlarmState().getClass());
 
         room.getIlluminationControl().setAutomationActive(true);
@@ -373,7 +374,7 @@ class SensorPresenceControlTest {
 
         smartHome.getAlarm().getSiren().addObserver(active -> {
             if (active) {
-                smartHome.getProtectionControl().handleAlarm();
+                smartHome.getProtectionControl().handleAlarm(Constants.securityPin());
             }
             latch.countDown();
         });

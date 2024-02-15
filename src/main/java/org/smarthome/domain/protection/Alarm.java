@@ -1,7 +1,9 @@
 package org.smarthome.domain.protection;
 
+import org.smarthome.exception.WrongSecurityPinException;
 import org.smarthome.listener.ObservableElement;
 import org.smarthome.listener.AlarmListener;
+import org.smarthome.util.Constants;
 
 import java.util.Objects;
 
@@ -44,12 +46,18 @@ public class Alarm extends ObservableElement<AlarmListener> {
         }
     }
 
-    public synchronized void handle() {
-        alarmState.handle();
+    public synchronized void handle(String pin) {
+        if (pin != null && pin.equals(Constants.securityPin())) {
+            alarmState.handle();
+        } else {
+            for (AlarmListener observer : observers) {
+                observer.onWrongSecurityPinException(new WrongSecurityPinException());
+            }
+        }
     }
 
-    public synchronized boolean emergency() {
-        return alarmState.emergency();
+    public synchronized void emergency() {
+        alarmState.emergency();
     }
 
 }
