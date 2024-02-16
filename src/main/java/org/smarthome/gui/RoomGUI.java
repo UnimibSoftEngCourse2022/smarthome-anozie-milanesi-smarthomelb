@@ -1,64 +1,62 @@
 package org.smarthome.gui;
 
+import org.smarthome.controller.IlluminationControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.illumination.LightOn;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 import static org.smarthome.util.Constants.*;
 
 public class RoomGUI extends JFrame {
+    private JPanel mainPanel;
+    private JPanel lightPanel;
     private JButton lightControlButton;
-    private JPanel roomPanel;
-    private JLabel automaticLightState;
-    private JLabel sensorPresenceState;
+    private JButton actuateIlluminationButton;
+    private JLabel automaticIlluminationLabel;
 
     public RoomGUI(Room room) throws HeadlessException {
-        setContentPane(roomPanel);
-        setLayout(new FlowLayout());
+        setContentPane(mainPanel);
         setSize(defaultJFrameWidthSetting(), defaultJFrameHeightSetting());
         setTitle(room.getName());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setMenu();
-        setSensorPresenceState(room);
-        setAutomaticLightState(room);
         initIllumination(room);
+        initAutomaticIllumination(room.getIlluminationControl());
         setVisible(true);
     }
 
-    public void initIllumination(Room room) {
+    private void initIllumination(Room room) {
+        lightPanel.setLayout(new BoxLayout(lightPanel, BoxLayout.Y_AXIS));
+
         for(Light light : room.getIllumination().getLights()) {
             JRadioButton button = createLightButton(light);
-            add(button);
-
-            light.addObserver(state ->
-                    button.setSelected(state.getClass().equals(LightOn.class)));
+            light.addObserver(state -> button.setSelected(light.isOn()));
+            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lightPanel.add(button);
         }
 
         lightControlButton.addActionListener(e -> room.getIlluminationControl().handleIllumination());
     }
 
-    public void setAutomaticLightState(Room room) {
-        if(room.getIlluminationControl().isAutomationActive()) {
-            automaticLightState.setText("ON");
-        }else {
-            automaticLightState.setText("OFF");
-        }
+    private void initAutomaticIllumination(IlluminationControl illuminationControl) {
+        setAutomaticIlluminationLabel(illuminationControl.isAutomationActive());
+
+        illuminationControl.addObserver(this::setAutomaticIlluminationLabel);
+
+        actuateIlluminationButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                illuminationControl.setAutomationActive(
+                        !illuminationControl.isAutomationActive());
+            }
+        });
     }
 
-    public void setSensorPresenceState(Room room) {
-        if(room.getPresenceSensor() != null && room.getPresenceSensor().monitor()){
-            sensorPresenceState.setText("ON");
-        }else {
-            sensorPresenceState.setText("OFF");
-        }
-    }
-
-    public void setMenu() {
+    private void setMenu() {
         JMenu simulation = new JMenu("Simulation");
-        JMenu temperature = new JMenu("Temperature");
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -70,7 +68,6 @@ public class RoomGUI extends JFrame {
         simulation.add(temperatureSimulation);
 
         menuBar.add(simulation);
-        menuBar.add(temperature);
 
         setJMenuBar(menuBar);
     }
@@ -82,9 +79,11 @@ public class RoomGUI extends JFrame {
         }
 
         lightButton.addActionListener(e -> light.handle());
-
-        lightButton.setVisible(true);
         return lightButton;
+    }
+
+    private void setAutomaticIlluminationLabel(boolean automationActive) {
+        automaticIlluminationLabel.setText(String.valueOf(automationActive));
     }
 
 }

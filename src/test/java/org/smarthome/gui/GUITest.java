@@ -47,6 +47,5 @@ class GUITest {
                 .create();
 
         new SmartHomeGUI(home1);
-        //new VacuumGUI(home1);
     }
 }

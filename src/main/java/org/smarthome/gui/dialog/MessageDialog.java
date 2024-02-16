@@ -4,11 +4,11 @@ import javax.swing.*;
 
 import static org.smarthome.util.Constants.*;
 
-public class VacuumDialog extends JDialog {
+public class MessageDialog extends JDialog {
     private JPanel contentPane;
     private JLabel label;
 
-    public VacuumDialog() {
+    public MessageDialog() {
         setContentPane(contentPane);
         setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
     }
