@@ -10,7 +10,7 @@ import org.smarthome.domain.sensor.TemperatureSensor;
 import org.smarthome.domain.temperature.AirConditioner;
 import org.smarthome.controller.TemperatureControl;
 import org.smarthome.domain.sensor.PresenceSensor;
-import org.smarthome.domain.temperature.TemperatureSettings;
+import org.smarthome.domain.temperature.TemperaturePreference;
 import org.smarthome.simulation.RoomSimulation;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class Room extends RoomSimulation {
 
     private final String name;
     private final Illumination illumination;
-    private final TemperatureSettings temperatureSettings;
+    private final TemperaturePreference temperaturePreference;
     private final AirConditioner airConditioner;
     private final PresenceSensor presenceSensor;
     private final TemperatureSensor temperatureSensor;
@@ -47,9 +47,9 @@ public class Room extends RoomSimulation {
             presenceSensor.setRoomPresenceSimulation(getPresenceSimulation());
         }
 
-        TemperatureSettings initTemperatureSettings = builder.getTemperatureSettings();
-        this.temperatureSettings = initTemperatureSettings == null ?
-                new TemperatureSettings() : initTemperatureSettings;
+        TemperaturePreference initTemperaturePreference = builder.getTemperaturePreference();
+        this.temperaturePreference = initTemperaturePreference == null ?
+                new TemperaturePreference() : initTemperaturePreference;
 
         this.temperatureSensor = builder.getTemperatureSensor();
         if (temperatureSensor != null) {
@@ -57,18 +57,21 @@ public class Room extends RoomSimulation {
         }
 
         this.illuminationControl = new IlluminationControl(illumination);
-        this.temperatureControl = new TemperatureControl(temperatureSettings, airConditioner);
+        this.temperatureControl = new TemperatureControl(temperaturePreference, airConditioner);
     }
 
     public void setAutomaticControl(SmartHome smartHome) {
         if (smartHome != null) {
-            SensorPresenceControl sensorPresenceControl = new SensorPresenceControl(
-                    presenceSensor, smartHome.getProtectionControl(), illuminationControl);
-            sensorPresenceControl.monitorSensor();
+            new SensorPresenceControl(
+                    presenceSensor,
+                    smartHome.getProtectionControl(),
+                    illuminationControl
+            ).monitorSensor();
 
-            SensorTemperatureControl sensorTemperatureControl = new SensorTemperatureControl(
-                    temperatureSensor, temperatureControl);
-            sensorTemperatureControl.monitorSensor();
+            new SensorTemperatureControl(
+                    temperatureSensor,
+                    temperatureControl
+            ).monitorSensor();
         }
     }
 
@@ -80,8 +83,8 @@ public class Room extends RoomSimulation {
         return illumination;
     }
 
-    public TemperatureSettings getTemperatureSettings() {
-        return temperatureSettings;
+    public TemperaturePreference getTemperaturePreference() {
+        return temperaturePreference;
     }
 
     public AirConditioner getAirConditioner() {

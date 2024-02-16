@@ -3,11 +3,12 @@ package org.smarthome.domain.sensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.simulation.RoomPresenceSimulation;
+import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PresenceSensorTest {
 
@@ -23,7 +24,7 @@ class PresenceSensorTest {
 
     @Test
     void presenceSensorTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         presenceSensor.addObserver(data -> {
             assertNotNull(data);
@@ -32,7 +33,8 @@ class PresenceSensorTest {
         });
 
         roomPresenceSimulation.setPresence(true);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }

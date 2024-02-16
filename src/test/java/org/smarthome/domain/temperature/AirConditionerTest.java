@@ -6,9 +6,11 @@ import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.simulation.RoomTemperatureSimulationListener;
 import org.smarthome.simulation.RoomTemperatureSimulation;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +51,7 @@ class AirConditionerTest {
 
     @Test
     void airConditionerTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         int expected = 21;
 
@@ -84,7 +86,8 @@ class AirConditionerTest {
         airConditioner.setTemperature(12);
         Thread.sleep(1);
         airConditioner.setTemperature(expected);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }

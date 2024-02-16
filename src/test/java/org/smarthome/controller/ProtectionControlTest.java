@@ -1,12 +1,15 @@
 package org.smarthome.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.*;
 import org.smarthome.domain.protection.*;
+import org.smarthome.exception.WrongSecurityPinException;
+import org.smarthome.listener.AlarmListener;
+import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,19 +46,39 @@ class ProtectionControlTest {
     }
 
     @Test
-    void activateDeactivateProtectionTest() {
-        alarm.addObserver(Assertions::assertNotNull);
+    void activateDeactivateProtectionTest() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(4);
 
-        protectionController.handleAlarm();
+        alarm.addObserver(new AlarmListener() {
+            @Override
+            public void onChangeState(AlarmState state) {
+                assertNotNull(state);
+                latch.countDown();
+            }
+
+            @Override
+            public void onWrongSecurityPinException(WrongSecurityPinException e) {
+                assertNotNull(e);
+                assertEquals(Constants.wrongSecurityPinMessage(), e.getMessage());
+                latch.countDown();
+            }
+        });
+
+        protectionController.handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
-        protectionController.handleAlarm();
+        protectionController.handleAlarm(Constants.securityPin());
         assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
+
+        protectionController.handleAlarm("wrong");
+        protectionController.handleAlarm(null);
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test
     void emergencySituationWithoutAlarmActivationTest() {
-        protectionController.emergencySituation();
+        protectionController.handleAutomation(true);
         assertFalse(siren.isActive());
     }
 
@@ -73,10 +96,10 @@ class ProtectionControlTest {
         }
 
         assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
-        protectionController.handleAlarm();
+        protectionController.handleAlarm(Constants.securityPin());
         assertEquals(Armed.class, alarm.getAlarmState().getClass());
 
-        CountDownLatch latch = new CountDownLatch(count);
+        final CountDownLatch latch = new CountDownLatch(count);
 
         for (Room room : rooms) {
             Illumination illumination = room.getIllumination();
@@ -87,8 +110,9 @@ class ProtectionControlTest {
             }
         }
 
-        protectionController.emergencySituation();
-        latch.await();
+        protectionController.handleAutomation(true);
+
+        CountDownLatchWaiter.awaitLatch(latch);
 
         assertTrue(siren.isActive());
         for (Room room : rooms) {
@@ -100,12 +124,11 @@ class ProtectionControlTest {
     }
 
     @Test
-    void doesNotThrowCleaningTest() {
+    void doesNotThrowProtectionTest() {
         assertDoesNotThrow(() -> {
             ProtectionControl protectionController = new ProtectionControl(null, rooms);
-            protectionController.handleAlarm();
-            assertFalse(protectionController.emergencySituation());
-            protectionController.handleAlarm();
+            protectionController.handleAlarm(Constants.securityPin());
+            protectionController.handleAutomation(true);
         });
     }
 

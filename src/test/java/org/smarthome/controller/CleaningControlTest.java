@@ -10,15 +10,16 @@ import org.smarthome.domain.cleaning.Vacuum;
 import org.smarthome.domain.cleaning.VacuumState;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CleaningControlTest {
 
@@ -45,7 +46,7 @@ class CleaningControlTest {
 
     @Test
     void startCleaningTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -73,14 +74,16 @@ class CleaningControlTest {
         });
 
         cleaningControl.startCleaning();
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
 
     @Test
     void stopCleaningTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -111,7 +114,8 @@ class CleaningControlTest {
         cleaningControl.startCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration() * 3L);
         cleaningControl.stopCleaning();
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
     @Test
@@ -125,7 +129,7 @@ class CleaningControlTest {
 
     @Test
     void startCleaningConcurrentTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch = new CountDownLatch(3);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -163,14 +167,16 @@ class CleaningControlTest {
         cleaningControl.startCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.startCleaning();
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertEquals(Charging.class, vacuum.getVacuumState().getClass());
         assertEquals(vacuum.getChargingStationPosition(), vacuum.getCurrentPosition());
     }
 
     @Test
     void stopCleaningConcurrentTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(2);
 
         vacuum.addObserver(new VacuumListener() {
             @Override
@@ -208,7 +214,8 @@ class CleaningControlTest {
         cleaningControl.stopCleaning();
         Thread.sleep(Constants.cleaningRoomMsDuration());
         cleaningControl.stopCleaning();
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }

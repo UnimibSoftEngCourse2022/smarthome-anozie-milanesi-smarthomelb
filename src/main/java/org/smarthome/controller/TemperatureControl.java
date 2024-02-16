@@ -1,15 +1,15 @@
 package org.smarthome.controller;
 
 import org.smarthome.domain.temperature.AirConditioner;
-import org.smarthome.domain.temperature.TemperatureSettings;
+import org.smarthome.domain.temperature.TemperaturePreference;
 
 public class TemperatureControl extends AutomaticControl<Integer> {
 
-    private final TemperatureSettings temperatureSettings;
+    private final TemperaturePreference temperaturePreference;
     private final AirConditioner airConditioner;
 
-    public TemperatureControl(TemperatureSettings temperatureSettings, AirConditioner airConditioner) {
-        this.temperatureSettings = temperatureSettings;
+    public TemperatureControl(TemperaturePreference temperaturePreference, AirConditioner airConditioner) {
+        this.temperaturePreference = temperaturePreference;
         this.airConditioner = airConditioner;
     }
 
@@ -36,12 +36,12 @@ public class TemperatureControl extends AutomaticControl<Integer> {
 
     @Override
     public void handleAutomation(Integer temperature) {
-        if (temperatureSettings != null && airConditioner != null && temperature != null) {
-            int temperatureDifference = temperature - temperatureSettings.getIdealTemperature();
+        if (temperaturePreference != null && airConditioner != null && temperature != null) {
+            int temperatureDifference = temperature - temperaturePreference.getIdealTemperature();
 
-            if (Math.abs(temperatureDifference) > temperatureSettings.getThreshold()) {
+            if (Math.abs(temperatureDifference) > temperaturePreference.getThreshold()) {
                 // Temperature exceeds the threshold, adjust it to the ideal temperature
-                airConditioner.setTemperature(temperatureSettings.getIdealTemperature());
+                airConditioner.setTemperature(temperaturePreference.getIdealTemperature());
             } else if (temperatureDifference == 0) {
                 airConditioner.off();
             }

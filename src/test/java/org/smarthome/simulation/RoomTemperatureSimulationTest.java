@@ -3,13 +3,14 @@ package org.smarthome.simulation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.util.Constants;
+import org.smarthome.util.CountDownLatchWaiter;
 import org.smarthome.util.DebugLogger;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RoomTemperatureSimulationTest {
 
@@ -25,7 +26,7 @@ class RoomTemperatureSimulationTest {
     @Test
     void startTemperatureChangeTest1() throws InterruptedException {
         int target = 24;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -42,14 +43,16 @@ class RoomTemperatureSimulationTest {
         });
 
         simulationTemperature.setTarget(target);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertEquals(target, simulationTemperature.getTemperature());
     }
 
     @Test
     void startTemperatureChangeTest2() throws InterruptedException {
         int target = 16;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -67,14 +70,16 @@ class RoomTemperatureSimulationTest {
         });
 
         simulationTemperature.setTarget(target);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertEquals(target, simulationTemperature.getTemperature());
     }
 
 
     @Test
     void stopTemperatureChangeTest() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -92,7 +97,9 @@ class RoomTemperatureSimulationTest {
         simulationTemperature.setTarget(target);
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.stopTemperatureChange();
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertNotEquals(target, simulationTemperature.getTemperature());
     }
 
@@ -100,7 +107,7 @@ class RoomTemperatureSimulationTest {
     void startTemperatureChangeConcurrentTest() throws InterruptedException {
         int targetFinal = 18;
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         simulationTemperature.setRoomTemperatureListener(new RoomTemperatureSimulationListener() {
             @Override
@@ -120,7 +127,9 @@ class RoomTemperatureSimulationTest {
         simulationTemperature.setTarget(target);
         Thread.sleep(Constants.temperatureChangeMsDuration() * 2L);
         simulationTemperature.setTarget(targetFinal);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
+
         assertEquals(targetFinal, simulationTemperature.getTemperature());
     }
 

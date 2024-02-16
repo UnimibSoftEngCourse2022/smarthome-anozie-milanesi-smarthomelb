@@ -3,8 +3,10 @@ package org.smarthome.domain.sensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.simulation.RoomTemperatureSimulation;
+import org.smarthome.util.CountDownLatchWaiter;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +25,7 @@ class TemperatureSensorTest {
     @Test
     void presenceSensorTest() throws InterruptedException {
         int target = 24;
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
 
         temperatureSensor.addObserver(data -> {
             assertNotNull(data);
@@ -34,7 +36,8 @@ class TemperatureSensorTest {
         });
 
         roomTemperatureSimulation.setTarget(target);
-        latch.await();
+
+        CountDownLatchWaiter.awaitLatch(latch);
     }
 
 }

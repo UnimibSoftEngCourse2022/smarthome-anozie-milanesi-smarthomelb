@@ -21,20 +21,17 @@ public class PresenceSensor extends Sensor<Boolean> {
 
     @Override
     public boolean analyze(Boolean detected) {
-        if (!detected.equals(data)) {
-            this.data = detected;
-            return true;
-        }
-        return false;
+        return detected != null && !detected.equals(data);
     }
 
     @Override
-    public void plan() {
+    public void plan(Boolean detected) {
         // no planning
     }
 
     @Override
-    public void execute() {
+    public void execute(Boolean detected) {
+        this.data = detected;
         notifyDataChange();
     }
 

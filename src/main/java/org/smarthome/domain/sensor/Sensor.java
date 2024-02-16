@@ -37,8 +37,8 @@ public abstract class Sensor<T>
     public void loop() {
         T detected = monitor();
         if (analyze(detected)) {
-            plan();
-            execute();
+            plan(detected);
+            execute(detected);
         }
     }
 
