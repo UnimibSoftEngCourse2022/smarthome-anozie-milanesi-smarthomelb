@@ -10,7 +10,6 @@ public class VacuumDialog extends JDialog {
 
     public VacuumDialog() {
         setContentPane(contentPane);
-        setModal(true);
         setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());
     }
 

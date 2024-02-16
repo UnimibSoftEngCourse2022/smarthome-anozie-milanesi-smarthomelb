@@ -46,6 +46,7 @@ class GUITest {
                 .setVacuumChargingStationPosition(r1)
                 .create();
 
-        new VacuumGUI(home1);
+        new SmartHomeGUI(home1);
+        //new VacuumGUI(home1);
     }
 }
