@@ -1,6 +1,7 @@
 package org.smarthome.gui;
 
 import org.smarthome.controller.CleaningControl;
+import org.smarthome.controller.ProtectionControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.*;
@@ -17,7 +18,6 @@ import static org.smarthome.util.Constants.*;
 
 
 public class SmartHomeGUI extends JFrame implements VacuumListener {
-
     private JPanel mainPanel;
     private JPanel roomPanel;
     private JButton startCleaningButton;
@@ -25,6 +25,7 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
     private JLabel stateLabel;
     private JLabel currentPositionLabel;
     private JLabel chargingStationPositionLabel;
+    private JLabel alarmState;
     private MessageDialog messageDialog;
 
     public SmartHomeGUI(SmartHome smartHome) {
@@ -34,6 +35,7 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initRooms(smartHome.getRooms());
         initCleaning(smartHome.getVacuum(), smartHome.getCleaningControl());
+        initSecurity(smartHome.getProtectionControl());
         setVisible(true);
     }
 
@@ -59,6 +61,14 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
 
         startCleaningButton.addActionListener(e -> cleaningControl.startCleaning());
         stopCleaningButton.addActionListener(e -> cleaningControl.stopCleaning());
+    }
+
+    private void initSecurity(ProtectionControl protectionControl) {
+        if(protectionControl.isAlarmArmed()) {
+            alarmState.setText("ON");
+        }else  {
+            alarmState.setText("OFF");
+        }
     }
 
     private JButton createRoomButton(Room room) {
