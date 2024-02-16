@@ -44,5 +44,5 @@ public interface MAPEControl<T> {
      * The main control loop that orchestrates the sequence of monitoring, analysis, planning, and execution.
      * It is typically called periodically to ensure continuous monitoring and control.
      */
-    void loop();
+    void MAPEIteration();
 }

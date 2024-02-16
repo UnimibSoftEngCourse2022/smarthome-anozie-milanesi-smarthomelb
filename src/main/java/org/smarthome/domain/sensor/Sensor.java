@@ -22,6 +22,10 @@ public abstract class Sensor<T>
         return data;
     }
 
+    public void updateData(T data) {
+        this.data = data;
+    }
+
     public void notifyDataChange() {
         observers.forEach(observer -> observer.onDataChange(data));
     }
@@ -29,12 +33,12 @@ public abstract class Sensor<T>
     public void startDetection() {
         // MAPE feedback control loop
         Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this::loop,
+                .scheduleAtFixedRate(this::MAPEIteration,
                         0, Constants.sensorIterationPeriodMsDuration(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void loop() {
+    public void MAPEIteration() {
         T detected = monitor();
         if (analyze(detected)) {
             plan(detected);

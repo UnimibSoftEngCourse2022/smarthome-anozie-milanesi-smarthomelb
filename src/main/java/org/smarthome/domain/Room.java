@@ -62,16 +62,16 @@ public class Room extends RoomSimulation {
 
     public void setAutomaticControl(SmartHome smartHome) {
         if (smartHome != null) {
-            new SensorPresenceControl(
+            AutomaticSystem.getInstance().automateSensorControl(new SensorPresenceControl(
                     presenceSensor,
                     smartHome.getProtectionControl(),
                     illuminationControl
-            ).monitorSensor();
+            ));
 
-            new SensorTemperatureControl(
+            AutomaticSystem.getInstance().automateSensorControl(new SensorTemperatureControl(
                     temperatureSensor,
                     temperatureControl
-            ).monitorSensor();
+            ));
         }
     }
 

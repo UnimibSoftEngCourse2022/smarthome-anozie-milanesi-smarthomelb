@@ -34,7 +34,7 @@ public class TemperatureSensor extends Sensor<Integer> {
 
     @Override
     public void execute(Integer detected) {
-        this.data = detected;
+        updateData(detected);
         notifyDataChange();
     }
 
