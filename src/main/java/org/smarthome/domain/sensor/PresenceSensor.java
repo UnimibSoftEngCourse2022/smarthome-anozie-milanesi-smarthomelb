@@ -32,7 +32,6 @@ public class PresenceSensor extends Sensor<Boolean> {
     @Override
     public void execute(Boolean detected) {
         updateData(detected);
-        notifyDataChange();
     }
 
 }

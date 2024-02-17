@@ -24,10 +24,7 @@ public abstract class Sensor<T>
 
     public void updateData(T data) {
         this.data = data;
-    }
-
-    public void notifyDataChange() {
-        observers.forEach(observer -> observer.onDataChange(data));
+        notifyDataChange();
     }
 
     public void startDetection() {
@@ -44,6 +41,10 @@ public abstract class Sensor<T>
             plan(detected);
             execute(detected);
         }
+    }
+
+    private void notifyDataChange() {
+        observers.forEach(observer -> observer.onDataChange(data));
     }
 
 }
