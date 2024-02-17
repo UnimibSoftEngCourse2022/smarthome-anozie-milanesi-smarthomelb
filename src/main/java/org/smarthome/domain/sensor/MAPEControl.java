@@ -41,7 +41,7 @@ public interface MAPEControl<T> {
     void execute(T detected);
 
     /**
-     * The main control loop that orchestrates the sequence of monitoring, analysis, planning, and execution.
+     * The main control iteration that orchestrates the sequence of monitoring, analysis, planning, and execution.
      * It is typically called periodically to ensure continuous monitoring and control.
      */
     void MAPEIteration();
