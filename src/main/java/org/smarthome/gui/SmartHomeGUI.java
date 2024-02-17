@@ -5,6 +5,7 @@ import org.smarthome.controller.ProtectionControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.*;
+import org.smarthome.domain.protection.Alarm;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.gui.dialog.MessageDialog;
 import org.smarthome.listener.VacuumListener;
@@ -26,6 +27,10 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
     private JLabel currentPositionLabel;
     private JLabel chargingStationPositionLabel;
     private JLabel alarmState;
+    private JLabel sirenState;
+    private JButton activateAutomaticControlButton;
+    private JLabel emergencyCallState;
+    private JLabel automaticControlState;
     private MessageDialog messageDialog;
 
     public SmartHomeGUI(SmartHome smartHome) {
@@ -35,7 +40,7 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initRooms(smartHome.getRooms());
         initCleaning(smartHome.getVacuum(), smartHome.getCleaningControl());
-        initSecurity(smartHome.getProtectionControl());
+        initSecurity(smartHome.getProtectionControl(), smartHome.getAlarm());
         setVisible(true);
     }
 
@@ -63,11 +68,56 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
         stopCleaningButton.addActionListener(e -> cleaningControl.stopCleaning());
     }
 
-    private void initSecurity(ProtectionControl protectionControl) {
+    private void initSecurity(ProtectionControl protectionControl, Alarm alarm) {
+
+        protectionControl.addObserver(protectionControl::setAutomationActive);
+
+        activateAutomaticControlButton.addActionListener(e -> {
+            protectionControl.setAutomationActive(!protectionControl.isAutomationActive());
+        });
+
+        if(alarm != null && protectionControl.isAutomationActive()) {
+            setAlarmState(protectionControl);
+            setSirenState(alarm);
+            setEmergencyCallState(protectionControl);
+        }else {
+            automaticControlState.setText("OFF");
+            alarmState.setText("OFF");
+            sirenState.setText("OFF");
+            emergencyCallState.setText("NO CALL");
+        }
+
+    }
+
+    private void setAutomaticControlState(ProtectionControl protectionControl) {
+        if(protectionControl.isAutomationActive()) {
+            automaticControlState.setText("ON");
+        }else  {
+            automaticControlState.setText("OFF");
+        }
+    }
+
+    private void setAlarmState(ProtectionControl protectionControl){
         if(protectionControl.isAlarmArmed()) {
             alarmState.setText("ON");
         }else  {
             alarmState.setText("OFF");
+        }
+    }
+
+    private void setSirenState(Alarm alarm) {
+        if(alarm.getSiren().isActive()) {
+            sirenState.setText("ON");
+        }else {
+            sirenState.setText("OFF");
+        }
+    }
+
+    private void setEmergencyCallState(ProtectionControl protectionControl) {
+        if(protectionControl.isAlarmArmed()){
+            emergencyCallState.setText("CALL ON GOING");
+        } else {
+            emergencyCallState.setText("NO CALL");
         }
     }
 
