@@ -49,7 +49,7 @@ public class SmartHomeBuilder implements HomeBuilder {
 
     @Override
     public SmartHomeBuilder setProtection(Siren siren, EmergencyService emergencyService) {
-        if (siren != null) {
+        if (siren != null && emergencyService != null) {
             this.alarm = new Alarm(siren, emergencyService);
         }
         return this;

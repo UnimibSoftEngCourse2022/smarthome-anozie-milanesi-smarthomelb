@@ -6,34 +6,33 @@ import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.temperature.*;
 import org.smarthome.exception.FieldOutOfRangeException;
-import org.smarthome.gui.dialog.MessageDialog;
-import org.smarthome.gui.dialog.TemperatureSettingDialog;
+import org.smarthome.gui.util.ConstantsGUI;
+import org.smarthome.gui.util.DialogOpener;
 import org.smarthome.listener.AirConditionerListener;
-import org.smarthome.listener.AutomationListener;
 import org.smarthome.listener.TemperaturePreferenceListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 
 import static org.smarthome.util.Constants.*;
 
 public class RoomGUI extends JFrame {
+
     private JPanel mainPanel;
     private JPanel lightPanel;
     private JButton lightControlButton;
     private JButton actuateIlluminationButton;
     private JLabel automaticIlluminationLabel;
+    private JLabel idealTemperatureLabel;
+    private JLabel thresholdLabel;
+    private JLabel automaticTemperatureControlLabel;
+    private JButton automaticTemperatureControlButton;
     private JButton increaseTemperatureButton;
     private JButton decreaseTemperatureButton;
-    private JLabel idealTemperatureSetting;
-    private JLabel thresholdTemperatureSetting;
-    private JLabel automaticTemperatureSetting;
     private JButton activateAirConditionerButton;
     private JLabel airConditionerState;
     private JLabel airConditionerTemperature;
-    private JButton activateAutomaticTemperatureButton;
 
     public RoomGUI(Room room) throws HeadlessException {
         setContentPane(mainPanel);
@@ -43,7 +42,7 @@ public class RoomGUI extends JFrame {
         setMenu(room);
         initIllumination(room);
         initAutomaticIllumination(room.getIlluminationControl());
-        initTemperatureSettings(room.getTemperaturePreference(), room.getTemperatureControl());
+        initTemperatureSettings(room.getTemperatureControl(), room.getTemperaturePreference());
         initAirConditioner(room.getAirConditioner(), room.getTemperatureControl());
         setVisible(true);
     }
@@ -75,108 +74,54 @@ public class RoomGUI extends JFrame {
         });
     }
 
-    private JRadioButton createLightButton(Light light) {
-        JRadioButton lightButton = new JRadioButton("Light");
-        if (light.isOn()) {
-            lightButton.setSelected(true);
-        }
+    private void initTemperatureSettings(TemperatureControl temperatureControl, TemperaturePreference temperaturePreference) {
+        setIdealTemperatureLabelText(temperaturePreference.getIdealTemperature());
+        setThresholdLabelText(temperaturePreference.getThreshold());
+        setAutomaticTemperatureControlLabelText(temperatureControl.isAutomationActive());
 
-        lightButton.addActionListener(e -> light.handle());
-        return lightButton;
-    }
+        temperatureControl.addObserver(this::setAutomaticTemperatureControlLabelText);
+        temperaturePreference.addObserver(new TemperaturePreferenceListener() {
+            @Override
+            public void onIdealTemperatureChange(int idealTemperature) {
+                setIdealTemperatureLabelText(idealTemperature);
+            }
 
-    private void setAutomaticIlluminationLabel(boolean automationActive) {
-        automaticIlluminationLabel.setText(String.valueOf(automationActive));
-    }
+            @Override
+            public void onThresholdChange(int threshold) {
+                setThresholdLabelText(threshold);
+            }
 
-    private void setMenu(Room room) {
-        JMenu simulation = new JMenu("Simulation");
-        JMenu changeTemperatureSettings = new JMenu("Change Temperature Settings");
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenuItem presenceSimulation = new JMenuItem("Presence Simulation");
-
-        JMenuItem temperatureSimulation = new JMenuItem("Temperature Simulation");
-
-        JMenuItem changeIdealTemperature = new JMenuItem("Change Ideal Temperature");
-        JMenuItem changeThreshold = new JMenuItem("Change Threshold Temperature");
-
-        changeIdealTemperature.addActionListener(e -> {
-            TemperatureSettingDialog temperatureSettingDialog = new TemperatureSettingDialog();
-            temperatureSettingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    if(temperatureSettingDialog.getTemperature() != null) {
-                        room.getTemperaturePreference().setIdealTemperature(Integer.parseInt(temperatureSettingDialog.getTemperature()));
-                    }
-                }
-            });
+            @Override
+            public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
+                DialogOpener.openMessageDialog(
+                        "Error!",
+                        "Temperature out of range",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         });
 
-        changeThreshold.addActionListener(e -> {
-            TemperatureSettingDialog temperatureSettingDialog = new TemperatureSettingDialog();
-            temperatureSettingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    if(temperatureSettingDialog.getTemperature() != null) {
-                        room.getTemperaturePreference().setThreshold(Integer.parseInt(temperatureSettingDialog.getTemperature()));
-                    }
-                }
-            });
-        });
-
-        simulation.add(presenceSimulation);
-        simulation.add(temperatureSimulation);
-
-        changeTemperatureSettings.add(changeIdealTemperature);
-        changeTemperatureSettings.add(changeThreshold);
-
-        menuBar.add(simulation);
-        menuBar.add(changeTemperatureSettings);
-
-
-        setJMenuBar(menuBar);
-    }
-
-    private void initTemperatureSettings(TemperaturePreference temperaturePreference,TemperatureControl temperatureControl) {
-        setIdealTemperatureSetting(temperaturePreference.getIdealTemperature());
-        setThresholdTemperatureSetting(temperaturePreference.getThreshold());
-        setAutomaticTemperatureSetting(temperatureControl);
-
-        temperatureControl.addObserver(setAutomatonListener(temperatureControl));
-        temperaturePreference.addObserver(setTemperaturePreferenceListener());
-
-        activateAutomaticTemperatureButton.addActionListener(e -> {
+        automaticTemperatureControlButton.addActionListener(e -> {
             temperatureControl.setAutomationActive(!temperatureControl.isAutomationActive());
         });
     }
 
-    private AutomationListener setAutomatonListener(TemperatureControl temperatureControl) {
-        return automationActive -> setAutomaticTemperatureSetting(temperatureControl);
-    }
-
-    private void setIdealTemperatureSetting(int idealTemperature) {
-        idealTemperatureSetting.setText(String.valueOf(idealTemperature));
-    }
-
-    private void setThresholdTemperatureSetting(int threshold) {
-        thresholdTemperatureSetting.setText(String.valueOf(threshold));
-    }
-
-    private void setAutomaticTemperatureSetting(TemperatureControl temperatureControl) {
-        if(temperatureControl.isAutomationActive()) {
-            automaticTemperatureSetting.setText("ON");
-        } else {
-            automaticTemperatureSetting.setText("OFF");
-        }
-    }
-
     private void initAirConditioner(AirConditioner airConditioner, TemperatureControl temperatureControl) {
         if(airConditioner != null) {
-            setAirConditionerState(airConditioner.getAirConditionerState());
-            setAirConditionerTemperature(airConditioner.getTemperature());
+            setAirConditionerStateLabelText(airConditioner.getAirConditionerState());
+            setAirConditionerTemperatureLabelText(airConditioner.getTemperature());
 
-            airConditioner.addObserver(setAirConditionerListener());
+            airConditioner.addObserver(new AirConditionerListener() {
+                @Override
+                public void onChangeState(AirConditionerState state) {
+                    setAirConditionerStateLabelText(state);
+                }
+
+                @Override
+                public void onTemperatureChange(int temperature) {
+                    setAirConditionerTemperatureLabelText(temperature);
+                }
+            });
 
             activateAirConditionerButton.addActionListener(e -> {
                 temperatureControl.handleAirConditioner();
@@ -191,55 +136,120 @@ public class RoomGUI extends JFrame {
             });
         } else {
             airConditionerState.setText("NULL");
-            setAirConditionerTemperature(0);
-        }
-    }
-    private void setAirConditionerState(AirConditionerState state) {
-        if (state.getClass().equals(AirConditionerOn.class)) {
-            airConditionerState.setText("ON");
-        } else {
-            airConditionerState.setText("OFF");
+            setAirConditionerTemperatureLabelText(0);
         }
     }
 
-    private void setAirConditionerTemperature(int temperature) {
+    private JRadioButton createLightButton(Light light) {
+        JRadioButton lightButton = new JRadioButton("Light");
+        if (light.isOn()) {
+            lightButton.setSelected(true);
+        }
+
+        lightButton.addActionListener(e -> light.handle());
+        return lightButton;
+    }
+
+    private void setAutomaticIlluminationLabel(boolean automationActive) {
+        automaticIlluminationLabel.setText(String.valueOf(automationActive));
+    }
+
+    private void setIdealTemperatureLabelText(int idealTemperature) {
+        idealTemperatureLabel.setText(String.valueOf(idealTemperature));
+    }
+
+    private void setThresholdLabelText(int threshold) {
+        thresholdLabel.setText(String.valueOf(threshold));
+    }
+
+    private void setAutomaticTemperatureControlLabelText(boolean automaticActive) {
+        if(automaticActive) {
+            automaticTemperatureControlLabel.setText(ConstantsGUI.ON);
+        } else {
+            automaticTemperatureControlLabel.setText(ConstantsGUI.OFF);
+        }
+    }
+
+    private void setAirConditionerStateLabelText(AirConditionerState state) {
+        if (state.getClass().equals(AirConditionerOn.class)) {
+            airConditionerState.setText(ConstantsGUI.ON);
+        } else {
+            airConditionerState.setText(ConstantsGUI.OFF);
+        }
+    }
+
+    private void setAirConditionerTemperatureLabelText(int temperature) {
         airConditionerTemperature.setText(String.valueOf(temperature));
     }
 
-    private AirConditionerListener setAirConditionerListener() {
-        return new AirConditionerListener() {
-            @Override
-            public void onChangeState(AirConditionerState state) {
-                setAirConditionerState(state);
-            }
+    private void setMenu(Room room) {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu simulation = new JMenu("Simulation");
+        JMenu changeTemperatureSettings = new JMenu("Change Temperature Settings");
 
-            @Override
-            public void onTemperatureChange(int temperature) {
-                setAirConditionerTemperature(temperature);
-            }
-        };
+        JMenuItem presenceSimulation = new JMenuItem("Presence Simulation");
+        JMenuItem temperatureSimulation = new JMenuItem("Temperature Simulation");
+
+        simulation.add(presenceSimulation);
+        simulation.add(temperatureSimulation);
+
+        changeTemperatureSettings.add(createChangeIdealTemperatureMenu(room));
+        changeTemperatureSettings.add(createChangeThresholdMenu(room));
+
+        menuBar.add(simulation);
+        menuBar.add(changeTemperatureSettings);
+
+        setJMenuBar(menuBar);
     }
 
-    private TemperaturePreferenceListener setTemperaturePreferenceListener() {
-        return new TemperaturePreferenceListener() {
-            @Override
-            public void onIdealTemperatureChange(int idealTemperature) {
-                setIdealTemperatureSetting(idealTemperature);
-            }
+    private JMenuItem createChangeIdealTemperatureMenu(Room room) {
+        JMenuItem changeIdealTemperature = new JMenuItem("Change Ideal Temperature");
+        changeIdealTemperature.addActionListener(e -> {
+            String str = DialogOpener.openInputDialog(
+                    "Ideal temperature",
+                    "Change ideal temperature:",
+                    JOptionPane.QUESTION_MESSAGE,
+                    String.valueOf(room.getTemperaturePreference().getIdealTemperature())
+            );
 
-            @Override
-            public void onThresholdChange(int threshold) {
-                setThresholdTemperatureSetting(threshold);
+            try{
+                int value = Integer.parseInt(str);
+                room.getTemperaturePreference().setIdealTemperature(value);
+            } catch (NumberFormatException e1) {
+                notIntegerDialog();
             }
+        });
 
-            @Override
-            public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
-                MessageDialog messageDialog = new MessageDialog();
-                messageDialog.setTitleDialog("Error!");
-                messageDialog.setMessageDialog("Temperature out of range");
-                messageDialog.setVisible(true);
+        return changeIdealTemperature;
+    }
+
+    private JMenuItem createChangeThresholdMenu(Room room) {
+        JMenuItem changeThreshold = new JMenuItem("Change Threshold Temperature");
+        changeThreshold.addActionListener(e -> {
+            String str = DialogOpener.openInputDialog(
+                    "Temperature Threshold",
+                    "Change temperature Threshold:",
+                    JOptionPane.QUESTION_MESSAGE,
+                    String.valueOf(room.getTemperaturePreference().getThreshold())
+            );
+
+            try{
+                int value = Integer.parseInt(str);
+                room.getTemperaturePreference().setThreshold(value);
+            } catch (NumberFormatException e1) {
+                notIntegerDialog();
             }
-        };
+        });
+
+        return changeThreshold;
+    }
+
+    private void notIntegerDialog() {
+        DialogOpener.openMessageDialog(
+                "Error!",
+                "The value typed is not an integer value.",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
 }

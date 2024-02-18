@@ -6,32 +6,37 @@ import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.*;
 import org.smarthome.domain.protection.Alarm;
+import org.smarthome.domain.protection.AlarmState;
+import org.smarthome.domain.protection.Armed;
 import org.smarthome.exception.CleaningException;
-import org.smarthome.gui.dialog.MessageDialog;
-import org.smarthome.listener.VacuumListener;
+import org.smarthome.exception.WrongSecurityPinException;
+import org.smarthome.gui.util.ConstantsGUI;
+import org.smarthome.gui.util.DialogOpener;
+import org.smarthome.listener.*;
 
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 import static org.smarthome.util.Constants.*;
 
 
-public class SmartHomeGUI extends JFrame implements VacuumListener {
+public class SmartHomeGUI extends JFrame {
+
     private JPanel mainPanel;
     private JPanel roomPanel;
     private JButton startCleaningButton;
     private JButton stopCleaningButton;
-    private JLabel stateLabel;
-    private JLabel currentPositionLabel;
     private JLabel chargingStationPositionLabel;
-    private JLabel alarmState;
-    private JLabel sirenState;
-    private JButton activateAutomaticControlButton;
-    private JLabel emergencyCallState;
-    private JLabel automaticControlState;
-    private MessageDialog messageDialog;
+    private JLabel currentPositionLabel;
+    private JLabel vacuumStateLabel;
+    private JLabel alarmStateLabel;
+    private JLabel sirenStateLabel;
+    private JLabel automaticProtectionControlStateLabel;
+    private JButton powerAlarmButton;
+    private JButton automaticProtectionControlButton;
 
     public SmartHomeGUI(SmartHome smartHome) {
         setContentPane(mainPanel);
@@ -57,68 +62,109 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
     }
 
     private void initCleaning(Vacuum vacuum, CleaningControl cleaningControl) {
-        messageDialog = new MessageDialog();
-        stateLabel.setText(vacuum.getChargingStationPosition().getName());
-        setTextFieldCurrentPosition(vacuum.getCurrentPosition());
-        setTextFieldState(vacuum.getVacuumState());
+        chargingStationPositionLabel.setText(vacuum.getChargingStationPosition().getName());
+        setCurrentPositionLabelText(vacuum.getCurrentPosition());
+        setVacuumStateLabelText(vacuum.getVacuumState());
 
-        vacuum.addObserver(this);
+        vacuum.addObserver(new VacuumListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+                setCurrentPositionLabelText(currentPosition);
+            }
+
+            @Override
+            public void onChangeState(VacuumState state) {
+                setVacuumStateLabelText(state);
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+                DialogOpener.openMessageDialog(
+                        "Complete Cleaning",
+                        "The cleaning of the house is now complete!",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+                DialogOpener.openMessageDialog(
+                        "Stopped Cleaning",
+                        "The cleaning process has stopped!",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                DialogOpener.openMessageDialog(
+                        "Cleaning Error!",
+                        e.getMessage(),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
 
         startCleaningButton.addActionListener(e -> cleaningControl.startCleaning());
         stopCleaningButton.addActionListener(e -> cleaningControl.stopCleaning());
     }
 
     private void initSecurity(ProtectionControl protectionControl, Alarm alarm) {
+        if (alarm != null) {
+            setAlarmStateLabelText(alarm.getAlarmState());
+            setSirenStateLabelText(alarm.getSiren().isActive());
 
-        protectionControl.addObserver(protectionControl::setAutomationActive);
+            alarm.addObserver(new AlarmListener() {
+                @Override
+                public void onChangeState(AlarmState state) {
+                    setAlarmStateLabelText(state);
+                }
 
-        activateAutomaticControlButton.addActionListener(e -> {
-            protectionControl.setAutomationActive(!protectionControl.isAutomationActive());
+                @Override
+                public void onWrongSecurityPinException(WrongSecurityPinException e) {
+                    DialogOpener.openMessageDialog(
+                            "Security Error!",
+                            e.getMessage(),
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+
+            alarm.getSiren().addObserver(this::setSirenStateLabelText);
+
+            alarm.getEmergencyService().addObserver(emergencyNumber -> {
+                DialogOpener.openMessageDialog(
+                        "Emergency Call",
+                        "Emergency call to number: " + emergencyNumber,
+                        JOptionPane.WARNING_MESSAGE
+                );
+            });
+        } else {
+            alarmStateLabel.setText(ConstantsGUI.NONE);
+            sirenStateLabel.setText(ConstantsGUI.NONE);
+        }
+
+        setAutomaticProtectionControlState(protectionControl.isAutomationActive());
+        protectionControl.addObserver(this::setAutomaticProtectionControlState);
+
+        powerAlarmButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String pin = DialogOpener.openInputDialog(
+                        "Security pin",
+                        "Type security pin:",
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                protectionControl.handleAlarm(pin);
+            }
         });
 
-        if(alarm != null && protectionControl.isAutomationActive()) {
-            setAlarmState(protectionControl);
-            setSirenState(alarm);
-            setEmergencyCallState(protectionControl);
-        }else {
-            automaticControlState.setText("OFF");
-            alarmState.setText("OFF");
-            sirenState.setText("OFF");
-            emergencyCallState.setText("NO CALL");
-        }
-
-    }
-
-    private void setAutomaticControlState(ProtectionControl protectionControl) {
-        if(protectionControl.isAutomationActive()) {
-            automaticControlState.setText("ON");
-        }else  {
-            automaticControlState.setText("OFF");
-        }
-    }
-
-    private void setAlarmState(ProtectionControl protectionControl){
-        if(protectionControl.isAlarmArmed()) {
-            alarmState.setText("ON");
-        }else  {
-            alarmState.setText("OFF");
-        }
-    }
-
-    private void setSirenState(Alarm alarm) {
-        if(alarm.getSiren().isActive()) {
-            sirenState.setText("ON");
-        }else {
-            sirenState.setText("OFF");
-        }
-    }
-
-    private void setEmergencyCallState(ProtectionControl protectionControl) {
-        if(protectionControl.isAlarmArmed()){
-            emergencyCallState.setText("CALL ON GOING");
-        } else {
-            emergencyCallState.setText("NO CALL");
-        }
+        automaticProtectionControlButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                protectionControl.setAutomationActive(!protectionControl.isAutomationActive());
+            }
+        });
     }
 
     private JButton createRoomButton(Room room) {
@@ -127,53 +173,42 @@ public class SmartHomeGUI extends JFrame implements VacuumListener {
         return roomButton;
     }
 
-    private void setTextFieldState(VacuumState vacuumState) {
+    private void setVacuumStateLabelText(VacuumState vacuumState) {
         if (vacuumState.getClass().equals(Cleaning.class)) {
-            chargingStationPositionLabel.setText("Cleaning");
-        }
-        else if (vacuumState.getClass().equals(Transit.class)) {
-            chargingStationPositionLabel.setText("Transit");
-        }
-        else if (vacuumState.getClass().equals(Charging.class)) {
-            chargingStationPositionLabel.setText("Charging");
+            vacuumStateLabel.setText("Cleaning");
+        } else if (vacuumState.getClass().equals(Transit.class)) {
+            vacuumStateLabel.setText("Transit");
+        } else if (vacuumState.getClass().equals(Charging.class)) {
+            vacuumStateLabel.setText("Charging");
         }
     }
 
-    private void setTextFieldCurrentPosition(Room currentPosition) {
+    private void setCurrentPositionLabelText(Room currentPosition) {
         currentPositionLabel.setText(currentPosition.getName());
     }
 
-    @Override
-    public void onChangePosition(Room currentPosition) {
-        setTextFieldCurrentPosition(currentPosition);
+    private void setAlarmStateLabelText(AlarmState state) {
+        if (state.getClass().equals(Armed.class)) {
+            alarmStateLabel.setText(ConstantsGUI.ARMED);
+        } else  {
+            alarmStateLabel.setText(ConstantsGUI.DISARMED);
+        }
     }
 
-    @Override
-    public void onChangeState(VacuumState state) {
-        setTextFieldState(state);
+    private void setSirenStateLabelText(boolean active) {
+        if (active) {
+            sirenStateLabel.setText(ConstantsGUI.ON);
+        } else  {
+            sirenStateLabel.setText(ConstantsGUI.OFF);
+        }
     }
 
-    @Override
-    public void onCompletedCleaning() {
-        messageDialog.setTitleDialog("Complete Cleaning");
-        messageDialog.setMessageDialog("The cleaning of the house is now complete!");
-        messageDialog.setVisible(true);
-
-    }
-
-    @Override
-    public void onStoppedCleaning() {
-        messageDialog.setTitleDialog("Stopped Cleaning");
-        messageDialog.setMessageDialog("The cleaning process has stopped!");
-        messageDialog.setVisible(true);
-
-    }
-
-    @Override
-    public void onCleaningException(CleaningException e) {
-        messageDialog.setTitleDialog("Cleaning Error!");
-        messageDialog.setMessageDialog(e.getMessage());
-        messageDialog.setVisible(true);
+    private void setAutomaticProtectionControlState(boolean automationActive) {
+        if (automationActive) {
+            automaticProtectionControlStateLabel.setText(ConstantsGUI.ON);
+        } else  {
+            automaticProtectionControlStateLabel.setText(ConstantsGUI.OFF);
+        }
     }
 
 }
