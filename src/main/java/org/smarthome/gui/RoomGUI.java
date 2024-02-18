@@ -5,12 +5,18 @@ import org.smarthome.controller.TemperatureControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.temperature.*;
+import org.smarthome.exception.FieldOutOfRangeException;
+import org.smarthome.gui.dialog.MessageDialog;
+import org.smarthome.gui.dialog.SettingDialog;
 import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.listener.AutomationListener;
+import org.smarthome.listener.TemperaturePreferenceListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import static org.smarthome.util.Constants.*;
 
@@ -85,31 +91,61 @@ public class RoomGUI extends JFrame {
     }
 
     private void setMenu(Room room) {
-
         JMenu simulation = new JMenu("Simulation");
         JMenu changeTemperatureSettings = new JMenu("Change Temperature Settings");
-
         JMenuBar menuBar = new JMenuBar();
 
         JMenuItem presenceSimulation = new JMenuItem("Presence Simulation");
 
         JMenuItem temperatureSimulation = new JMenuItem("Temperature Simulation");
 
+        JMenuItem changeIdealTemperature = new JMenuItem("Change Ideal Temperature");
+        JMenuItem changeThreshold = new JMenuItem("Change Threshold Temperature");
+
+        changeIdealTemperature.addActionListener(e -> {
+            SettingDialog settingDialog = new SettingDialog();
+            settingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if(settingDialog.getTemperature() != null) {
+                        room.getTemperaturePreference().setIdealTemperature(Integer.parseInt(settingDialog.getTemperature()));
+                    }
+                }
+            });
+        });
+
+        changeThreshold.addActionListener(e -> {
+            SettingDialog settingDialog = new SettingDialog();
+            settingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if(settingDialog.getTemperature() != null) {
+                        room.getTemperaturePreference().setThreshold(Integer.parseInt(settingDialog.getTemperature()));
+                    }
+                }
+            });
+        });
+
         simulation.add(presenceSimulation);
         simulation.add(temperatureSimulation);
 
+        changeTemperatureSettings.add(changeIdealTemperature);
+        changeTemperatureSettings.add(changeThreshold);
+
         menuBar.add(simulation);
         menuBar.add(changeTemperatureSettings);
+
 
         setJMenuBar(menuBar);
     }
 
     private void initTemperatureSettings(TemperaturePreference temperaturePreference,TemperatureControl temperatureControl) {
-        setIdealTemperatureSetting(temperaturePreference);
-        setThresholdTemperatureSetting(temperaturePreference);
+        setIdealTemperatureSetting(temperaturePreference.getIdealTemperature());
+        setThresholdTemperatureSetting(temperaturePreference.getThreshold());
         setAutomaticTemperatureSetting(temperatureControl);
 
         temperatureControl.addObserver(setAutomatonListener(temperatureControl));
+        temperaturePreference.addObserver(setTemperaturePreferenceListener());
 
         activateAutomaticTemperatureButton.addActionListener(e -> {
             temperatureControl.setAutomationActive(!temperatureControl.isAutomationActive());
@@ -120,12 +156,12 @@ public class RoomGUI extends JFrame {
         return automationActive -> setAutomaticTemperatureSetting(temperatureControl);
     }
 
-    private void setIdealTemperatureSetting(TemperaturePreference temperaturePreference) {
-        idealTemperatureSetting.setText(String.valueOf(temperaturePreference.getIdealTemperature()));
+    private void setIdealTemperatureSetting(int idealTemperature) {
+        idealTemperatureSetting.setText(String.valueOf(idealTemperature));
     }
 
-    private void setThresholdTemperatureSetting(TemperaturePreference temperaturePreference) {
-        thresholdTemperatureSetting.setText(String.valueOf(temperaturePreference.getThreshold()));
+    private void setThresholdTemperatureSetting(int threshold) {
+        thresholdTemperatureSetting.setText(String.valueOf(threshold));
     }
 
     private void setAutomaticTemperatureSetting(TemperatureControl temperatureControl) {
@@ -181,6 +217,28 @@ public class RoomGUI extends JFrame {
             @Override
             public void onTemperatureChange(int temperature) {
                 setAirConditionerTemperature(temperature);
+            }
+        };
+    }
+
+    private TemperaturePreferenceListener setTemperaturePreferenceListener() {
+        return new TemperaturePreferenceListener() {
+            @Override
+            public void onIdealTemperatureChange(int idealTemperature) {
+                setIdealTemperatureSetting(idealTemperature);
+            }
+
+            @Override
+            public void onThresholdChange(int threshold) {
+                setThresholdTemperatureSetting(threshold);
+            }
+
+            @Override
+            public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
+                MessageDialog messageDialog = new MessageDialog();
+                messageDialog.setTitleDialog("Error!");
+                messageDialog.setMessageDialog("Temperature out of range");
+                messageDialog.setVisible(true);
             }
         };
     }
