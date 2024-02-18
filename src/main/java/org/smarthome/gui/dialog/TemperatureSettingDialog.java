@@ -5,12 +5,12 @@ import javax.swing.*;
 import static org.smarthome.util.Constants.defaultDialogHeightSetting;
 import static org.smarthome.util.Constants.defaultDialogWidthSetting;
 
-public class SettingDialog extends JDialog {
+public class TemperatureSettingDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JTextField textField;
 
-    public SettingDialog() {
+    public TemperatureSettingDialog() {
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
         setSize(defaultDialogWidthSetting(), defaultDialogHeightSetting());

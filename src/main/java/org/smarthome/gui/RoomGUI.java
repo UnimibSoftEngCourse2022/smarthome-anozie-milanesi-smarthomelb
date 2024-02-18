@@ -7,7 +7,7 @@ import org.smarthome.domain.illumination.Light;
 import org.smarthome.domain.temperature.*;
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.gui.dialog.MessageDialog;
-import org.smarthome.gui.dialog.SettingDialog;
+import org.smarthome.gui.dialog.TemperatureSettingDialog;
 import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.listener.AutomationListener;
 import org.smarthome.listener.TemperaturePreferenceListener;
@@ -16,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import static org.smarthome.util.Constants.*;
 
@@ -103,24 +102,24 @@ public class RoomGUI extends JFrame {
         JMenuItem changeThreshold = new JMenuItem("Change Threshold Temperature");
 
         changeIdealTemperature.addActionListener(e -> {
-            SettingDialog settingDialog = new SettingDialog();
-            settingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            TemperatureSettingDialog temperatureSettingDialog = new TemperatureSettingDialog();
+            temperatureSettingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    if(settingDialog.getTemperature() != null) {
-                        room.getTemperaturePreference().setIdealTemperature(Integer.parseInt(settingDialog.getTemperature()));
+                    if(temperatureSettingDialog.getTemperature() != null) {
+                        room.getTemperaturePreference().setIdealTemperature(Integer.parseInt(temperatureSettingDialog.getTemperature()));
                     }
                 }
             });
         });
 
         changeThreshold.addActionListener(e -> {
-            SettingDialog settingDialog = new SettingDialog();
-            settingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            TemperatureSettingDialog temperatureSettingDialog = new TemperatureSettingDialog();
+            temperatureSettingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    if(settingDialog.getTemperature() != null) {
-                        room.getTemperaturePreference().setThreshold(Integer.parseInt(settingDialog.getTemperature()));
+                    if(temperatureSettingDialog.getTemperature() != null) {
+                        room.getTemperaturePreference().setThreshold(Integer.parseInt(temperatureSettingDialog.getTemperature()));
                     }
                 }
             });
