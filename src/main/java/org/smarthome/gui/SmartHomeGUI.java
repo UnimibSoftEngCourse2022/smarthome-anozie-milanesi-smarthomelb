@@ -10,7 +10,6 @@ import org.smarthome.domain.protection.AlarmState;
 import org.smarthome.domain.protection.Armed;
 import org.smarthome.exception.CleaningException;
 import org.smarthome.exception.WrongSecurityPinException;
-import org.smarthome.gui.util.ConstantsGUI;
 import org.smarthome.gui.util.DialogOpener;
 import org.smarthome.listener.*;
 
@@ -20,76 +19,8 @@ import java.awt.event.ActionEvent;
 
 public class SmartHomeGUI extends JFrame {
 
-    private final VacuumListener vacuumListener = new VacuumListener() {
-        @Override
-        public void onChangePosition(Room currentPosition) {
-            setCurrentPositionLabelText(currentPosition);
-        }
-
-        @Override
-        public void onChangeState(VacuumState state) {
-            setVacuumStateLabelText(state);
-        }
-
-        @Override
-        public void onCompletedCleaning() {
-            DialogOpener.openMessageDialog(
-                    "Complete Cleaning",
-                    "The cleaning of the house is now complete!",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        }
-
-        @Override
-        public void onStoppedCleaning() {
-            DialogOpener.openMessageDialog(
-                    "Stopped Cleaning",
-                    "The cleaning process has stopped!",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        }
-
-        @Override
-        public void onCleaningException(CleaningException e) {
-            DialogOpener.openMessageDialog(
-                    "Cleaning Error!",
-                    e.getMessage(),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    };
-
-    private final AlarmListener alarmListener = new AlarmListener() {
-        @Override
-        public void onChangeState(AlarmState state) {
-            setAlarmStateLabelText(state);
-        }
-
-        @Override
-        public void onWrongSecurityPinException(WrongSecurityPinException e) {
-            DialogOpener.openMessageDialog(
-                    "Security Error!",
-                    e.getMessage(),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    };
-
-    private final SirenListener sirenListener = this::setSirenStateLabelText;
-
-    private final EmergencyServiceListener emergencyServiceListener = emergencyNumber ->
-            DialogOpener.openMessageDialog(
-                    "Emergency Call",
-                    "Emergency call to number: " + emergencyNumber,
-                    JOptionPane.WARNING_MESSAGE
-            );
-
-    private final AutomationListener automationProtectionControlListener =
-            this::setAutomaticProtectionControlState;
-
     private static SmartHomeGUI instance;
 
-    private final SmartHome smartHome;
     private JPanel mainPanel;
     private JPanel roomPanel;
     private JButton startCleaningButton;
@@ -112,32 +43,22 @@ public class SmartHomeGUI extends JFrame {
     public static SmartHomeGUI init(SmartHome smartHome) {
         if (instance == null) {
             instance = new SmartHomeGUI(smartHome);
-        } else {
-            if (instance.getSmartHome() != null && instance.getSmartHome() != smartHome) {
-                instance.dispose();
-                instance = new SmartHomeGUI(smartHome);
-            }
         }
         return instance;
     }
 
     private SmartHomeGUI(SmartHome smartHome) {
-        this.smartHome = smartHome;
         setContentPane(mainPanel);
         setTitle("Smart Home");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        initRooms();
-        initCleaning();
-        initSecurity();
+        initRooms(smartHome);
+        initCleaning(smartHome);
+        initSecurity(smartHome);
         pack();
         setLocationRelativeTo(null);
     }
 
-    public SmartHome getSmartHome() {
-        return smartHome;
-    }
-
-    private void initRooms() {
+    private void initRooms(SmartHome smartHome) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -149,7 +70,7 @@ public class SmartHomeGUI extends JFrame {
         }
     }
 
-    private void initCleaning() {
+    private void initCleaning(SmartHome smartHome) {
         CleaningControl cleaningControl = smartHome.getCleaningControl();
         Vacuum vacuum = smartHome.getVacuum();
 
@@ -158,7 +79,7 @@ public class SmartHomeGUI extends JFrame {
             setCurrentPositionLabelText(vacuum.getCurrentPosition());
             setVacuumStateLabelText(vacuum.getVacuumState());
 
-            vacuum.addObserver(vacuumListener);
+            vacuum.addObserver(createVacuumListener());
 
             startCleaningButton.addActionListener(e -> cleaningControl.startCleaning());
             stopCleaningButton.addActionListener(e -> cleaningControl.stopCleaning());
@@ -167,7 +88,7 @@ public class SmartHomeGUI extends JFrame {
         }
     }
 
-    private void initSecurity() {
+    private void initSecurity(SmartHome smartHome) {
         ProtectionControl protectionControl = smartHome.getProtectionControl();
         Alarm alarm = smartHome.getAlarm();
 
@@ -175,12 +96,12 @@ public class SmartHomeGUI extends JFrame {
             setAlarmStateLabelText(alarm.getAlarmState());
             setSirenStateLabelText(alarm.getSiren().isActive());
 
-            alarm.addObserver(alarmListener);
-            alarm.getSiren().addObserver(sirenListener);
-            alarm.getEmergencyService().addObserver(emergencyServiceListener);
+            alarm.addObserver(createAlarmListener());
+            alarm.getSiren().addObserver(createSirenListener());
+            alarm.getEmergencyService().addObserver(createEmergencyServiceListener());
 
             setAutomaticProtectionControlState(protectionControl.isAutomationActive());
-            protectionControl.addObserver(automationProtectionControlListener);
+            protectionControl.addObserver(createAutomationProtectionControlListener());
 
             powerAlarmButton.addActionListener(new AbstractAction() {
                 @Override
@@ -235,26 +156,104 @@ public class SmartHomeGUI extends JFrame {
 
     private void setAlarmStateLabelText(AlarmState state) {
         if (state.getClass().equals(Armed.class)) {
-            alarmStateLabel.setText(ConstantsGUI.ARMED);
+            alarmStateLabel.setText("Armed");
         } else  {
-            alarmStateLabel.setText(ConstantsGUI.DISARMED);
+            alarmStateLabel.setText("Disarmed");
         }
     }
 
     private void setSirenStateLabelText(boolean active) {
         if (active) {
-            sirenStateLabel.setText(ConstantsGUI.ON);
+            sirenStateLabel.setText("On");
         } else  {
-            sirenStateLabel.setText(ConstantsGUI.OFF);
+            sirenStateLabel.setText("Off");
         }
     }
 
     private void setAutomaticProtectionControlState(boolean automationActive) {
         if (automationActive) {
-            automaticProtectionControlStateLabel.setText(ConstantsGUI.ON);
+            automaticProtectionControlStateLabel.setText("On");
         } else  {
-            automaticProtectionControlStateLabel.setText(ConstantsGUI.OFF);
+            automaticProtectionControlStateLabel.setText("Off");
         }
+    }
+
+    /* - */
+
+    private VacuumListener createVacuumListener() {
+        return new VacuumListener() {
+            @Override
+            public void onChangePosition(Room currentPosition) {
+                setCurrentPositionLabelText(currentPosition);
+            }
+
+            @Override
+            public void onChangeState(VacuumState state) {
+                setVacuumStateLabelText(state);
+            }
+
+            @Override
+            public void onCompletedCleaning() {
+                DialogOpener.openMessageDialog(
+                        "Complete Cleaning",
+                        "The cleaning of the house is now complete!",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+            @Override
+            public void onStoppedCleaning() {
+                DialogOpener.openMessageDialog(
+                        "Stopped Cleaning",
+                        "The cleaning process has stopped!",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+
+            @Override
+            public void onCleaningException(CleaningException e) {
+                DialogOpener.openMessageDialog(
+                        "Cleaning Error!",
+                        e.getMessage(),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        };
+    }
+
+    private AlarmListener createAlarmListener() {
+        return new AlarmListener() {
+            @Override
+            public void onChangeState(AlarmState state) {
+                setAlarmStateLabelText(state);
+            }
+
+            @Override
+            public void onWrongSecurityPinException(WrongSecurityPinException e) {
+                DialogOpener.openMessageDialog(
+                        "Security Error!",
+                        e.getMessage(),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        };
+    }
+
+    private SirenListener createSirenListener() {
+        return this::setSirenStateLabelText;
+    }
+
+    private EmergencyServiceListener createEmergencyServiceListener() {
+        return emergencyNumber ->
+                DialogOpener.openMessageDialog(
+                        "Emergency Call",
+                        "Emergency call to number: " + emergencyNumber,
+                        JOptionPane.WARNING_MESSAGE
+                );
+    }
+
+    private AutomationListener createAutomationProtectionControlListener() {
+        return this::setAutomaticProtectionControlState;
     }
 
 }

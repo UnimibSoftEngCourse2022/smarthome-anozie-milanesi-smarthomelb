@@ -9,7 +9,6 @@ public class DialogOpener {
     private DialogOpener() {}
 
     public static void openMessageDialog(String title, String message, int messageType) {
-
         JOptionPane.showMessageDialog(
                 null,
                 String.format(HTML, 300, message),

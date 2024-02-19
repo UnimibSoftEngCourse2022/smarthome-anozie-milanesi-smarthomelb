@@ -12,7 +12,6 @@ import org.smarthome.domain.temperature.AirConditionerOn;
 import org.smarthome.domain.temperature.AirConditionerState;
 import org.smarthome.domain.temperature.TemperaturePreference;
 import org.smarthome.exception.FieldOutOfRangeException;
-import org.smarthome.gui.util.ConstantsGUI;
 import org.smarthome.gui.util.DialogOpener;
 import org.smarthome.listener.AirConditionerListener;
 import org.smarthome.listener.AutomationListener;
@@ -25,52 +24,6 @@ import java.awt.event.ActionEvent;
 
 public class RoomGUI extends JFrame {
 
-    private final AutomationListener automationIlluminationControlListener =
-            this::setAutomaticIlluminationLabel;
-
-    private final AutomationListener automationTemperatureControlListener =
-            this::setAutomaticTemperatureControlLabelText;
-
-    private final TemperaturePreferenceListener temperaturePreferenceListener = new TemperaturePreferenceListener() {
-        @Override
-        public void onIdealTemperatureChange(int idealTemperature) {
-            setIdealTemperatureLabelText(idealTemperature);
-        }
-
-        @Override
-        public void onThresholdChange(int threshold) {
-            setThresholdLabelText(threshold);
-        }
-
-        @Override
-        public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
-            DialogOpener.openMessageDialog(
-                    "Error!",
-                    "Temperature out of range",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    };
-
-    private final AirConditionerListener airConditionerListener = new AirConditionerListener() {
-        @Override
-        public void onChangeState(AirConditionerState state) {
-            setAirConditionerStateLabelText(state);
-        }
-
-        @Override
-        public void onTemperatureChange(int temperature) {
-            setAirConditionerTemperatureLabelText(temperature);
-        }
-    };
-
-    private final SensorListener<Boolean> sensorPresenceListener = this::setAmbientPresenceLabelText;
-
-    private final SensorListener<Integer> sensorTemperatureListener = this::setAmbientTemperatureLabelText;
-
-    private static RoomGUI instance;
-
-    private final Room room;
     private JPanel mainPanel;
     private JPanel lightPanel;
     private JButton lightControlButton;
@@ -96,32 +49,19 @@ public class RoomGUI extends JFrame {
     private JLabel temperatureLabel;
     private JPanel ambientPanel;
 
-    public static RoomGUI getInstance() {
-        return instance;
-    }
-
     public static RoomGUI init(Room room) {
-        if (instance == null) {
-            instance = new RoomGUI(room);
-        } else {
-            if (instance.getRoom() != null && instance.getRoom() != room) {
-                instance.dispose();
-                instance = new RoomGUI(room);
-            }
-        }
-        return instance;
+        return new RoomGUI(room);
     }
 
     private RoomGUI(Room room) {
-        this.room = room;
         setContentPane(mainPanel);
         setTitle(room.getName());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setMenu();
-        initIllumination();
-        initAirConditioner();
-        initTemperatureSettings();
-        initAmbient();
+        setMenu(room);
+        initIllumination(room);
+        initAirConditioner(room);
+        initTemperatureSettings(room);
+        initAmbient(room);
         backHomeButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,11 +73,7 @@ public class RoomGUI extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    private void initIllumination() {
+    private void initIllumination(Room room) {
         lightPanel.setLayout(new BoxLayout(lightPanel, BoxLayout.Y_AXIS));
 
         IlluminationControl illuminationControl = room.getIlluminationControl();
@@ -158,7 +94,7 @@ public class RoomGUI extends JFrame {
 
         if (presenceSensor != null) {
             setAutomaticIlluminationLabel(illuminationControl.isAutomationActive());
-            illuminationControl.addObserver(automationIlluminationControlListener);
+            illuminationControl.addObserver(createAutomationIlluminationControlListener());
 
             actuateIlluminationButton.addActionListener(new AbstractAction() {
                 @Override
@@ -172,7 +108,7 @@ public class RoomGUI extends JFrame {
         }
     }
 
-    private void initAirConditioner() {
+    private void initAirConditioner(Room room) {
         TemperatureControl temperatureControl = room.getTemperatureControl();
         AirConditioner airConditioner = room.getAirConditioner();
 
@@ -180,7 +116,7 @@ public class RoomGUI extends JFrame {
             setAirConditionerStateLabelText(airConditioner.getAirConditionerState());
             setAirConditionerTemperatureLabelText(airConditioner.getTemperature());
 
-            airConditioner.addObserver(airConditionerListener);
+            airConditioner.addObserver(createAirConditionerListener());
 
             activateAirConditionerButton.addActionListener(e ->
                     temperatureControl.handleAirConditioner());
@@ -195,7 +131,7 @@ public class RoomGUI extends JFrame {
         }
     }
 
-    private void initTemperatureSettings() {
+    private void initTemperatureSettings(Room room) {
         TemperatureControl temperatureControl = room.getTemperatureControl();
         TemperaturePreference temperaturePreference = room.getTemperaturePreference();
         TemperatureSensor temperatureSensor = room.getTemperatureSensor();
@@ -203,8 +139,8 @@ public class RoomGUI extends JFrame {
         setIdealTemperatureLabelText(temperaturePreference.getIdealTemperature());
         setThresholdLabelText(temperaturePreference.getThreshold());
 
-        temperatureControl.addObserver(automationTemperatureControlListener);
-        temperaturePreference.addObserver(temperaturePreferenceListener);
+        temperatureControl.addObserver(createAutomationTemperatureControlListener());
+        temperaturePreference.addObserver(createTemperaturePreferenceListener());
 
         if (temperatureSensor != null) {
             setAutomaticTemperatureControlLabelText(temperatureControl.isAutomationActive());
@@ -215,7 +151,7 @@ public class RoomGUI extends JFrame {
         }
     }
 
-    private void initAmbient() {
+    private void initAmbient(Room room) {
         PresenceSensor presenceSensor = room.getPresenceSensor();
         TemperatureSensor temperatureSensor = room.getTemperatureSensor();
 
@@ -224,7 +160,7 @@ public class RoomGUI extends JFrame {
         } else {
             if (presenceSensor != null) {
                 setAmbientPresenceLabelText(presenceSensor.getData());
-                presenceSensor.addObserver(sensorPresenceListener);
+                presenceSensor.addObserver(createSensorPresenceListener());
             } else {
                 presenceLabel.setVisible(false);
                 ambientPresenceLabel.setVisible(false);
@@ -232,7 +168,7 @@ public class RoomGUI extends JFrame {
 
             if (temperatureSensor != null) {
                 setAmbientTemperatureLabelText(temperatureSensor.getData());
-                temperatureSensor.addObserver(sensorTemperatureListener);
+                temperatureSensor.addObserver(createSensorTemperatureListener());
             } else {
                 temperatureLabel.setVisible(false);
                 ambientTemperatureLabel.setVisible(false);
@@ -264,17 +200,17 @@ public class RoomGUI extends JFrame {
 
     private void setAutomaticTemperatureControlLabelText(boolean automaticActive) {
         if(automaticActive) {
-            automaticTemperatureControlLabel.setText(ConstantsGUI.ON);
+            automaticTemperatureControlLabel.setText("On");
         } else {
-            automaticTemperatureControlLabel.setText(ConstantsGUI.OFF);
+            automaticTemperatureControlLabel.setText("Off");
         }
     }
 
     private void setAirConditionerStateLabelText(AirConditionerState state) {
         if (state.getClass().equals(AirConditionerOn.class)) {
-            airConditionerState.setText(ConstantsGUI.ON);
+            airConditionerState.setText("On");
         } else {
-            airConditionerState.setText(ConstantsGUI.OFF);
+            airConditionerState.setText("Off");
         }
     }
 
@@ -290,7 +226,7 @@ public class RoomGUI extends JFrame {
         ambientTemperatureLabel.setText(temperature + "°");
     }
 
-    private void setMenu() {
+    private void setMenu(Room room) {
         PresenceSensor presenceSensor = room.getPresenceSensor();
         TemperatureSensor temperatureSensor = room.getTemperatureSensor();
 
@@ -299,23 +235,23 @@ public class RoomGUI extends JFrame {
         if (presenceSensor != null || temperatureSensor != null) {
             JMenu simulation = new JMenu("Simulation");
             if (presenceSensor != null) {
-                simulation.add(createPresenceSimulationMenu());
+                simulation.add(createPresenceSimulationMenu(room));
             }
             if (temperatureSensor != null) {
-                simulation.add(createTemperatureSimulationMenu());
+                simulation.add(createTemperatureSimulationMenu(room));
             }
             menuBar.add(simulation);
         }
 
         JMenu changeTemperatureSettings = new JMenu("Preference");
-        changeTemperatureSettings.add(createChangeIdealTemperatureMenu());
-        changeTemperatureSettings.add(createChangeThresholdMenu());
+        changeTemperatureSettings.add(createChangeIdealTemperatureMenu(room));
+        changeTemperatureSettings.add(createChangeThresholdMenu(room));
         menuBar.add(changeTemperatureSettings);
 
         setJMenuBar(menuBar);
     }
 
-    private JMenuItem createPresenceSimulationMenu() {
+    private JMenuItem createPresenceSimulationMenu(Room room) {
         JMenuItem presenceSimulation = new JMenuItem("Presence");
         presenceSimulation.addActionListener(new AbstractAction() {
             @Override
@@ -326,7 +262,7 @@ public class RoomGUI extends JFrame {
         return presenceSimulation;
     }
 
-    private JMenuItem createTemperatureSimulationMenu() {
+    private JMenuItem createTemperatureSimulationMenu(Room room) {
         JMenuItem temperatureSimulation = new JMenuItem("Temperature");
         temperatureSimulation.addActionListener(new AbstractAction() {
             @Override
@@ -351,7 +287,7 @@ public class RoomGUI extends JFrame {
         return temperatureSimulation;
     }
 
-    private JMenuItem createChangeIdealTemperatureMenu() {
+    private JMenuItem createChangeIdealTemperatureMenu(Room room) {
         JMenuItem changeIdealTemperature = new JMenuItem("Ideal temperature");
         changeIdealTemperature.addActionListener(e -> {
             String str = DialogOpener.openInputDialog(
@@ -373,7 +309,7 @@ public class RoomGUI extends JFrame {
         return changeIdealTemperature;
     }
 
-    private JMenuItem createChangeThresholdMenu() {
+    private JMenuItem createChangeThresholdMenu(Room room) {
         JMenuItem changeThreshold = new JMenuItem("Threshold");
         changeThreshold.addActionListener(e -> {
             String str = DialogOpener.openInputDialog(
@@ -401,6 +337,61 @@ public class RoomGUI extends JFrame {
                 "The value typed is not an integer value.",
                 JOptionPane.ERROR_MESSAGE
         );
+    }
+
+    /* - */
+
+    private AutomationListener createAutomationIlluminationControlListener() {
+        return this::setAutomaticIlluminationLabel;
+    }
+
+    private AutomationListener createAutomationTemperatureControlListener() {
+        return this::setAutomaticTemperatureControlLabelText;
+    }
+
+    private TemperaturePreferenceListener createTemperaturePreferenceListener() {
+        return new TemperaturePreferenceListener() {
+            @Override
+            public void onIdealTemperatureChange(int idealTemperature) {
+                setIdealTemperatureLabelText(idealTemperature);
+            }
+
+            @Override
+            public void onThresholdChange(int threshold) {
+                setThresholdLabelText(threshold);
+            }
+
+            @Override
+            public void onFieldOutOfRangeException(FieldOutOfRangeException e) {
+                DialogOpener.openMessageDialog(
+                        "Error!",
+                        "Temperature out of range",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        };
+    }
+
+    private AirConditionerListener createAirConditionerListener() {
+        return new AirConditionerListener() {
+            @Override
+            public void onChangeState(AirConditionerState state) {
+                setAirConditionerStateLabelText(state);
+            }
+
+            @Override
+            public void onTemperatureChange(int temperature) {
+                setAirConditionerTemperatureLabelText(temperature);
+            }
+        };
+    }
+
+    private SensorListener<Boolean> createSensorPresenceListener() {
+        return this::setAmbientPresenceLabelText;
+    }
+
+    private SensorListener<Integer> createSensorTemperatureListener() {
+        return this::setAmbientTemperatureLabelText;
     }
 
 }
