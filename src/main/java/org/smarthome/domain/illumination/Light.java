@@ -7,11 +7,17 @@ import java.util.Objects;
 
 public class Light extends ObservableElement<LightActionListener> {
 
+    private final String name;
     private LightState lightState;
-
-    public Light() {
+    
+    public Light(String name) {
         super();
+        this.name = name;
         lightState = new LightOff(this);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public synchronized LightState getLightState() {

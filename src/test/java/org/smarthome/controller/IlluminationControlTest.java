@@ -20,9 +20,9 @@ class IlluminationControlTest {
     @BeforeEach
     void setUp() {
         lights = new ArrayList<>();
-        lights.add(new Light());
-        lights.add(new Light());
-        lights.add(new Light());
+        lights.add(new Light("Light"));
+        lights.add(new Light("Light"));
+        lights.add(new Light("Light"));
         illumination = new Illumination(lights);
 
         illuminationControl = new IlluminationControl(illumination);

@@ -21,8 +21,8 @@ class SmartHomeBuilderTest {
     void createSmartHomeTest() {
         // create rooms
         Room room1 = new SmartHomeRoomBuilder("test1")
-                .addLight(new Light())
-                .addLight(new Light())
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
                 .create();
         assertNotNull(room1.getIllumination());
         assertNull(room1.getAirConditioner());
@@ -30,7 +30,7 @@ class SmartHomeBuilderTest {
         assertNull(room1.getTemperatureSensor());
 
         Room room2 = new SmartHomeRoomBuilder("test2")
-                .addLight(new Light())
+                .addLight(new Light("Light"))
                 .setTemperaturePreference(new TemperaturePreference(21, 4))
                 .setAirConditioner(new AirConditioner())
                 .setPresenceSensor(new PresenceSensor())
@@ -74,12 +74,12 @@ class SmartHomeBuilderTest {
         assertThrows(UnidentifiedRoomException.class, () -> {
             // create rooms
             Room room1 = new SmartHomeRoomBuilder("test1")
-                    .addLight(new Light())
-                    .addLight(new Light())
+                    .addLight(new Light("Light"))
+                    .addLight(new Light("Light"))
                     .create();
 
             Room room2 = new SmartHomeRoomBuilder("test2")
-                    .addLight(new Light())
+                    .addLight(new Light("Light"))
                     .create();
 
             // create smartHome

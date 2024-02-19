@@ -35,16 +35,16 @@ class SensorPresenceControlTest {
     @BeforeEach
     public void setup() {
         room = new SmartHomeRoomBuilder("test1")
-                .addLight(new Light())
-                .addLight(new Light())
-                .addLight(new Light())
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
                 .setPresenceSensor(new PresenceSensor())
                 .create();
 
         Room room1 = new SmartHomeRoomBuilder("test2")
-                .addLight(new Light())
-                .addLight(new Light())
-                .addLight(new Light())
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
                 .create();
 
         rooms = new ArrayList<>();
