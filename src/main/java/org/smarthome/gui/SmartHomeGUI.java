@@ -15,12 +15,8 @@ import org.smarthome.gui.util.DialogOpener;
 import org.smarthome.listener.*;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
-
-import static org.smarthome.util.Constants.*;
 
 public class SmartHomeGUI extends JFrame {
 
@@ -81,7 +77,7 @@ public class SmartHomeGUI extends JFrame {
 
     private final SirenListener sirenListener = this::setSirenStateLabelText;
 
-    private final EmergencyServiceListener emergencyNumber = emergencyNumber ->
+    private final EmergencyServiceListener emergencyServiceListener = emergencyNumber ->
             DialogOpener.openMessageDialog(
                     "Emergency Call",
                     "Emergency call to number: " + emergencyNumber,
@@ -181,7 +177,7 @@ public class SmartHomeGUI extends JFrame {
 
             alarm.addObserver(alarmListener);
             alarm.getSiren().addObserver(sirenListener);
-            alarm.getEmergencyService().addObserver(emergencyNumber);
+            alarm.getEmergencyService().addObserver(emergencyServiceListener);
 
             setAutomaticProtectionControlState(protectionControl.isAutomationActive());
             protectionControl.addObserver(automationProtectionControlListener);

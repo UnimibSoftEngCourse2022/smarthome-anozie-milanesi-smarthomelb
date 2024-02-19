@@ -8,7 +8,7 @@ public class AutomaticSystem {
 
     private AutomaticSystem() {}
 
-    public synchronized static AutomaticSystem getInstance() {
+    public static synchronized AutomaticSystem getInstance() {
         if (instance == null) {
             instance = new AutomaticSystem();
         }

@@ -5,22 +5,23 @@ import org.smarthome.controller.TemperatureControl;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.illumination.Illumination;
 import org.smarthome.domain.illumination.Light;
-import org.smarthome.domain.illumination.LightState;
 import org.smarthome.domain.sensor.PresenceSensor;
 import org.smarthome.domain.sensor.TemperatureSensor;
-import org.smarthome.domain.temperature.*;
+import org.smarthome.domain.temperature.AirConditioner;
+import org.smarthome.domain.temperature.AirConditionerOn;
+import org.smarthome.domain.temperature.AirConditionerState;
+import org.smarthome.domain.temperature.TemperaturePreference;
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.gui.util.ConstantsGUI;
 import org.smarthome.gui.util.DialogOpener;
-import org.smarthome.listener.*;
+import org.smarthome.listener.AirConditionerListener;
+import org.smarthome.listener.AutomationListener;
+import org.smarthome.listener.SensorListener;
+import org.smarthome.listener.TemperaturePreferenceListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import static org.smarthome.util.Constants.*;
 
 public class RoomGUI extends JFrame {
 
@@ -114,7 +115,6 @@ public class RoomGUI extends JFrame {
     private RoomGUI(Room room) {
         this.room = room;
         setContentPane(mainPanel);
-        setSize(defaultJFrameWidthSetting(), defaultJFrameHeightSetting());
         setTitle(room.getName());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMenu();
@@ -182,17 +182,14 @@ public class RoomGUI extends JFrame {
 
             airConditioner.addObserver(airConditionerListener);
 
-            activateAirConditionerButton.addActionListener(e -> {
-                temperatureControl.handleAirConditioner();
-            });
+            activateAirConditionerButton.addActionListener(e ->
+                    temperatureControl.handleAirConditioner());
 
-            increaseTemperatureButton.addActionListener(e -> {
-                temperatureControl.increaseTemperature();
-            });
+            increaseTemperatureButton.addActionListener(e ->
+                    temperatureControl.increaseTemperature());
 
-            decreaseTemperatureButton.addActionListener(e -> {
-                temperatureControl.decreaseTemperature();
-            });
+            decreaseTemperatureButton.addActionListener(e ->
+                    temperatureControl.decreaseTemperature());
         } else {
             airConditionerPanel.setVisible(false);
         }
@@ -211,9 +208,8 @@ public class RoomGUI extends JFrame {
 
         if (temperatureSensor != null) {
             setAutomaticTemperatureControlLabelText(temperatureControl.isAutomationActive());
-            automaticTemperatureControlButton.addActionListener(e -> {
-                temperatureControl.setAutomationActive(!temperatureControl.isAutomationActive());
-            });
+            automaticTemperatureControlButton.addActionListener(e ->
+                    temperatureControl.setAutomationActive(!temperatureControl.isAutomationActive()));
         } else {
             automaticTemperaturePanel.setVisible(false);
         }

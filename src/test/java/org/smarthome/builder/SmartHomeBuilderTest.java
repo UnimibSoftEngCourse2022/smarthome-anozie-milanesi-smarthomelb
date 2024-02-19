@@ -1,6 +1,7 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
@@ -11,6 +12,7 @@ import org.smarthome.domain.sensor.TemperatureSensor;
 import org.smarthome.domain.temperature.AirConditioner;
 import org.smarthome.domain.temperature.TemperaturePreference;
 import org.smarthome.exception.UnidentifiedRoomException;
+import org.smarthome.util.MockSmartHome;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -87,6 +89,14 @@ class SmartHomeBuilderTest {
                     .addRoom(room1)
                     .setVacuumChargingStationPosition(room2)
                     .create();
+        });
+    }
+
+    @Test
+    void mockSmartHomeTest() {
+        assertDoesNotThrow(() -> {
+            SmartHome smartHome = MockSmartHome.mock();
+            assertNotNull(smartHome);
         });
     }
 
