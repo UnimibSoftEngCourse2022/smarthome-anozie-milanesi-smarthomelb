@@ -19,9 +19,9 @@ class IlluminationTest {
     void setUp() {
         // create lights
         lights = new ArrayList<>();
-        lights.add(new Light());
-        lights.add(new Light());
-        lights.add(new Light());
+        lights.add(new Light("Light"));
+        lights.add(new Light("Light"));
+        lights.add(new Light("Light"));
 
         // create rooms
         illumination = new Illumination(lights);

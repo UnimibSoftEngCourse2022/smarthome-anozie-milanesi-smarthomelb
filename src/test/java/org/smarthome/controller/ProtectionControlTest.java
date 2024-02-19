@@ -28,12 +28,12 @@ class ProtectionControlTest {
     void setUp() {
         // create rooms
         Room room1 = new SmartHomeRoomBuilder("test1")
-                .addLight(new Light())
-                .addLight(new Light())
+                .addLight(new Light("Light"))
+                .addLight(new Light("Light"))
                 .create();
 
         Room room2 = new SmartHomeRoomBuilder("test2")
-                .addLight(new Light())
+                .addLight(new Light("Light"))
                 .create();
 
         rooms = new ArrayList<>();

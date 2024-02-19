@@ -124,4 +124,22 @@ public class Constants {
         }
     }
 
+    public static int defaultJFrameWidthSetting() {
+        return Integer.parseInt(properties.getProperty("default.jframe.width.setting"));
+    }
+
+    public static int defaultJFrameHeightSetting() {
+        return Integer.parseInt(properties.getProperty("default.jframe.height.setting"));
+    }
+
+    public static int defaultDialogWidthSetting() {
+        return Integer.parseInt(properties.getProperty("default.dialog.width.setting"));
+    }
+
+    public static int defaultDialogHeightSetting() {
+        return Integer.parseInt(properties.getProperty("default.dialog.height.setting"));
+    }
+
+
+
 }

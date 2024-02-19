@@ -12,7 +12,9 @@ public abstract class ObservableElement<T extends ElementListener> {
     }
 
     public void addObserver(T observer) {
-        observers.add(observer);
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
     }
 
     public void removeObserver(T observer) {

@@ -13,7 +13,7 @@ class LightTest {
     @BeforeEach
     void setUp() {
         // create light
-        light = new Light();
+        light = new Light("Light");
     }
 
     @Test
