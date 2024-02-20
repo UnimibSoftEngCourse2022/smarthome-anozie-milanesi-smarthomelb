@@ -2,6 +2,7 @@ package org.smarthome.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.temperature.*;
 import org.smarthome.exception.FieldOutOfRangeException;
 import org.smarthome.listener.AirConditionerListener;
@@ -148,6 +149,19 @@ class TemperatureControlTest {
 
         temperatureControl.handleAutomation(roomTemperatureSimulation.getTemperature());
         assertEquals(AirConditionerOff.class, airConditioner.getAirConditionerState().getClass());
+    }
+
+    @Test
+    void temperatureControlDoesNotThrowTest() {
+        assertDoesNotThrow(() -> {
+            TemperatureControl temperatureControl =
+                    new TemperatureControl(null, null);
+            temperatureControl.handleAirConditioner();
+            temperatureControl.increaseTemperature();
+            temperatureControl.decreaseTemperature();
+            temperatureControl.handleAutomation(null);
+            temperatureControl.handleAutomation(30);
+        });
     }
 
 }

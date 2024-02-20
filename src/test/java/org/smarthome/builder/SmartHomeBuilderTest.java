@@ -1,7 +1,6 @@
 package org.smarthome.builder;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.Room;
 import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.illumination.Light;
@@ -50,6 +49,7 @@ class SmartHomeBuilderTest {
                 .addRoom(room1)
                 .addRoom(room2)
                 .setVacuumChargingStationPosition(room1)
+                .setProtection(null, null)
                 .setProtection(new Siren(), new EmergencyService("112"))
                 .create();
 

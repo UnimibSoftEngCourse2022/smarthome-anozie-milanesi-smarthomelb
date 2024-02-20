@@ -3,6 +3,7 @@ package org.smarthome.controller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.smarthome.domain.illumination.*;
 import org.smarthome.listener.AutomationListener;
 
@@ -49,6 +50,15 @@ class IlluminationControlTest {
         for (Light light : illumination.getLights()) {
             assertEquals(LightOff.class, light.getLightState().getClass());
         }
+
+        assertDoesNotThrow(() -> {
+            IlluminationControl illuminationControl2 = new IlluminationControl(null);
+            illuminationControl2.handleIllumination();
+            illuminationControl2.handleSingleLight(null);
+            illuminationControl2.handleAutomation(null);
+            illuminationControl2.handleAutomation(true);
+            illuminationControl2.handleAutomation(false);
+        });
     }
 
     @Test

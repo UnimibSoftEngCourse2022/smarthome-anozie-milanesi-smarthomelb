@@ -132,4 +132,17 @@ class ProtectionControlTest {
         });
     }
 
+    @Test
+    void alarmTest() {
+        assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
+        protectionController.handleAlarm(Constants.securityPin());
+        assertEquals(Armed.class, alarm.getAlarmState().getClass());
+
+        protectionController.handleAutomation(true);
+        assertTrue(alarm.getSiren().isActive());
+        protectionController.handleAlarm(Constants.securityPin());
+
+        assertFalse(protectionController.isAlarmArmed());
+    }
+
 }

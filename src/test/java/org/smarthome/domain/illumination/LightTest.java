@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smarthome.listener.LightActionListener;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LightTest {
 
@@ -18,11 +18,14 @@ class LightTest {
 
     @Test
     void lightTest() {
+        assertNotNull(light.getName());
         assertEquals(LightOff.class, light.getLightState().getClass());
         light.handle();
         assertEquals(LightOn.class, light.getLightState().getClass());
+        assertTrue(light.isOn());
         light.handle();
         assertEquals(LightOff.class, light.getLightState().getClass());
+        assertFalse(light.isOn());
     }
 
     @Test

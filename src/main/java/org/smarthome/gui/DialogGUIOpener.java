@@ -1,12 +1,12 @@
-package org.smarthome.gui.util;
+package org.smarthome.gui;
 
 import javax.swing.*;
 
-public class DialogOpener {
+public class DialogGUIOpener {
 
     private static final String HTML = "<html><body style='width: %1spx'>%1s";
 
-    private DialogOpener() {}
+    private DialogGUIOpener() {}
 
     public static void openMessageDialog(String title, String message, int messageType) {
         JOptionPane.showMessageDialog(

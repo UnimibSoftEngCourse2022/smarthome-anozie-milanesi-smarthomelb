@@ -95,6 +95,12 @@ class SensorTemperatureControlTest {
         assertEquals(room.getTemperaturePreference().getIdealTemperature(), room.getAirConditioner().getTemperature());
     }
 
+    @Test
+    void assertNullMonitorTest() {
+        TemperatureSensor temperatureSensor = new TemperatureSensor();
+        assertNull(temperatureSensor.monitor());
+    }
+
     /* - */
 
     @Test

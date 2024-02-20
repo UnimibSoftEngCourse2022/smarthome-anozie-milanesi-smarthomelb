@@ -32,6 +32,10 @@ class AlarmTest {
         alarm.handle(Constants.securityPin());
         assertEquals(Disarmed.class, alarm.getAlarmState().getClass());
         assertFalse(alarm.getSiren().isActive());
+        assertEquals("112", alarm.getEmergencyService().getEmergencyNumber());
+        alarm.getSiren().setActive(true);
+        alarm.getSiren().setActive(true);
+        assertTrue(alarm.getSiren().isActive());
     }
 
     @Test

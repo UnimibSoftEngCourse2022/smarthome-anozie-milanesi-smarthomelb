@@ -3,6 +3,7 @@ package org.smarthome.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.smarthome.builder.SmartHomeBuilder;
 import org.smarthome.builder.SmartHomeRoomBuilder;
 import org.smarthome.domain.Room;
@@ -223,6 +224,16 @@ class SensorPresenceControlTest {
         CountDownLatchWaiter.awaitLatch(latch);
 
         assertFalse(alarm.getSiren().isActive());
+    }
+
+    @Test
+    void stopMonitorTest() {
+        assertDoesNotThrow(() -> {
+            sensorPresenceControl.monitorSensor();
+            sensorPresenceControl.monitorSensor();
+            sensorPresenceControl.stopMonitorSensor();
+            sensorPresenceControl.stopMonitorSensor();
+        });
     }
 
     /* - */

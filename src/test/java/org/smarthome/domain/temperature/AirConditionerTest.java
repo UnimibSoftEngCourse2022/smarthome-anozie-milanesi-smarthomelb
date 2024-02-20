@@ -30,6 +30,14 @@ class AirConditionerTest {
     }
 
     @Test
+    void airConditionerStateTest() {
+        airConditioner.handle();
+        assertTrue(airConditioner.isOn());
+        airConditioner.handle();
+        assertFalse(airConditioner.isOn());
+    }
+
+    @Test
     void isOnAirConditionerTest() {
         int expected = Constants.defaultIdealTemperature() + 1;
         airConditioner.addObserver(new AirConditionerListener() {

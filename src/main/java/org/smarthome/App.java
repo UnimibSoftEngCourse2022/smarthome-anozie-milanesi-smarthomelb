@@ -1,12 +1,13 @@
 package org.smarthome;
 
-import org.smarthome.gui.SmartHomeGUI;
+import org.smarthome.gui.SmartHomeGUIController;
 import org.smarthome.util.MockSmartHome;
 
 public class App {
 
     public static void main(String[] args) {
-        SmartHomeGUI.init(MockSmartHome.mock()).setVisible(true);
+        new SmartHomeGUIController(MockSmartHome.mock())
+                .getSmartHomeGUI().setVisible(true);
     }
 
 }

@@ -1,25 +1,16 @@
 package org.smarthome.gui;
 
-import org.smarthome.controller.CleaningControl;
 import org.smarthome.controller.ProtectionControl;
 import org.smarthome.domain.Room;
-import org.smarthome.domain.SmartHome;
 import org.smarthome.domain.cleaning.*;
 import org.smarthome.domain.protection.Alarm;
 import org.smarthome.domain.protection.AlarmState;
 import org.smarthome.domain.protection.Armed;
-import org.smarthome.exception.CleaningException;
-import org.smarthome.exception.WrongSecurityPinException;
-import org.smarthome.gui.util.DialogOpener;
-import org.smarthome.listener.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class SmartHomeGUI extends JFrame {
-
-    private static SmartHomeGUI instance;
 
     private JPanel mainPanel;
     private JPanel roomPanel;
@@ -36,111 +27,77 @@ public class SmartHomeGUI extends JFrame {
     private JPanel cleaningPanel;
     private JPanel securityPanel;
 
-    public static SmartHomeGUI getInstance() {
-        return instance;
-    }
-
-    public static SmartHomeGUI init(SmartHome smartHome) {
-        if (instance == null) {
-            instance = new SmartHomeGUI(smartHome);
-        }
-        return instance;
-    }
-
-    private SmartHomeGUI(SmartHome smartHome) {
+    public SmartHomeGUI(SmartHomeGUIController smartHomeGUIController) {
         setContentPane(mainPanel);
         setTitle("Smart Home");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        initRooms(smartHome);
-        initCleaning(smartHome);
-        initSecurity(smartHome);
+        initRooms(smartHomeGUIController);
+        initCleaning(smartHomeGUIController);
+        initSecurity(smartHomeGUIController);
         pack();
         setLocationRelativeTo(null);
     }
 
-    private void initRooms(SmartHome smartHome) {
+    private void initRooms(SmartHomeGUIController smartHomeGUIController) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.fill = GridBagConstraints.HORIZONTAL;
 
         roomPanel.setLayout(new GridBagLayout());
 
-        for(Room room : smartHome.getRooms()) {
-            roomPanel.add(createRoomButton(room), constraints);
+        for(Room room : smartHomeGUIController.getSmartHome().getRooms()) {
+            roomPanel.add(createRoomButton(smartHomeGUIController, room), constraints);
         }
     }
 
-    private void initCleaning(SmartHome smartHome) {
-        CleaningControl cleaningControl = smartHome.getCleaningControl();
-        Vacuum vacuum = smartHome.getVacuum();
-
+    private void initCleaning(SmartHomeGUIController smartHomeGUIController) {
+        Vacuum vacuum = smartHomeGUIController.getSmartHome().getVacuum();
         if (vacuum != null) {
             chargingStationPositionLabel.setText(vacuum.getChargingStationPosition().getName());
             setCurrentPositionLabelText(vacuum.getCurrentPosition());
             setVacuumStateLabelText(vacuum.getVacuumState());
 
-            vacuum.addObserver(createVacuumListener());
+            vacuum.addObserver(smartHomeGUIController.getVacuumListener());
 
-            startCleaningButton.addActionListener(e -> cleaningControl.startCleaning());
-            stopCleaningButton.addActionListener(e -> cleaningControl.stopCleaning());
+            startCleaningButton.addActionListener(smartHomeGUIController.handleStartCleaningButton());
+            stopCleaningButton.addActionListener(smartHomeGUIController.handleStopCleaningButton());
         } else {
             cleaningPanel.setVisible(false);
         }
     }
 
-    private void initSecurity(SmartHome smartHome) {
-        ProtectionControl protectionControl = smartHome.getProtectionControl();
-        Alarm alarm = smartHome.getAlarm();
+    private void initSecurity(SmartHomeGUIController smartHomeGUIController) {
+        ProtectionControl protectionControl = smartHomeGUIController.getSmartHome().getProtectionControl();
+        Alarm alarm = smartHomeGUIController.getSmartHome().getAlarm();
 
         if (alarm != null) {
             setAlarmStateLabelText(alarm.getAlarmState());
             setSirenStateLabelText(alarm.getSiren().isActive());
 
-            alarm.addObserver(createAlarmListener());
-            alarm.getSiren().addObserver(createSirenListener());
-            alarm.getEmergencyService().addObserver(createEmergencyServiceListener());
+            alarm.addObserver(smartHomeGUIController.getAlarmListener());
+            alarm.getSiren().addObserver(smartHomeGUIController.getSirenListener());
+
+            alarm.getEmergencyService().addObserver(smartHomeGUIController.getEmergencyServiceListener());
 
             setAutomaticProtectionControlState(protectionControl.isAutomationActive());
-            protectionControl.addObserver(createAutomationProtectionControlListener());
+            protectionControl.addObserver(smartHomeGUIController.getAutomationProtectionControlListener());
 
-            powerAlarmButton.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String pin = DialogOpener.openInputDialog(
-                            "Security pin",
-                            "Type security pin:",
-                            JOptionPane.QUESTION_MESSAGE
-                    );
-
-                    if (pin != null) {
-                        protectionControl.handleAlarm(pin);
-                    }
-                }
-            });
-            automaticProtectionControlButton.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    protectionControl.setAutomationActive(!protectionControl.isAutomationActive());
-                }
-            });
+            powerAlarmButton.addActionListener(
+                    smartHomeGUIController.handlePowerAlarmButton());
+            automaticProtectionControlButton.addActionListener(
+                    smartHomeGUIController.handleAutomaticProtectionControlButton());
         } else {
             securityPanel.setVisible(false);
         }
     }
 
-    private JButton createRoomButton(Room room) {
+    private JButton createRoomButton(SmartHomeGUIController smartHomeGUIController, Room room) {
         JButton roomButton = new JButton(room.getName());
-        roomButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                RoomGUI.init(room).setVisible(true);
-            }
-        });
+        roomButton.addActionListener(smartHomeGUIController.handleRoomButton(room));
         return roomButton;
     }
 
-    private void setVacuumStateLabelText(VacuumState vacuumState) {
+    public void setVacuumStateLabelText(VacuumState vacuumState) {
         if (vacuumState.getClass().equals(Cleaning.class)) {
             vacuumStateLabel.setText("Cleaning");
         } else if (vacuumState.getClass().equals(Transit.class)) {
@@ -150,11 +107,11 @@ public class SmartHomeGUI extends JFrame {
         }
     }
 
-    private void setCurrentPositionLabelText(Room currentPosition) {
+    public void setCurrentPositionLabelText(Room currentPosition) {
         currentPositionLabel.setText(currentPosition.getName());
     }
 
-    private void setAlarmStateLabelText(AlarmState state) {
+    public void setAlarmStateLabelText(AlarmState state) {
         if (state.getClass().equals(Armed.class)) {
             alarmStateLabel.setText("Armed");
         } else  {
@@ -162,7 +119,7 @@ public class SmartHomeGUI extends JFrame {
         }
     }
 
-    private void setSirenStateLabelText(boolean active) {
+    public void setSirenStateLabelText(boolean active) {
         if (active) {
             sirenStateLabel.setText("On");
         } else  {
@@ -170,90 +127,12 @@ public class SmartHomeGUI extends JFrame {
         }
     }
 
-    private void setAutomaticProtectionControlState(boolean automationActive) {
+    public void setAutomaticProtectionControlState(boolean automationActive) {
         if (automationActive) {
             automaticProtectionControlStateLabel.setText("On");
         } else  {
             automaticProtectionControlStateLabel.setText("Off");
         }
-    }
-
-    /* - */
-
-    private VacuumListener createVacuumListener() {
-        return new VacuumListener() {
-            @Override
-            public void onChangePosition(Room currentPosition) {
-                setCurrentPositionLabelText(currentPosition);
-            }
-
-            @Override
-            public void onChangeState(VacuumState state) {
-                setVacuumStateLabelText(state);
-            }
-
-            @Override
-            public void onCompletedCleaning() {
-                DialogOpener.openMessageDialog(
-                        "Complete Cleaning",
-                        "The cleaning of the house is now complete!",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-
-            @Override
-            public void onStoppedCleaning() {
-                DialogOpener.openMessageDialog(
-                        "Stopped Cleaning",
-                        "The cleaning process has stopped!",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-
-            @Override
-            public void onCleaningException(CleaningException e) {
-                DialogOpener.openMessageDialog(
-                        "Cleaning Error!",
-                        e.getMessage(),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        };
-    }
-
-    private AlarmListener createAlarmListener() {
-        return new AlarmListener() {
-            @Override
-            public void onChangeState(AlarmState state) {
-                setAlarmStateLabelText(state);
-            }
-
-            @Override
-            public void onWrongSecurityPinException(WrongSecurityPinException e) {
-                DialogOpener.openMessageDialog(
-                        "Security Error!",
-                        e.getMessage(),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        };
-    }
-
-    private SirenListener createSirenListener() {
-        return this::setSirenStateLabelText;
-    }
-
-    private EmergencyServiceListener createEmergencyServiceListener() {
-        return emergencyNumber ->
-                DialogOpener.openMessageDialog(
-                        "Emergency Call",
-                        "Emergency call to number: " + emergencyNumber,
-                        JOptionPane.WARNING_MESSAGE
-                );
-    }
-
-    private AutomationListener createAutomationProtectionControlListener() {
-        return this::setAutomaticProtectionControlState;
     }
 
 }
