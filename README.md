@@ -1,4 +1,7 @@
 # SmartHome
+Questo progetto universitario è stato realizzato per il corso di Ingegneria del 
+Software (anno accademico 2023/2024).
+
 Smart Home mira a migliorare la qualità della vita dei residenti attraverso
 un sistema che fornisce varie funzionalità, sia manuali che automatiche,
 per vivere al meglio nella propria abitazione
